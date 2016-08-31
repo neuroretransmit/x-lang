@@ -1,0 +1,104 @@
+﻿LANGUAGE X SPEC.
+
+Identifiers:
+
+* TODO: Don’t allow _*- that’s gross.
+
+Identifiers are only allowed to contain lowercase, underscores or digits – as long as that digit is not the first character. 
+
+Literals:
+
+Floating literals explicitly deny not including a zero – I’m enforcing good code.
+
+Function calls:
+
+Parenthesis are optional
+
+Packages:
+
+These will not be implicitly set by filename – I want to know what package I’m in if I’ve been in a file for a while. However, they will not be required. Because I still think that is dumb for small projects.
+
+<character> ::= /[:alpha:]/
+
+<symbol> ::= /[:punct:]/
+
+<escape_sequences> ::= /[:cntrl:]/
+
+<arithmetic_operator> ::= /[+-/*%]/
+
+<logical_operator> ::= /&&|\|\||!/
+
+<relational_operator> ::= /==|!=|>|<|>=|<=/
+
+<bitwise_operator> ::= /[|&^]|>>|<</
+
+<unary_operator> ::= /\+\+|--|~/
+
+<assignment_operator> ::= /=|\*=|\/=|%=|\+=|-=|<<=|>>=|^=|&=||=/
+
+<character_literal> ::= ‘\’’ <character> ‘\’’
+
+<floating_literal> ::= /[:digit:]+\.[:digit:]+/
+
+<decimal_literal> ::= /[:digit:]+u?/
+
+<string_literal> ::= /\”[:ascii:]\”/
+
+<number> ::= <floating_literal> | <decimal_literal>
+
+<literal> ::= <string_literal> | <number> | <character_literal>
+
+<identifier> ::= /[_:alpha:][_[:alpha:][:digit:]]*/
+
+<function_call> ::= <ident> ( ‘(‘ ( <expression> ( ‘,’ <expression)+ )? ‘)’ )?
+
+<arithmetic_expression> ::= <expression> <arithmetic_operator> <expression>
+
+<bitwise_expression> ::= <expression> <bitwise_operator> <expression>
+
+<logical_expression> ::= <expression> <logical_operator> <expression>
+
+<assignment_expression> ::= <ident> <assignment_operator> <expression>
+
+<relational_expression> ::= <expression> <relational_operator> <expression>
+
+<ternary_expression> ::= <expression> ‘?’ <expression> ‘:’ <expression>
+
+<expression> ::= <literal> 
+		| <ident> 
+		| <function_call> 
+		| <arithmetic_expression>
+		| <bitwise_expression>
+		| <logical_expression>
+		| <assignment_expression>
+		| <relational_expression>
+		| <ternary_expression>
+		;
+
+<variable_declaration> ::= <type> <ident>
+
+<variable_definition> ::= <variable_declaration> ‘=’ <expression>
+
+<function_argument> ::= <ident> ‘:’ <type>
+
+<prototype> ::= “fn” <ident> ( ‘(‘ <function_argument> (‘,’ <function_argument>)* ‘)’ ) “->” <type>
+
+<function_definition> ::= <prototype> ‘{‘ <expression>+ ‘}’
+
+<package> ::= /<ident> ( \. <ident> )*/
+
+<package_specifier> ::= “package” <package>
+
+<import> ::= “import” <package>
+
+<statement> ::=  <variable_declaration>
+		| <variable_definition>
+		| <function_declaration>
+		| <function_definition>
+		| <prototype>
+		| <package_specifier>
+		| <import>
+		| <expression>
+		;
+
+<program> ::= <statement>+
