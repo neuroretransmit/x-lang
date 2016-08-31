@@ -131,17 +131,11 @@ unsigned int hashmap_hash_int(HashMap_Map* m, char* keystring)
  */
 MapStatus hashmap_hash(HashMap* in, char* key){
 	int curr;
-	
-	/* Cast the hashmap */
 	HashMap_Map* m = (HashMap_Map*) in;
 
-	/* If full, return immediately */
 	check((m->size <= (m->table_size/2)), "Map was full");
-
-	/* Find the best index */
 	curr = hashmap_hash_int(m, key);
 
-	/* Linear probing */
 	for (int i = 0; i < MAX_CHAIN_LENGTH; i++) {
 		if (m->data[curr].in_use == 0)
 			return curr;
@@ -285,3 +279,4 @@ size_t hashmap_length(HashMap* in)
 
 	return 0;
 }
+
