@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "grammar/lexer.h"
 #include "util/file_utils.h"
 
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
@@ -59,10 +60,12 @@ int main(int argc, char** argv)
 		
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
-				
+				init_lexer(fname);
+				lex();
 			}
 			prev = fname;
 		}
 		free(arguments.argz);
 	}
+	destroy_lexer();
 }

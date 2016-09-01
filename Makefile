@@ -1,5 +1,7 @@
 BINARY := lang-x
 
+WORKSPACE_DIR := $(shell pwd)
+
 BINDIR := bin
 OBJDIR := obj
 SRCDIR := src
@@ -22,5 +24,8 @@ $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+run-%: $(BINDIR)/$(BINARY)
+	valgrind bin/lang-x res/$*.x 2>&1 | tee -a LEAK_REPORT.txt
+
 clean:
-	rm -rfv bin obj
+	rm -rfv bin obj LEAK_REPORT.txt
