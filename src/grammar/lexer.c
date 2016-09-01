@@ -19,14 +19,18 @@ void destroy_token(void* tok)
 	Token* token = (Token*) tok;
 
 	if (token) {
-		switch (token->type) {
-			case TOK_IDENT:
-				free(token->val->string);
-				token->val->string = NULL;
-				break;
-			default:
-				log_err("destroy_token: type not supported\n");
-				break;
+		if (token->type) {
+			switch (token->type) {
+				case TOK_EOF:
+					break;			
+				case TOK_IDENT:
+					free(token->val->string);
+					token->val->string = NULL;
+					break;
+				default:
+					log_err("destroy_token: type not supported\n");
+					break;
+			}
 		}
 
 		if (token->val) {
@@ -118,12 +122,6 @@ static TokenValue* init_token_value()
 	return calloc(1, sizeof(TokenValue));
 }
 
-
-/*static char* dupe_string(const char* val)
-{
-	return strdup(val);
-}*/
-
 static Token* create_token(int type, void* val)
 {
 	Token* token = malloc(sizeof(Token));
@@ -154,15 +152,13 @@ static void tokenize()
 		case '\n':
 			return;
 		default: {
+			switch (_lookahead) {
+				case EOF: fifo_push(_tokens, create_token(TOK_EOF, NULL)); return;
+			}
+
 			if (isalpha(_lookahead) || _lookahead == '_') {
 				char* tmp = capture_string();
 				fifo_push(_tokens, create_token(TOK_IDENT, tmp));
-
-				/* FIXME: When parser is added - this is debug */
-				Token* tok = fifo_pop(_tokens);
-				log_info("%s\n", tok->val->string);	
-				destroy_token(tok);
-				tok = NULL;
 			}
 
 			break;

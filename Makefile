@@ -1,11 +1,10 @@
-BINARY := lang-x
-
-WORKSPACE_DIR := $(shell pwd)
+BINARY := x-lang
 
 BINDIR := bin
 OBJDIR := obj
 SRCDIR := src
 DOCDIR := doc
+RESDIR := res
 
 SOURCES := $(shell find src -name **.c)
 OBJECTS := $(patsubst src/%.c, obj/%.o, $(SOURCES))
@@ -25,7 +24,7 @@ $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 run-%: $(BINDIR)/$(BINARY)
-	valgrind bin/lang-x res/$*.x 2>&1 | tee -a LEAK_REPORT.txt
+	valgrind --leak-check=full $(BINDIR)/$(BINARY) $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
 
 clean:
 	rm -rfv bin obj LEAK_REPORT.txt

@@ -5,6 +5,7 @@
 #include "../util/collections/fifo.h"
 
 typedef enum {
+	TOK_EOF,
 	TOK_IDENT
 } TokenType;
 
