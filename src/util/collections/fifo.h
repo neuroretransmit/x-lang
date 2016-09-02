@@ -16,7 +16,7 @@ typedef struct {
 } FIFO;
 
 FIFO* init_fifo();
-FIFO* init_fifo_objects(void (*destructor)(void *data));
+FIFO* init_fifo_objects(void (*destructor)(void* data));
 
 void destroy_fifo(FIFO* fifo);
 void fifo_push(FIFO* fifo, void* data);

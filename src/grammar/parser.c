@@ -42,18 +42,16 @@ static bool valid_ident(Token* ident)
 {
 	regex_t r;
 	const char* regex_text = "([_a-z])([_a-z0-9])*";
-	
+
 	compile_regex(&r, regex_text);
-	
-	if (ident && ident->val && ident->val->string) { 
+
+	if (ident && ident->val && ident->val->string) {
 		if (!match_regex(&r, ident->val->string)) {
-			parse_error(ident, "not a valid identifier\n");
-			
 			regfree(&r);
 			return false;
 		}
 	}
-	
+
 	regfree(&r);
 	return true;
 }
@@ -67,7 +65,7 @@ static Token* parse_ident()
 		destroy_token(ident);
 		return NULL;
 	}
-	
+
 	return ident;
 }
 
@@ -79,26 +77,28 @@ static Token* parse_ident()
 static bool parse_x_lang()
 {
 	Token* token = (Token*) fifo_peek(_tokens);
-	
+
 	if (token) {
 		if (token->type == TOK_EOF) {
-			while(_tokens->size)
+			while (_tokens->size)
 				destroy_token(fifo_pop(_tokens));
 
 			return true;
-		} else {	
+		} else {
 			switch (token->type) {
 				case TOK_IDENT:
 					parse_ident();
 					log_info("%s\n", token->val->string);
 					destroy_token(token);
 					break;
+
 				default:
 					parse_error(token, "expected one of <ident, EOF>\n");
 					break;
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -106,6 +106,6 @@ void parse(char* fname)
 {
 	_current_file = fname;
 
-	while(parse_x_lang() != FINISHED);
+	while (parse_x_lang() != FINISHED);
 }
 

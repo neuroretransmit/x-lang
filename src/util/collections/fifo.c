@@ -11,7 +11,7 @@ FIFO* init_fifo_objects(void (*destructor)(void* data))
 {
 	FIFO* fifo = calloc(1, sizeof(FIFO));
 	fifo->destructor = destructor;
-	
+
 	return fifo;
 }
 
@@ -23,14 +23,14 @@ void destroy_fifo(FIFO* fifo)
 		if (fifo->head->data) {
 			if (fifo->destructor) {
 				fifo->destructor(fifo->head->data);
-				
+
 				while ((node = fifo->head->next)) {
 					fifo->destructor(node->data);
 				}
 			} else {
 				free(fifo->head->data);
 				fifo->head->data = NULL;
-				
+
 				while ((node = fifo->head->next)) {
 					free(node->data);
 					node->data = NULL;
@@ -70,13 +70,14 @@ void* fifo_pop(FIFO* fifo)
 		return NULL;
 
 	data = node->data;
+
 	if ((fifo->head = node->next) == NULL)
 		fifo->tail = NULL;
 
 	free(node);
 	node = NULL;
-	
-	fifo->size--;	
+
+	fifo->size--;
 
 	return data;
 }
@@ -84,10 +85,10 @@ void* fifo_pop(FIFO* fifo)
 void* fifo_peek(FIFO* fifo)
 {
 	FIFONode* node;
-	
+
 	if ((node = fifo->head) == NULL)
 		return NULL;
-	
+
 	return node->data;
 }
 

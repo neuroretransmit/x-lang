@@ -19,19 +19,21 @@ struct arguments {
 static int parse_opt(int key, char* arg, struct argp_state* state)
 {
 	struct arguments* a = state->input;
-	
-    switch (key) {
+
+	switch (key) {
 
 		case ARGP_KEY_ARG:
 			argz_add(&a->argz, &a->argz_len, arg);
 			break;
+
 		case ARGP_KEY_INIT:
 			a->argz = 0;
 			a->argz_len = 0;
 			break;
+
 		case ARGP_KEY_END: {
 			size_t count = argz_count(a->argz, a->argz_len);
-		
+
 			if (count > 2)
 				argp_failure(state, 1, 0, "Too many source files.");
 			else if (count < 1)
@@ -49,22 +51,24 @@ int main(int argc, char** argv)
 		{ 0 , 0, 0, 0, 0, 0 }
 	};
 
-	struct arguments arguments;	
+	struct arguments arguments;
 	struct argp argp = { options, parse_opt, args_doc, doc, NULL, NULL, NULL };
-    
+
 	if (argp_parse(&argp, argc, argv, 0, 0, &arguments) == 0) {
 		const char* prev = NULL;
 		char* fname;
-		
+
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
 				init_parser(fname);
 				parse();
 			}
+
 			prev = fname;
 		}
+
 		free(arguments.argz);
 	}
-	
+
 	destroy_parser();
 }
