@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef enum {
@@ -11,7 +12,21 @@ typedef enum {
 
 typedef int (*generic)(void*, void*);
 
-typedef struct HashMap HashMap;
+struct HashMap;
+
+typedef struct {
+	char* key;
+	bool in_use;
+	void* data;
+} HashMapElement;
+
+typedef struct {
+	size_t table_size;
+	size_t size;
+	HashMapElement* data;
+} HashMap_Map;
+
+typedef HashMap_Map HashMap;
 
 HashMap* init_hashmap();
 void destroy_hashmap();

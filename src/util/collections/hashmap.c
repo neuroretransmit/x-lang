@@ -64,18 +64,6 @@ static unsigned long crc32_tab[] = {
 	0x2d02ef8dL
 };
 
-typedef struct {
-	char* key;
-	bool in_use;
-	void* data;
-} HashMapElement;
-
-typedef struct {
-	size_t table_size;
-	size_t size;
-	HashMapElement* data;
-} HashMap_Map;
-
 HashMap* init_hashmap()
 {
 	HashMap_Map* m = (HashMap_Map*) malloc(sizeof(HashMap_Map));
