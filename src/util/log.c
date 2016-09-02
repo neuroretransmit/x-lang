@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_err(const char* fmt, ...)
+/*void log_err(const char* fmt, ...)
 {	
 	fprintf(stderr, "[%sERROR%s] ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	
@@ -48,4 +48,4 @@ void log_kill(const char* fmt, ...)
 	va_end(args);
 	
 	exit(1);
-}
+}*/

@@ -9,9 +9,9 @@
 #include "../util/regex_utils.h"
 #include "../util/collections/fifo.h"
 
-extern FIFO* _tokens;
-
+static const bool FINISHED = true;
 static char* _current_file;
+extern FIFO* _tokens;
 
 void init_parser(const char* fname)
 {
@@ -41,15 +41,17 @@ static void parse_error(Token* token, const char* fmt, ...)
 static bool valid_ident(Token* ident)
 {
 	regex_t r;
-	const char* regex_text = "[_a-z]([_a-z0-9])*";
+	const char* regex_text = "([_a-z])([_a-z0-9])*";
 	
 	compile_regex(&r, regex_text);
 	
-	if (ident && ident->val && ident->val->string && !match_regex(&r, ident->val->string)) {
-		parse_error(ident, "not a valid identifier\n");
-		
-		regfree(&r);
-		return false;
+	if (ident && ident->val && ident->val->string) { 
+		if (!match_regex(&r, ident->val->string)) {
+			parse_error(ident, "not a valid identifier\n");
+			
+			regfree(&r);
+			return false;
+		}
 	}
 	
 	regfree(&r);
@@ -69,6 +71,11 @@ static Token* parse_ident()
 	return ident;
 }
 
+/**
+ * Starting point for parser
+ *
+ * @return Was EOF found?
+ */
 static bool parse_x_lang()
 {
 	Token* token = (Token*) fifo_peek(_tokens);
@@ -77,17 +84,17 @@ static bool parse_x_lang()
 		if (token->type == TOK_EOF) {
 			while(_tokens->size)
 				destroy_token(fifo_pop(_tokens));
+
 			return true;
 		} else {	
 			switch (token->type) {
-				case TOK_IDENT: {
+				case TOK_IDENT:
 					parse_ident();
 					log_info("%s\n", token->val->string);
 					destroy_token(token);
 					break;
-				}
 				default:
-					log_err("expected one of <ident, EOF>\n");
+					parse_error(token, "expected one of <ident, EOF>\n");
 					break;
 			}
 		}
@@ -99,6 +106,6 @@ void parse(char* fname)
 {
 	_current_file = fname;
 
-	while(!parse_x_lang());
+	while(parse_x_lang() != FINISHED);
 }
 
