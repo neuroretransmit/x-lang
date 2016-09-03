@@ -32,7 +32,7 @@ void destroy_list(List* list)
 
 	while (list->size)
 		list_remove(list, list->size - 1);
-	
+
 	free(list);
 	list = NULL;
 }

@@ -9,15 +9,17 @@
 #define MIN_SLOTS	16
 #define MULTIPLIER	37
 
-size_t hash32(char *str)
+size_t hash32(char* str)
 {
-   unsigned int h;
-   unsigned char *p;
+	unsigned int h;
+	unsigned char* p;
 
-   h = 0;
-   for (p = (unsigned char*)str; *p != '\0'; p++)
-      h = MULTIPLIER * h + *p;
-   return h; // or, h % ARRAY_SIZE;
+	h = 0;
+
+	for (p = (unsigned char*)str; *p != '\0'; p++)
+		h = MULTIPLIER * h + *p;
+
+	return h; // or, h % ARRAY_SIZE;
 }
 
 static bool hash_cmp(HashNode* node, char* key)
@@ -28,8 +30,28 @@ static bool hash_cmp(HashNode* node, char* key)
 	} else {
 		log_warn("Node not set.");
 	}
-	
+
 	return false;
+}
+
+HashMap* init_hashmap(hash_func hash, cmp_func cmp)
+{
+	HashMap* map = malloc(sizeof(HashMap));
+	map->len = MIN_SLOTS;
+	map->table = calloc(map->len, sizeof(HashNode*));
+	map->count = 0;
+	map->hash = (hash) ? hash : (hash_func) &hash32;
+	map->cmp = (cmp) ? cmp : (cmp_func) &hash_cmp;
+
+	return map;
+}
+
+void destroy_hashmap(HashMap* map)
+{
+	free(map->table);
+	map->table = NULL;
+	free(map);
+	map = NULL;
 }
 
 static int hashmap_grow(HashMap* map)
@@ -105,26 +127,6 @@ static int hashmap_shrink(HashMap* map)
 
 	map->table = newtable;
 	return 0;
-}
-
-HashMap* init_hashmap(hash_func hash, cmp_func cmp)
-{
-	HashMap* map = malloc(sizeof(HashMap));
-	map->len = MIN_SLOTS;
-	map->table = calloc(map->len, sizeof(HashNode*));
-	map->count = 0;
-	map->hash = (hash) ? hash : (hash_func) &hash32;
-	map->cmp = (cmp) ? cmp : (cmp_func) &hash_cmp;
-	
-	return map;
-}
-
-void destroy_hashmap(HashMap* map)
-{
-	free(map->table);
-	map->table = NULL;
-	free(map);
-	map = NULL;
 }
 
 HashNode* hashmap_get(HashMap* map, void* key)

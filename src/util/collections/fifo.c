@@ -10,7 +10,7 @@ FIFO* init_fifo()
 FIFO* init_fifo_objects(void (*destructor)(void* data))
 {
 	FIFO* fifo = calloc(1, sizeof(FIFO));
-	fifo->destructor = destructor;
+	fifo->destructor = (destructor) ? destructor : &free;
 
 	return fifo;
 }
