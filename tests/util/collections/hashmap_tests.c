@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../../src/util/log.h"
-#include "../../../src/util/collections/list.h"
-#include "../../../src/util/collections/hashmap.h"
+#include <util/log.h>
+#include <util/collections/list.h>
+#include <util/collections/hashmap.h>
 
 static void init_hashmap_test()
 {
