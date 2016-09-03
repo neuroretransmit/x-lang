@@ -41,9 +41,7 @@ static void hashmap_put_test()
 static void hashmap_remove_test()
 {
 	HashMap* map = init_hashmap(NULL, NULL);
-	
 	HashNode* node = NULL;
-	
 	List* node_ptrs = init_list_objects(NULL);
 	
 	for (unsigned i = 0; i < 1024; i++) {
