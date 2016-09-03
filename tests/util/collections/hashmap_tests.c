@@ -1,80 +1,75 @@
 #include "hashmap_tests.h"
 
+#include <ctype.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "../../../src/util/log.h"
+#include "../../../src/util/collections/list.h"
 #include "../../../src/util/collections/hashmap.h"
-
-HashMap* init_hashmap();
-void destroy_hashmap();
-MapStatus hashmap_put(HashMap* in, char* key, void* value);
-MapStatus hashmap_get(HashMap* in, char* key, void** arg);
-MapStatus hashmap_remove(HashMap* in, char* key);
-size_t hashmap_length();
-
-/*static const int MAX_KEY_LENGTH = 256;
-static const int KEY_COUNT = 1024 * 1024;
-static const char* KEY_PREFIX = "foo";
-
-typedef struct {
-	char key_str[MAX_KEY_LENGTH];
-	int number;
-} TestStructure;
-*/
 
 static void init_hashmap_test()
 {
-	HashMap* map = init_hashmap();
-	
-	assert(map);
-	assert(map->data);
-	assert(map->size == 0);
-	log_info("init_hashmap()...PASSED\n");
+	HashMap* map = init_hashmap(NULL, NULL);
+	assert(map->table);
+	log_info("PASS\n");
 	destroy_hashmap(map);
 }
 
-/*
-bool destroy_hashmap_test()
+static void hashmap_put_test()
 {
+	HashMap* map = init_hashmap(NULL, NULL);
+	HashNode* node = NULL;
 	
+	List* node_ptrs = init_list_objects(NULL);
+	
+	for (unsigned i = 0; i < 1024; i++) {
+		char key[100];
+		sprintf(key, "i_am_the_key%d", i);
+		list_append(node_ptrs, node = malloc(sizeof(HashNode)));
+		hashmap_put(map, node, key);
+		assert(hashmap_get(map, key));
+	}
+	
+	log_info("PASS\n");
+	
+	destroy_list(node_ptrs);
+	destroy_hashmap(map);
 }
 
-bool hashmap_get_test()
+static void hashmap_remove_test()
 {
+	HashMap* map = init_hashmap(NULL, NULL);
 	
+	HashNode* node = NULL;
+	
+	List* node_ptrs = init_list_objects(NULL);
+	
+	for (unsigned i = 0; i < 1024; i++) {
+		char key[100];
+		sprintf(key, "i_am_the_key%d", i);
+		list_append(node_ptrs, node = malloc(sizeof(HashNode)));
+		hashmap_put(map, node, key);
+	}
+	
+	for (unsigned i = 1023; i!= 0; --i) {
+		char key[100];
+		sprintf(key, "i_am_the_key%d", i);
+		hashmap_remove(map, key);
+		assert(map->count == i);
+		assert(!hashmap_get(map, key));
+	}
+	
+	log_info("PASS\n");
+	
+	destroy_list(node_ptrs);
+	destroy_hashmap(map);
 }
 
-bool hashmap_put_test()
-{
-	HashMap* map = init_hashmap();
-	int error;
-	char key_str[MAX_KEY_LENGTH];
-	TestStructure* val;
-	
-	for (int i = 0; i < KEY_COUNT; i++) {
-		val = malloc(sizeof(TestStructure));
-		snprintf(val->key_str, MAX_KEY_LENGTH, "%s%d", KEY_PREFIX, i);
-		val->number = i;
-		
-		error = hashmap_put(map, val->key_str, val);
-		assert(error == MAP_OK);
-	}	
-}
-
-bool hashmap_remove_test()
-{
-	
-}
-
-bool hashmap_length_test()
-{
-	
-}
-*/
 void hashmap_tests()
 {
-	
 	init_hashmap_test();
+	hashmap_put_test();
+	hashmap_remove_test();
 }

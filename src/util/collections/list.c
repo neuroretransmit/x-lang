@@ -12,7 +12,7 @@ List* init_list()
 List* init_list_objects(void (*destructor)(void* obj))
 {
 	List* list = calloc(1, sizeof(List));
-	list->destructor = destructor;
+	list->destructor = (destructor) ? destructor : free;
 
 	return list;
 }
@@ -32,7 +32,7 @@ void destroy_list(List* list)
 
 	while (list->size)
 		list_remove(list, list->size - 1);
-
+	
 	free(list);
 	list = NULL;
 }

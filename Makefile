@@ -16,6 +16,7 @@ OBJECTS := $(patsubst src/%.c, obj/%.o, $(SOURCES))
 TEST_SOURCES := $(shell find tests -name **.c)
 TEST_OBJECTS := $(patsubst tests/%.c, obj/tests/%.o, $(TEST_SOURCES))
 
+CC := gcc
 CSTD := -std=gnu11
 WARNINGS := -Wall -Wextra -Werror -fPIC
 CFLAGS := -g $(CSTD) $(WARNINGS)
@@ -46,7 +47,7 @@ run-%: $(BINARY)
 	valgrind --leak-check=full $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
 
 run-tests: $(TESTS_BINARY)
-	valgrind --leak-check=full 2>&1 | tee -a TESTS_LEAK_REPORT.txt
+	valgrind --leak-check=full $< 2>&1 | tee -a TESTS_LEAK_REPORT.txt
 
 clean:
 	rm -rfv bin obj LEAK_REPORT.txt

@@ -1,37 +1,25 @@
 #pragma once
 
+#include <string.h>
 #include <stdbool.h>
-#include <stddef.h>
 
-typedef enum {
-	MAP_MISSING,
-	MAP_FULL,
-	MAP_OOM,
-	MAP_OK
-} MapStatus;
+typedef struct HashNode {
+	size_t hash;
+	struct HashNode* next;
+} HashNode;
 
-typedef int (*generic)(void*, void*);
+typedef size_t (*hash_func)(void* key);
+typedef bool (*cmp_func)(HashNode* node, void* key);
 
-struct HashMap;
+typedef struct HashMap {
+	struct HashNode** table;
+	size_t len, count;
+	hash_func hash;
+	cmp_func cmp;
+} HashMap;
 
-typedef struct {
-	char* key;
-	bool in_use;
-	void* data;
-} HashMapElement;
-
-typedef struct {
-	size_t table_size;
-	size_t size;
-	HashMapElement* data;
-} HashMap_Map;
-
-typedef HashMap_Map HashMap;
-
-HashMap* init_hashmap();
-void destroy_hashmap();
-MapStatus hashmap_put(HashMap* in, char* key, void* value);
-MapStatus hashmap_get(HashMap* in, char* key, void** arg);
-MapStatus hashmap_remove(HashMap* in, char* key);
-size_t hashmap_length();
-
+HashMap* init_hashmap(hash_func hash, cmp_func cmp);
+void destroy_hashmap(HashMap* map);
+HashNode* hashmap_get(HashMap* map, void* key);
+int hashmap_put(HashMap* map, HashNode* node, void* key);
+HashNode* hashmap_remove(HashMap* map, void* key);
