@@ -28,7 +28,7 @@ ListNode* init_list_node(void* data)
 void destroy_list(List* list)
 {
 	if (!list)
-		log_kill("destroy_list(): List was null\n");
+		log_kill("list was null\n");
 
 	while (list->size)
 		list_remove(list, list->size - 1);
@@ -40,11 +40,11 @@ void destroy_list(List* list)
 void destroy_list_node(List* list, ListNode* node)
 {
 	if (!list)
-		log_kill("destroy_list_node(): List was null\n");
+		log_kill("list was null\n");
 	else if (!list->head || !list->tail)
-		log_kill("destroy_list_node(): List was empty\n");
+		log_kill("list was empty\n");
 	else if (!node)
-		log_kill("destroy_list_node(): Node was null\n");
+		log_kill("node was null\n");
 
 	// Join surrounding nodes
 	if (list->head == node) {			// Head - reassign
@@ -82,9 +82,9 @@ static ListNode* get_node(List* list, size_t pos)
 void list_remove(List* list, size_t pos)
 {
 	if (!list)
-		log_kill("list_remove(): List was null\n");
+		log_kill("list was null\n");
 	else if ((pos + 1) > list->size)
-		log_kill("list_remove(): Out of bounds\n");
+		log_kill("out of bounds\n");
 
 	destroy_list_node(list, get_node(list, pos));
 	list->size -= 1;
@@ -93,7 +93,7 @@ void list_remove(List* list, size_t pos)
 void list_append(List* list, void* data)
 {
 	if (!list)
-		log_kill("list_remove(): List was null.\n");
+		log_kill("list was null\n");
 
 	ListNode* node = init_list_node(data);
 
@@ -111,7 +111,7 @@ void list_append(List* list, void* data)
 void list_prepend(List* list, void* data)
 {
 	if (!list)
-		log_kill("list_remove(): List was null.\n");
+		log_kill("list was null\n");
 
 	ListNode* node = init_list_node(data);
 

@@ -22,11 +22,13 @@ void destroy_token(void* tok)
 		if (token->type) {
 			switch (token->type) {
 				case TOK_EOF:
-					break;			
+					break;
+
 				case TOK_IDENT:
 					free(token->val->string);
 					token->val->string = NULL;
 					break;
+
 				default:
 					log_err("destroy_token: type not supported\n");
 					break;
@@ -134,6 +136,7 @@ static Token* create_token(int type, void* val)
 		case TOK_IDENT:
 			token->val->string = val;
 			break;
+
 		default:
 			break;
 	}
@@ -151,9 +154,12 @@ static void tokenize()
 		case '\t':
 		case '\n':
 			return;
+
 		default: {
 			switch (_lookahead) {
-				case EOF: fifo_push(_tokens, create_token(TOK_EOF, NULL)); return;
+				case EOF:
+					fifo_push(_tokens, create_token(TOK_EOF, NULL));
+					return;
 			}
 
 			if (isalpha(_lookahead) || _lookahead == '_') {
@@ -163,7 +169,7 @@ static void tokenize()
 
 			break;
 		}
-	}	
+	}
 
 	/* IF-ELSE chain for types/keywords here */
 }

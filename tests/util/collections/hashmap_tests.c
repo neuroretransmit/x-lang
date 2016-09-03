@@ -69,6 +69,7 @@ static void hashmap_remove_test()
 
 void hashmap_tests()
 {
+	log_info("Testing HashMap\n");
 	init_hashmap_test();
 	hashmap_put_test();
 	hashmap_remove_test();
