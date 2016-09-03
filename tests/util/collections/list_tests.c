@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
-#include "../../../src/util/log.h"
-#include "../../../src/util/collections/list.h"
+#include <util/log.h>
+#include <util/collections/list.h>
 
 #define MATCH (0)
 

@@ -33,7 +33,7 @@ $(LIBRARY): $(filter-out obj/main.o, $(OBJECTS))
 
 $(TESTS_BINARY): $(TEST_OBJECTS) $(LIBRARY)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS)  $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@
 
 $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.c
 	@mkdir -p $(@D)
@@ -41,7 +41,7 @@ $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.c
 
 $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -Isrc -c $< -o $@
 
 run-%: $(BINARY)
 	valgrind --leak-check=full $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt

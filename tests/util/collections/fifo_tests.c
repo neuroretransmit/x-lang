@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../../src/util/debug.h"
-#include "../../../src/util/collections/fifo.h"
+#include <util/debug.h>
+#include <util/collections/fifo.h>
 
 #define MATCH (0)
 
