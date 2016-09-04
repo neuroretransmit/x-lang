@@ -11,13 +11,14 @@
 #include "../util/collections/fifo.h"
 
 static const bool FINISHED = true;
-static char* _current_file;
+static char* _current_file = "";
 static List* _ast;
 extern FIFO* _tokens;
 
-void init_parser(const char* fname)
+void init_parser(char* fname)
 {
-	init_lexer(fname);
+	_current_file = fname;
+	init_lexer(_current_file);
 	_ast = init_list_objects(&destroy_ast_node);
 	lex();
 }
@@ -36,6 +37,7 @@ static void parse_error(Token* token, const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
+	
 	sprintf(msg, "[%s:%zu:%zu] ", _current_file, token->pos.line, token->pos.column);
 	strcat(msg, fmt);
 
@@ -69,8 +71,8 @@ static Token* parse_ident()
 	Token* ident = fifo_pop(_tokens);
 
 	if (!valid_ident(ident)) {
-		parse_error(ident, "parse_ident: not a valid ident\n");
-		//destroy_token(ident);
+		parse_error(ident, "not a valid identifier\n");
+		destroy_token(ident);
 		return NULL;
 	}
 
@@ -97,20 +99,20 @@ static bool parse_x_lang()
 		} else {
 			switch (token->type) {
 				case TOK_IDENT:
-					parse_ident();
-					list_append(root_construct, token);
-					ASTNode* node = init_ast_node(root_construct);
-					List* ast_list = init_list(&destroy_ast_node);
-					list_append(ast_list, node);
-					ast_dump(ast_list);
-					destroy_list(ast_list);
+					if (parse_ident() != NULL) {
+						list_append(root_construct, token);
+						ASTNode* node = init_ast_node(root_construct);
+						List* ast_list = init_list(&destroy_ast_node);
+						list_append(ast_list, node);
+						ast_dump(ast_list);
+						destroy_list(ast_list);
+					}
 					break;
 
 				default:
 					parse_error(token, "expected one of <ident, EOF>\n");
 					break;
 			}
-			
 			
 			destroy_list(root_construct);
 			return false;
@@ -120,11 +122,8 @@ static bool parse_x_lang()
 	return false;
 }
 
-void parse(char* fname)
+void parse()
 {
-	_current_file = fname;
-
 	while (parse_x_lang() != FINISHED);
-	
 }
 
