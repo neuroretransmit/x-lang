@@ -8,7 +8,6 @@
 
 extern FIFO* _tokens;
 
-// TODO: Restrict dumb names like _ and __
 static void ident_test()
 {
 	init_lexer("res/lexer.x");

@@ -50,19 +50,26 @@ static void parse_error(Token* token, const char* fmt, ...)
 
 static bool valid_ident(Token* ident)
 {
-	regex_t r;
-	const char* regex_text = "([_a-z])([_a-z0-9])*";
+	regex_t regex;
+	regex_t regex_underscores;
+	
+	const char* regex_text = "[_a-z][_a-z0-9]*";
+	const char* regex_text_underscores = "[^_]+";
 
-	compile_regex(&r, regex_text);
+	compile_regex(&regex, regex_text);
+	compile_regex(&regex_underscores, regex_text_underscores);
 
 	if (ident && ident->val && ident->val->string) {
-		if (!match_regex(&r, ident->val->string)) {
-			regfree(&r);
+		if (!match_regex(&regex, ident->val->string) || 
+			!match_regex(&regex_underscores, ident->val->string)) {
+			regfree(&regex_underscores);
+			regfree(&regex);
 			return false;
 		}
 	}
-
-	regfree(&r);
+	
+	regfree(&regex_underscores);
+	regfree(&regex);
 	return true;
 }
 
