@@ -8,6 +8,7 @@
 
 extern FIFO* _tokens;
 
+// TODO: Restrict dumb names like _ and __
 static void ident_test()
 {
 	init_lexer("res/lexer.x");
@@ -19,7 +20,10 @@ static void ident_test()
 	
 	while (_tokens->size) {
 		Token* token = fifo_pop(_tokens);
-		assert(strcmp((char*) token->val, expected[_tokens->size - 1]));
+		
+		if (token->type != TOK_EOF)
+			assert(strcmp(token->val->string, expected[_tokens->size - 1]));
+		
 		destroy_token(token);
 	}
 	

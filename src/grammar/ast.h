@@ -8,12 +8,10 @@ struct ASTNode;
 typedef struct {
 	TokenType type;
 	union {
-		Token token;
+		Token* token;
 	};
 } ASTNode;
 
-ASTNode* init_ast_token(TokenType type, Token token);
-void destroy_ast_token(ASTNode* node);
+ASTNode* init_ast_node(List* tokens);
+void destroy_ast_node(void* node);
 void ast_dump(List* ast);
-
-

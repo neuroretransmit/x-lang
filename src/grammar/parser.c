@@ -6,27 +6,35 @@
 
 #include "lexer.h"
 #include "../util/debug.h"
+#include "../grammar/ast.h"
 #include "../util/regex_utils.h"
 #include "../util/collections/fifo.h"
 
 static const bool FINISHED = true;
 static char* _current_file;
+static List* _ast;
 extern FIFO* _tokens;
 
 void init_parser(const char* fname)
 {
 	init_lexer(fname);
+	_ast = init_list_objects(&destroy_ast_node);
 	lex();
 }
 
 void destroy_parser()
 {
+	for (unsigned i = 0; i < _ast->size; i++) {
+		destroy_ast_node(list_get(_ast, i));
+	}
+	
+	destroy_list(_ast);
 	destroy_lexer();
 }
 
 static void parse_error(Token* token, const char* fmt, ...)
 {
-	fprintf(stderr, "[%sERROR%s] ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
+	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
 	sprintf(msg, "[%s:%zu:%zu] ", _current_file, token->pos.line, token->pos.column);
 	strcat(msg, fmt);
@@ -62,7 +70,7 @@ static Token* parse_ident()
 
 	if (!valid_ident(ident)) {
 		parse_error(ident, "parse_ident: not a valid ident\n");
-		destroy_token(ident);
+		//destroy_token(ident);
 		return NULL;
 	}
 
@@ -77,28 +85,38 @@ static Token* parse_ident()
 static bool parse_x_lang()
 {
 	Token* token = (Token*) fifo_peek(_tokens);
-
+	List* root_construct = init_list_objects(&destroy_token);
+	
 	if (token) {
 		if (token->type == TOK_EOF) {
 			while (_tokens->size)
 				destroy_token(fifo_pop(_tokens));
-
+			
+			destroy_list(root_construct);
 			return true;
 		} else {
 			switch (token->type) {
 				case TOK_IDENT:
 					parse_ident();
-					log_info("%s\n", token->val->string);
-					destroy_token(token);
+					list_append(root_construct, token);
+					ASTNode* node = init_ast_node(root_construct);
+					List* ast_list = init_list(&destroy_ast_node);
+					list_append(ast_list, node);
+					ast_dump(ast_list);
+					destroy_list(ast_list);
 					break;
 
 				default:
 					parse_error(token, "expected one of <ident, EOF>\n");
 					break;
 			}
+			
+			
+			destroy_list(root_construct);
+			return false;
 		}
 	}
-
+	
 	return false;
 }
 
@@ -107,5 +125,6 @@ void parse(char* fname)
 	_current_file = fname;
 
 	while (parse_x_lang() != FINISHED);
+	
 }
 

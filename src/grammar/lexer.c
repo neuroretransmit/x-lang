@@ -11,7 +11,7 @@ static FILE* _current_file;
 static char _lookahead;
 FIFO* _tokens;
 
-TokenPos _current_pos = { 0, 1 };
+TokenPos _current_pos = { 1, 1 };
 TokenPos _current_tok_start = { 1, 1 };
 
 void destroy_token(void* tok)
@@ -63,7 +63,10 @@ void destroy_lexer()
 static void next_token()
 {
 	_lookahead = fgetc(_current_file);
+}
 
+static void adjust_position()
+{
 	if (_lookahead == '\n') {
 		++_current_pos.line;
 		_current_pos.column = 1;
@@ -170,7 +173,9 @@ static void tokenize()
 			break;
 		}
 	}
-
+	
+	adjust_position();
+	
 	/* IF-ELSE chain for types/keywords here */
 }
 
