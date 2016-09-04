@@ -1,0 +1,9 @@
+1. Add token to TokenType enum in lexer.h.
+2. If token contains a value, add this value type to TokenValue union in lexer.h.
+3. Add catch to tokenize() in lexer.c.
+4. Add case statement to create_token() in lexer.c.
+5. Add case statement to parse_x_lang() in parser.c.
+6. Add case statement to init_ast_node() in ast.c.
+7. Add init function for AST node type.
+8. Add case statement to switch in ast_dump().
+9. Add ast_dump function for node type.
