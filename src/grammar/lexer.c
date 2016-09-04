@@ -106,6 +106,7 @@ static bool is_separator()
 		case ';':
 		case '\t':
 		case '\n':
+		case EOF:
 			return true;
 	}
 
