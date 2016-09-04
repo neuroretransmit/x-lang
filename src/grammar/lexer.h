@@ -28,7 +28,7 @@ typedef struct Token {
 
 extern FIFO* _tokens;
 
-void init_lexer(const char* fname);
+void init_lexer(char* fname);
 void destroy_lexer();
 void destroy_token();
 

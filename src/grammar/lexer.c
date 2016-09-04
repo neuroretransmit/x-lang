@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "../util/log.h"
 
+static char* _current_file_name;
 static FILE* _current_file;
 static char _lookahead;
 FIFO* _tokens;
@@ -45,8 +47,9 @@ void destroy_token(void* tok)
 	}
 }
 
-void init_lexer(const char* fname)
+void init_lexer(char* fname)
 {
+	_current_file_name = fname;
 	_current_file = fopen(fname, "r");
 	_tokens = init_fifo_objects(destroy_token);
 }
@@ -58,6 +61,21 @@ void destroy_lexer()
 
 	if (_current_file)
 		fclose(_current_file);
+}
+
+static void lexer_error(const char* fmt, ...)
+{
+	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
+	char msg[250];
+	
+	sprintf(msg, "[%s:%zu:%zu] ", _current_file_name, _current_pos.line, _current_pos.column);
+	strcat(msg, fmt);
+
+	va_list args;
+
+	va_start(args, fmt);
+	vprintf(msg, args);
+	va_end(args);
 }
 
 static void next_token()
@@ -147,6 +165,7 @@ static Token* create_token(int type, void* val)
 	return token;
 }
 
+
 static void tokenize()
 {
 	next_token();
@@ -168,6 +187,8 @@ static void tokenize()
 			if (isalpha(_lookahead) || _lookahead == '_') {
 				char* tmp = capture_string();
 				fifo_push(_tokens, create_token(TOK_IDENT, tmp));
+			} else {
+				lexer_error("unknown grammar\n");
 			}
 
 			break;

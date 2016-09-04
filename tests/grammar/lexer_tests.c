@@ -15,7 +15,7 @@ static void ident_test()
 	lex();
 	
 	const char* expected[] = {
-		"_", "__", "a", "A", "a0", "_0", "A0", "a000"
+		"_", "__", "a", "a0", "_0", "A0", "a000"
 	};
 	
 	while (_tokens->size) {
