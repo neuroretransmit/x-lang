@@ -47,7 +47,7 @@ run-%: $(BINARY)
 	valgrind --leak-check=full $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
 
 run-tests: $(TESTS_BINARY)
-	valgrind --leak-check=full $< 2>&1 | tee -a TESTS_LEAK_REPORT.txt
+	valgrind --leak-check=full $< 2>&1 | tee -a LEAK_REPORT_TESTS.txt
 
 clean:
 	rm -rfv bin obj LEAK_REPORT.txt

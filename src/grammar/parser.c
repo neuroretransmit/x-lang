@@ -73,17 +73,25 @@ static bool valid_ident(Token* ident)
 	return true;
 }
 
-static Token* parse_ident()
+/* Always valid, just pop and return true; */
+static bool parse_integer_literal()
+{
+	fifo_pop(_tokens);
+	
+	return true;
+}
+
+static bool parse_ident()
 {
 	Token* ident = fifo_pop(_tokens);
 
 	if (!valid_ident(ident)) {
 		parse_error(ident, "not a valid identifier\n");
 		destroy_token(ident);
-		return NULL;
+		return false;
 	}
 
-	return ident;
+	return true;
 }
 
 /**
@@ -94,36 +102,45 @@ static Token* parse_ident()
 static bool parse_x_lang()
 {
 	Token* token = (Token*) fifo_peek(_tokens);
-	List* root_construct = init_list_objects(&destroy_token);
 	
 	if (token) {
-		if (token->type == TOK_EOF) {
-			while (_tokens->size)
-				destroy_token(fifo_pop(_tokens));
-			
-			destroy_list(root_construct);
-			return true;
-		} else {
-			switch (token->type) {
-				case TOK_IDENT:
-					if (parse_ident() != NULL) {
-						list_append(root_construct, token);
-						ASTNode* node = init_ast_node(root_construct);
-						List* ast_list = init_list(&destroy_ast_node);
-						list_append(ast_list, node);
-						ast_dump(ast_list);
-						destroy_list(ast_list);
-					}
-					break;
-
-				default:
-					parse_error(token, "expected one of <ident, EOF>\n");
-					break;
-			}
-			
-			destroy_list(root_construct);
-			return false;
+		List* root_construct = init_list_objects(&destroy_token);
+		
+		List* ast_list = init_list(&destroy_ast_node);
+		
+		
+		switch (token->type) {
+			case TOK_EOF:
+				while (_tokens->size)
+					destroy_token(fifo_pop(_tokens));
+				
+				destroy_list(ast_list);
+				destroy_list(root_construct);
+				return true;
+			case TOK_IDENT:
+				if (parse_ident()) {
+					list_append(root_construct, token);
+					ASTNode* node = init_ast_node(root_construct);
+					list_append(ast_list, node);
+					ast_dump(ast_list);
+				}
+				break;
+			case TOK_INTEGER_LITERAL:
+				if (parse_integer_literal()) {
+					list_append(root_construct, token);
+					ASTNode* node = init_ast_node(root_construct);
+					list_append(ast_list, node);
+					ast_dump(ast_list);
+				}
+				break;
+			default:
+				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");
+				return true;
 		}
+		destroy_list(root_construct);
+		destroy_list(ast_list);
+		
+		return false;
 	}
 	
 	return false;

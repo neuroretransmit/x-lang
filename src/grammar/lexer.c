@@ -30,9 +30,14 @@ void destroy_token(void* tok)
 					free(token->val->string);
 					token->val->string = NULL;
 					break;
-
+				
+				case TOK_INTEGER_LITERAL:
+					free(token->val->integer);
+					token->val->integer = NULL;
+					break;
+					
 				default:
-					log_err("destroy_token: type not supported\n");
+					log_err("type not supported\n");
 					break;
 			}
 		}
@@ -128,7 +133,7 @@ static char* capture_string()
 	string = malloc(size + 1);
 
 	if (fgets(string, size, _current_file) == 0)
-		log_kill("capture_string: failed to retrieve string\n");
+		log_kill("failed to retrieve string\n");
 
 	string[size] = '\0';
 
@@ -141,24 +146,40 @@ static inline void save_token_start()
 	_current_tok_start.column = _current_pos.column;
 }
 
-static TokenValue* init_token_value()
+static TokenValue* init_token_value(TokenType type)
 {
-	return calloc(1, sizeof(TokenValue));
+	TokenValue* val = calloc(1, sizeof(TokenValue));
+	
+	switch (type) {
+		case TOK_EOF:
+		case TOK_IDENT:
+		case TOK_INTEGER_LITERAL:
+			break;
+		default:
+			log_err("unknown token type\n");
+			break;
+	}
+	
+	return val;
 }
 
-static Token* create_token(int type, void* val)
+static Token* create_token(TokenType type, void* val)
 {
 	Token* token = malloc(sizeof(Token));
-	token->val = init_token_value();
+	token->val = init_token_value(type);
 	token->type = type;
 	token->pos.line = _current_tok_start.line;
 	token->pos.column = _current_tok_start.column;
 
 	switch (type) {
+		case TOK_EOF:
+			break;
 		case TOK_IDENT:
 			token->val->string = val;
 			break;
-
+		case TOK_INTEGER_LITERAL:
+			token->val->integer = val;
+			break;
 		default:
 			break;
 	}
@@ -177,7 +198,8 @@ static void tokenize()
 		case '\t':
 		case '\n':
 			return;
-
+		
+		/* Token symbols here */
 		default: {
 			switch (_lookahead) {
 				case EOF:
@@ -188,6 +210,13 @@ static void tokenize()
 			if (isalpha(_lookahead) || _lookahead == '_') {
 				char* tmp = capture_string();
 				fifo_push(_tokens, create_token(TOK_IDENT, tmp));
+			} else if (isdigit(_lookahead)) {
+				char* tmp = capture_string();
+				uint64_t* value = malloc(sizeof(uint64_t));
+				*value = (uint64_t) strtoll(tmp, 0, 0);
+				free(tmp);
+				tmp = NULL;
+				fifo_push(_tokens, create_token(TOK_INTEGER_LITERAL, value));
 			} else {
 				lexer_error("unknown grammar\n");
 			}
