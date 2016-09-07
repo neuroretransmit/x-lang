@@ -25,11 +25,13 @@ void init_parser(char* fname)
 
 void destroy_parser()
 {
-	for (unsigned i = 0; i < _ast->size; i++) {
-		destroy_ast_node(list_get(_ast, i));
+	if (_ast) {
+		for (unsigned i = 0; i < _ast->size; i++) {
+			destroy_ast_node(list_get(_ast, i));
+		}
+		
+		destroy_list(_ast);
 	}
-	
-	destroy_list(_ast);
 	destroy_lexer();
 }
 
