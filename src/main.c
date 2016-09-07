@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "grammar/parser.h"
+#include "util/mem_utils.h"
 #include "util/file_utils.h"
 
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
@@ -67,7 +68,7 @@ int main(int argc, char** argv)
 			prev = fname;
 		}
 
-		free(arguments.argz);
+		destroy(arguments.argz);
 	}
 
 	destroy_parser();

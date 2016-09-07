@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 #include "../util/log.h"
+#include "../util/mem_utils.h"
 
 static char* _current_file_name;
 static FILE* _current_file;
@@ -27,13 +28,11 @@ void destroy_token(void* tok)
 					break;
 
 				case TOK_IDENT:
-					free(token->val->string);
-					token->val->string = NULL;
+					destroy(token->val->string);
 					break;
 
 				case TOK_INTEGER_LITERAL:
-					free(token->val->integer);
-					token->val->integer = NULL;
+					destroy(token->val->integer);
 					break;
 
 				default:
@@ -42,13 +41,10 @@ void destroy_token(void* tok)
 			}
 		}
 
-		if (token->val) {
-			free(token->val);
-			token->val = NULL;
-		}
+		if (token->val)
+			destroy(token->val);
 
-		free(token);
-		token = NULL;
+		destroy(token);
 	}
 }
 
@@ -218,8 +214,7 @@ static void tokenize()
 				char* tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));
 				*value = (uint64_t) strtoll(tmp, 0, 0);
-				free(tmp);
-				tmp = NULL;
+				destroy(tmp);
 				fifo_push(_tokens, create_token(TOK_INTEGER_LITERAL, value));
 			} else {
 				lexer_error("unknown grammar\n");

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "hashmap.h"
+#include "../mem_utils.h"
 #include "../log.h"
 
 #define MIN_SLOTS	16
@@ -46,10 +47,8 @@ HashMap* init_hashmap(hash_func hash, cmp_func cmp)
 
 void destroy_hashmap(HashMap* map)
 {
-	free(map->table);
-	map->table = NULL;
-	free(map);
-	map = NULL;
+	destroy(map->table);
+	destroy(map);
 }
 
 static int hashmap_grow(HashMap* map)

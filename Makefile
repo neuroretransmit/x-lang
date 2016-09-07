@@ -50,4 +50,4 @@ run-tests: $(TESTS_BINARY)
 	valgrind --leak-check=full $< 2>&1 | tee -a LEAK_REPORT_TESTS.txt
 
 clean:
-	rm -rfv bin obj LEAK_REPORT.txt
+	rm -rfv bin obj LEAK_REPORT.txt LEAK_REPORT_TESTS.txt

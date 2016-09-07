@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "../mem_utils.h"
 #include "../debug.h"
 
 List* init_list()
@@ -12,7 +13,7 @@ List* init_list()
 List* init_list_objects(void (*destructor)(void* obj))
 {
 	List* list = calloc(1, sizeof(List));
-	list->destructor = (destructor) ? destructor : free;
+	list->destructor = (destructor) ? destructor : destroy;
 
 	return list;
 }
@@ -33,8 +34,7 @@ void destroy_list(List* list)
 	while (list->size)
 		list_remove(list, list->size - 1);
 
-	free(list);
-	list = NULL;
+	destroy(list);
 }
 
 void destroy_list_node(List* list, ListNode* node)
@@ -58,15 +58,12 @@ void destroy_list_node(List* list, ListNode* node)
 		node->next->prev = node->prev;
 	}
 
-	if (list->destructor != NULL && node->data != NULL) {
+	if (list->destructor != NULL && node->data != NULL)
 		list->destructor(node->data);
-	} else if (node->data != NULL) {
-		free(node->data);
-		node->data = NULL;
-	}
+	else if (node->data != NULL)
+		destroy(node->data);
 
-	free(node);
-	node = NULL;
+	destroy(node);
 }
 
 static ListNode* get_node(List* list, size_t pos)

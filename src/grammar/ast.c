@@ -3,6 +3,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
+#include "../util/mem_utils.h"
 #include "../util/log.h"
 #include "../grammar/lexer.h"
 
@@ -56,8 +57,7 @@ void destroy_ast_node(void* node)
 		if (converted->token)
 			destroy_token(converted->token);
 
-		free(converted);
-		converted = NULL;
+		destroy(converted);
 	}
 }
 

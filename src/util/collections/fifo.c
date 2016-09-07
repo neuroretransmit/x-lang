@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#include "../mem_utils.h"
+
 FIFO* init_fifo()
 {
 	return calloc(1, sizeof(FIFO));
@@ -10,7 +12,7 @@ FIFO* init_fifo()
 FIFO* init_fifo_objects(void (*destructor)(void* data))
 {
 	FIFO* fifo = calloc(1, sizeof(FIFO));
-	fifo->destructor = (destructor) ? destructor : &free;
+	fifo->destructor = (destructor) ? destructor : &destroy;
 
 	return fifo;
 }
@@ -28,21 +30,16 @@ void destroy_fifo(FIFO* fifo)
 					fifo->destructor(node->data);
 				}
 			} else {
-				free(fifo->head->data);
-				fifo->head->data = NULL;
+				destroy(fifo->head->data);
 
-				while ((node = fifo->head->next)) {
-					free(node->data);
-					node->data = NULL;
-				}
+				while ((node = fifo->head->next))
+					destroy(node->data);
 			}
 		}
 	}
 
-	free(fifo->head);
-	fifo->head = NULL;
-	free(fifo);
-	fifo = NULL;
+	destroy(fifo->head);
+	destroy(fifo);
 }
 
 void fifo_push(FIFO* fifo, void* data)
@@ -74,9 +71,7 @@ void* fifo_pop(FIFO* fifo)
 	if ((fifo->head = node->next) == NULL)
 		fifo->tail = NULL;
 
-	free(node);
-	node = NULL;
-
+	destroy(node);
 	fifo->size--;
 
 	return data;
