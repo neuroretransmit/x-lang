@@ -1,18 +1,21 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "../util/collections/fifo.h"
 
 typedef enum {
 	TOK_EOF,
-	TOK_IDENT
+	TOK_IDENT,
+	TOK_INTEGER_LITERAL
 } TokenType;
 
 struct Token;
 
 typedef union {
 	char* string;
+	int64_t* integer;
 } TokenValue;
 
 typedef struct {
