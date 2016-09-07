@@ -50,4 +50,4 @@ This is a rewrite of my original, unplanned, and very spaghetti first (I use tha
 
 ## License
 
-Code and documentation copyright 2016 John Holly. Code released under the MIT license.
+Code and documentation copyright 2016 John Holly. Code released under the [MIT](LICENSE.md) license.
