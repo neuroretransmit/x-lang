@@ -46,9 +46,14 @@ ASTNode* init_ast_node(List* tokens)
 
 void destroy_ast_node(void* node)
 {
-	if (node) {
-		free(node);
-		node = NULL;
+	ASTNode* converted = (ASTNode*) node;
+	
+	if (converted) {
+		if (converted->token)
+			destroy_token(converted->token);
+		
+		free(converted);
+		converted = NULL;
 	}
 }
 

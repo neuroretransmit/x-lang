@@ -127,19 +127,19 @@ static bool parse_x_lang()
 				break;
 			case TOK_INTEGER_LITERAL:
 				if (parse_integer_literal()) {
-				list_append(root_construct, token);
-				ASTNode* node = init_ast_node(root_construct);
-				list_append(ast_list, node);
-				ast_dump(ast_list);
+					list_append(root_construct, token);
+					ASTNode* node = init_ast_node(root_construct);
+					list_append(ast_list, node);
+					ast_dump(ast_list);
 				}
 				break;
 			default:
 				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");
 				return true;
 		}
-		
-		destroy_list(ast_list);
 		destroy_list(root_construct);
+		destroy_list(ast_list);
+		
 		return false;
 	}
 	

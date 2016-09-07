@@ -32,6 +32,8 @@ void destroy_token(void* tok)
 					break;
 				
 				case TOK_INTEGER_LITERAL:
+					free(token->val->integer);
+					token->val->integer = NULL;
 					break;
 					
 				default:
@@ -150,11 +152,8 @@ static TokenValue* init_token_value(TokenType type)
 	
 	switch (type) {
 		case TOK_EOF:
-			break;
 		case TOK_IDENT:
-			break;
 		case TOK_INTEGER_LITERAL:
-			val->integer = malloc(sizeof(int64_t));
 			break;
 		default:
 			log_err("unknown token type\n");
@@ -179,7 +178,7 @@ static Token* create_token(TokenType type, void* val)
 			token->val->string = val;
 			break;
 		case TOK_INTEGER_LITERAL:
-			*token->val->integer = *((int64_t*) val);
+			token->val->integer = val;
 			break;
 		default:
 			break;
@@ -199,7 +198,8 @@ static void tokenize()
 		case '\t':
 		case '\n':
 			return;
-
+		
+		/* Token symbols here */
 		default: {
 			switch (_lookahead) {
 				case EOF:
@@ -214,6 +214,8 @@ static void tokenize()
 				char* tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));
 				*value = (uint64_t) strtoll(tmp, 0, 0);
+				free(tmp);
+				tmp = NULL;
 				fifo_push(_tokens, create_token(TOK_INTEGER_LITERAL, value));
 			} else {
 				lexer_error("unknown grammar\n");
