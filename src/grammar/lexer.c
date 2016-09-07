@@ -12,6 +12,8 @@
 static char* _current_file_name;
 static FILE* _current_file;
 static char _lookahead;
+static char _previous;
+static size_t _current_tok_len = 0;
 FIFO* _tokens;
 
 TokenPos _current_pos = { 1, 1 };
@@ -81,18 +83,23 @@ static void lexer_error(const char* fmt, ...)
 
 static void next_token()
 {
+	_previous = _lookahead;
 	_lookahead = fgetc(_current_file);
 }
 
 static void adjust_position()
 {
-	if (_lookahead == '\n') {
-		++_current_pos.line;
-		_current_pos.column = 1;
-	} else if (_lookahead == '\t') {
-		_current_pos.column += 4;
-	} else if (isprint(_lookahead)) {
-		_current_pos.column += 1;
+	if (isprint(_lookahead)) {
+		if (isdigit((char) _previous)) {
+			_current_pos.column += _current_tok_len;
+		} else if (_lookahead == '\n') {
+			++_current_pos.line;
+			_current_pos.column = 1;
+		} else if (_lookahead == '\t') {
+			_current_pos.column += 4;
+		} else {
+			_current_pos.column += 1;
+		}
 	}
 }
 
@@ -132,7 +139,8 @@ static char* capture_string()
 		log_kill("failed to retrieve string\n");
 
 	string[size] = '\0';
-
+	_current_tok_len = size;
+	
 	return string;
 }
 
