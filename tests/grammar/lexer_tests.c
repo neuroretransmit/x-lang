@@ -1,5 +1,6 @@
 #include "lexer_tests.h"
 
+#include <inttypes.h>
 #include <assert.h>
 #include <string.h>
 
@@ -30,7 +31,31 @@ static void ident_test()
 	destroy_lexer();
 }
 
+static void integer_literal_test()
+{
+	init_lexer("res/integer_literals.x");
+	lex();
+	
+	const int64_t expected[] = {
+		0, 66, 23976, 238, 129238, 000
+	};
+	
+	for (size_t i = 0; _tokens->size > 0; i++) {
+		Token* token = fifo_pop(_tokens);
+		
+		if (token->type != TOK_EOF)
+			assert(*token->val->integer == expected[i]);
+		
+		destroy_token(token);
+		
+	}
+	
+	log_info("PASS\n");
+	destroy_lexer();
+}
+
 void lexer_tests()
 {
 	ident_test();
+	integer_literal_test();
 }
