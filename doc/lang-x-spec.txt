@@ -75,6 +75,14 @@ These will not be implicitly set by filename – I want to know what package I�
 		| <ternary_expression>
 		;
 
+<integer_types> ::= "u8" | "u16" | "u32" | "u64" | "s8" | "s16" | "s32" | "s64"
+
+<floating_types> ::= "f32" | "f64"
+
+<character_types> ::= "string" | "char"
+
+<type> ::= <integer_types> | <floating_types> | <character_types> | "void"
+
 <variable_declaration> ::= <type> <ident>
 
 <variable_definition> ::= <variable_declaration> ‘=’ <expression>
