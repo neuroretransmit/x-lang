@@ -11,10 +11,8 @@
 
 size_t hash32(char* str)
 {
-	unsigned int h;
+	unsigned int h = 0;
 	unsigned char* p;
-
-	h = 0;
 
 	for (p = (unsigned char*)str; *p != '\0'; p++)
 		h = MULTIPLIER * h + *p;
@@ -56,11 +54,8 @@ void destroy_hashmap(HashMap* map)
 
 static int hashmap_grow(HashMap* map)
 {
-	size_t i;
-
 	/* first, allocate more room for the table */
-	HashNode** newtable = realloc(map->table, map->len * 2 *
-								  sizeof(HashNode*));
+	HashNode** newtable = realloc(map->table, map->len * 2 * sizeof(HashNode*));
 
 	if (newtable == NULL)
 		return -1;
@@ -69,7 +64,7 @@ static int hashmap_grow(HashMap* map)
 
 	/* then, split all nodes from the lower half of the table
 	   to either lower or upper half of the table */
-	for (i = 0; i < map->len; ++i) {
+	for (size_t i = 0; i < map->len; ++i) {
 		HashNode* node = map->table[i], *next;
 		HashNode* a = NULL, *b = NULL;
 
@@ -119,8 +114,7 @@ static int hashmap_shrink(HashMap* map)
 	}
 
 	/* then, release unneeded memory */
-	HashNode** newtable = realloc(map->table, map->len *
-								  sizeof(HashNode*));
+	HashNode** newtable = realloc(map->table, map->len * sizeof(HashNode*));
 
 	if (newtable == NULL)
 		return -1;

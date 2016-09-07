@@ -30,12 +30,12 @@ void destroy_token(void* tok)
 					free(token->val->string);
 					token->val->string = NULL;
 					break;
-				
+
 				case TOK_INTEGER_LITERAL:
 					free(token->val->integer);
 					token->val->integer = NULL;
 					break;
-					
+
 				default:
 					log_err("type not supported\n");
 					break;
@@ -72,7 +72,7 @@ static void lexer_error(const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
-	
+
 	sprintf(msg, "[%s:%zu:%zu] ", _current_file_name, _current_pos.line, _current_pos.column);
 	strcat(msg, fmt);
 
@@ -149,17 +149,18 @@ static inline void save_token_start()
 static TokenValue* init_token_value(TokenType type)
 {
 	TokenValue* val = calloc(1, sizeof(TokenValue));
-	
+
 	switch (type) {
 		case TOK_EOF:
 		case TOK_IDENT:
 		case TOK_INTEGER_LITERAL:
 			break;
+
 		default:
 			log_err("unknown token type\n");
 			break;
 	}
-	
+
 	return val;
 }
 
@@ -174,12 +175,15 @@ static Token* create_token(TokenType type, void* val)
 	switch (type) {
 		case TOK_EOF:
 			break;
+
 		case TOK_IDENT:
 			token->val->string = val;
 			break;
+
 		case TOK_INTEGER_LITERAL:
 			token->val->integer = val;
 			break;
+
 		default:
 			break;
 	}
@@ -198,8 +202,8 @@ static void tokenize()
 		case '\t':
 		case '\n':
 			return;
-		
-		/* Token symbols here */
+
+			/* Token symbols here */
 		default: {
 			switch (_lookahead) {
 				case EOF:
@@ -224,9 +228,9 @@ static void tokenize()
 			break;
 		}
 	}
-	
+
 	adjust_position();
-	
+
 	/* IF-ELSE chain for types/keywords here */
 }
 
