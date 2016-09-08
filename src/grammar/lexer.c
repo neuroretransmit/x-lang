@@ -71,7 +71,7 @@ void init_lexer(char* fname)
 {
 	_current_file_name = fname;
 	_current_file = fopen(fname, "r");
-	_tokens = init_fifo_objects(destroy_token);
+	_tokens = init_fifo_objects(&destroy_token);
 }
 
 void destroy_lexer()
@@ -272,7 +272,7 @@ static void tokenize()
 					fifo_push(_tokens, create_token(TOK_IDENT, strdup(tmp)));
 				}
 
-				destroy(tmp);
+				
 			} else if (isdigit(_lookahead)) {
 				tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));

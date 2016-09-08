@@ -116,8 +116,7 @@ static bool parse_x_lang()
 
 	if (token) {
 		List* root_construct = init_list_objects(&destroy_token);
-
-		List* ast_list = init_list(&destroy_ast_node);
+		_ast = init_list(&destroy_ast_node);
 
 
 		switch (token->type) {
@@ -125,7 +124,7 @@ static bool parse_x_lang()
 				while (_tokens->size)
 					destroy_token(fifo_pop(_tokens));
 
-				destroy_list(ast_list);
+				destroy_list(_ast);
 				destroy_list(root_construct);
 				return true;
 
@@ -133,8 +132,7 @@ static bool parse_x_lang()
 				if (parse_ident()) {
 					list_append(root_construct, token);
 					ASTNode* node = init_ast_node(root_construct);
-					list_append(ast_list, node);
-					ast_dump(ast_list);
+					list_append(_ast, node);
 				}
 
 				break;
@@ -143,8 +141,7 @@ static bool parse_x_lang()
 				if (parse_integer_literal()) {
 					list_append(root_construct, token);
 					ASTNode* node = init_ast_node(root_construct);
-					list_append(ast_list, node);
-					ast_dump(ast_list);
+					list_append(_ast, node);
 				}
 
 				break;
@@ -158,32 +155,34 @@ static bool parse_x_lang()
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64:
 				if (parse_type()) {
+					Token* ident = fifo_pop(_tokens);
 					list_append(root_construct, token);
+					
+					if (parse_ident())
+						list_append(root_construct, ident);
+					
+					list_append(root_construct, ident);
 					ASTNode* node = init_ast_node(root_construct);
-					list_append(ast_list, node);
-					ast_dump(ast_list);
+					list_append(_ast, node);
 				}
 
 				break;
-
-
 
 			default:
 				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");
 				return true;
 		}
-
+		
 		destroy_list(root_construct);
-		destroy_list(ast_list);
-
 		return false;
 	}
 
-	return false;
+	return true;
 }
 
 void parse()
 {
 	while (parse_x_lang() != FINISHED);
+	ast_dump(_ast);
 }
 

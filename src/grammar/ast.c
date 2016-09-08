@@ -11,14 +11,15 @@ static ASTNode* _allocate_node(Token* tok)
 {
 	ASTNode* node = malloc(sizeof(ASTNode));
 	node->token = tok;
+	node->type = tok->type;
 
 	return node;
 }
 
-static ASTNode* init_ast_type(Token* tok)
+/*static ASTNode* init_ast_type(Token* tok)
 {
 	return _allocate_node(tok);
-}
+}*/
 
 static ASTNode* init_ast_ident(Token* tok)
 {
@@ -30,10 +31,50 @@ static ASTNode* init_ast_integer_literal(Token* tok)
 	return _allocate_node(tok);
 }
 
+static ASTNode* init_ast_type(Token* tok)
+{
+	return _allocate_node(tok);
+}
+
+static ASTNode* init_ast_variable_declaration(List* tok, ASTType type)
+{
+	ASTNode* node = malloc(sizeof(ASTNode) * tok->size);
+	node->type = type;
+	
+	switch (type) {
+		case AST_TYPE_VARIABLE_DECLARATION: {
+			if (tok->size != 2)
+				log_err("list held too many tokens");
+			
+			enum {
+				TYPE_IDX,
+				IDENT_IDX
+			};
+			
+			Token* type = list_get(tok, TYPE_IDX);
+			Token* ident = list_get(tok, IDENT_IDX);
+			
+			if (type && ident) {
+				ASTVariableDeclaration* variable_declaration = malloc(sizeof(ASTVariableDeclaration));
+				variable_declaration->ident = malloc(sizeof(ident));
+				variable_declaration->ident = ident;
+				variable_declaration->type = type;
+				node->variable_declaration = variable_declaration;
+			}
+				
+		}
+			
+		default:
+			break;
+	}
+	
+	return node;
+}
+
 ASTNode* init_ast_node(List* tokens)
 {
-	for (unsigned i = 0; i < tokens->size; i++) {
-		Token* token = list_get(tokens, i);
+	
+		Token* token = list_get(tokens, 0);
 
 		if (token) {
 			switch (token->type) {
@@ -45,7 +86,7 @@ ASTNode* init_ast_node(List* tokens)
 
 				case TOK_INTEGER_LITERAL:
 					return init_ast_integer_literal(token);
-
+				
 				case TOK_TYPE_S8:
 				case TOK_TYPE_S16:
 				case TOK_TYPE_S32:
@@ -53,17 +94,52 @@ ASTNode* init_ast_node(List* tokens)
 				case TOK_TYPE_U8:
 				case TOK_TYPE_U16:
 				case TOK_TYPE_U32:
-				case TOK_TYPE_U64:
-					return init_ast_type(token);
-
+				case TOK_TYPE_U64: {
+					List* var_decl_tokens = init_list_objects(&destroy_token);
+					list_append(var_decl_tokens, token);
+					Token* ident = list_get(tokens, 1);
+					log_info("%d\n", ident->type);
+					if (ident->type != TOK_IDENT) {
+						log_err("expected identifier\n");
+					} else {
+						list_append(var_decl_tokens, ident);
+						return init_ast_variable_declaration(var_decl_tokens, AST_TYPE_VARIABLE_DECLARATION); /**/
+					}
+				}
 				default:
 					log_err("expected one of <ident>, ...\n");
 					return NULL;
 			}
 		}
-	}
+	
 
 	return NULL;
+}
+
+static void destroy_ast_variable_declaration(ASTVariableDeclaration* variable_declaration)
+{
+	if (variable_declaration) {
+		if (variable_declaration->ident)
+			destroy(variable_declaration->ident);
+		if (variable_declaration->s8)
+			destroy(variable_declaration->s8);
+		if (variable_declaration->s16)
+			destroy(variable_declaration->s16);
+		if (variable_declaration->s32)
+			destroy(variable_declaration->s32);
+		if (variable_declaration->s64)
+			destroy(variable_declaration->s64);
+		if (variable_declaration->u8)
+			destroy(variable_declaration->u8);
+		if (variable_declaration->u16)
+			destroy(variable_declaration->u16);
+		if (variable_declaration->u32)
+			destroy(variable_declaration->u32);
+		if (variable_declaration->u64)
+			destroy(variable_declaration->u64);
+		
+		destroy(variable_declaration);
+	}
 }
 
 void destroy_ast_node(void* node)
@@ -71,8 +147,30 @@ void destroy_ast_node(void* node)
 	ASTNode* converted = (ASTNode*) node;
 
 	if (converted) {
-		if (converted->token)
-			destroy_token(converted->token);
+		
+		switch (converted->type) {
+			case TOK_IDENT:
+			case TOK_INTEGER_LITERAL:
+			case TOK_TYPE_S8:
+			case TOK_TYPE_S16:
+			case TOK_TYPE_S32:
+			case TOK_TYPE_S64:
+			case TOK_TYPE_U8:
+			case TOK_TYPE_U16:
+			case TOK_TYPE_U32:
+			case TOK_TYPE_U64:
+				destroy_token(converted->token);
+				break;
+			case AST_TYPE_VARIABLE_DECLARATION:
+				destroy_ast_variable_declaration(converted->variable_declaration);
+				break;
+			default:
+				log_err("unsupported ast type\n");
+		}
+		
+		// TODO: Remove after switch
+		//if (converted->token)
+		//	destroy_token(converted->token);
 
 		destroy(converted);
 	}
@@ -121,6 +219,22 @@ static void ast_dump_type(ASTNode* type, int depth)
 	}
 }
 
+static void ast_dump_variable_declaration(ASTNode* variable_declaration, int depth)
+{
+	if (variable_declaration) {
+		print_depth(depth);
+		if (variable_declaration->token) {
+			printf("<%zu:%zu:variable_declaration>\n",
+				variable_declaration->variable_declaration->type->pos.line, variable_declaration->variable_declaration->type->pos.column);
+			depth += 1;
+			ast_dump_type(init_ast_type(variable_declaration->variable_declaration->type), depth);
+			
+			if (variable_declaration->variable_declaration->ident)
+				ast_dump_ident(init_ast_ident(variable_declaration->variable_declaration->ident), depth);
+		}
+	}
+}
+
 void ast_dump(List* ast)
 {
 	int depth = 0;
@@ -129,7 +243,7 @@ void ast_dump(List* ast)
 		ASTNode* node = list_get(ast, i);
 
 		if (node && node->token) {
-			switch (node->token->type) {
+			switch (node->type) {
 				case TOK_EOF:
 					break;
 
@@ -151,7 +265,11 @@ void ast_dump(List* ast)
 				case TOK_TYPE_U64:
 					ast_dump_type(node, depth);
 					break;
-
+				
+				case AST_TYPE_VARIABLE_DECLARATION:
+					ast_dump_variable_declaration(node, depth);
+					break;
+					
 				default:
 					log_err("unsupported AST node type\n");
 					break;

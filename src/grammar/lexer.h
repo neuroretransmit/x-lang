@@ -5,8 +5,9 @@
 
 #include "../util/collections/fifo.h"
 
+/* Reserve the top 100 for root ast constructs */
 typedef enum {
-	TOK_EOF,
+	TOK_EOF = 100,
 	TOK_IDENT,
 	TOK_INTEGER_LITERAL,
 	TOK_TYPE_S8,

@@ -19,17 +19,25 @@ TEST_OBJECTS := $(patsubst tests/%.c, obj/tests/%.o, $(TEST_SOURCES))
 CC := gcc
 CSTD := -std=gnu11
 WARNINGS := -Wall -Wextra -Werror -fPIC
-CFLAGS := -g $(CSTD) $(WARNINGS)
+CFLAGS := -g $(CSTD) $(WARNINGS) -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS
+
+CXX := g++
+CXXSTD := -std=g++14
+CXXFLAGS := $(CXXSTD) $(WARNINGS) -rdynamic -pthread
+
+#LIBS := `llvm-config --libs core analysis` -ldl -lz
+#LDFLAGS := `llvm-config --ldflags`
+
 
 all: $(BINARY) $(TESTS_BINARY) $(LIBRARY)
 
-$(BINARY): $(OBJECTS)
+$(BINARY): $(OBJECTS) 
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-$(LIBRARY): $(filter-out obj/main.o, $(OBJECTS))
+$(LIBRARY): $(filter-out obj/main.o, $(OBJECTS)) $(LIBS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -shared -o $@ $^
+	$(CC) $(CFLAGS) -shared $^ $(LIBS) -o $@
 
 $(TESTS_BINARY): $(TEST_OBJECTS) $(LIBRARY)
 	@mkdir -p $(@D)
@@ -44,7 +52,7 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 	$(CC) $(CFLAGS) -Isrc -c $< -o $@
 
 run-%: $(BINARY)
-	valgrind --leak-check=full $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
+	valgrind $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
 
 run-tests: $(TESTS_BINARY)
 	valgrind --leak-check=full $< 2>&1 | tee -a LEAK_REPORT_TESTS.txt
