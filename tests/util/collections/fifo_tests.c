@@ -23,24 +23,24 @@ static void test_init()
 static void test_push_pop()
 {
 	FIFO* fifo = init_fifo_objects(NULL);
-	
+
 	for (unsigned i = 0; i < 1024; i++) {
 		assert(fifo->size == i);
-		
+
 		char key[100];
 		sprintf(key, "i_am_the_key%u", i);
 		fifo_push(fifo, key);
 	}
-	
+
 	for (unsigned i = 0, j = 1024; i < 1024; i++, j--) {
 		assert(fifo->size == j);
-		
+
 		char key[100];
 		sprintf(key, "i_am_the_key%u", i);
-		
+
 		assert(strcmp(fifo_pop(fifo), key) == MATCH);
 	}
-	
+
 	destroy_fifo(fifo);
 	log_info("PASS\n");
 }

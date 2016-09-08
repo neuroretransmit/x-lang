@@ -29,12 +29,29 @@ void destroy_token(void* tok)
 				case TOK_EOF:
 					break;
 
-				case TOK_IDENT:
-					destroy(token->val->string);
-					break;
-
 				case TOK_INTEGER_LITERAL:
 					destroy(token->val->integer);
+					break;
+
+				case TOK_TYPE_S8:
+
+				case TOK_TYPE_S16:
+
+				case TOK_TYPE_S32:
+
+				case TOK_TYPE_S64:
+
+				case TOK_TYPE_U8:
+
+				case TOK_TYPE_U16:
+
+				case TOK_TYPE_U32:
+
+				case TOK_TYPE_U64:
+					break;
+
+				case TOK_IDENT:
+					destroy(token->val->string);
 					break;
 
 				default:
@@ -140,7 +157,7 @@ static char* capture_string()
 
 	string[size] = '\0';
 	_current_tok_len = size;
-	
+
 	return string;
 }
 
@@ -158,6 +175,14 @@ static TokenValue* init_token_value(TokenType type)
 		case TOK_EOF:
 		case TOK_IDENT:
 		case TOK_INTEGER_LITERAL:
+		case TOK_TYPE_S8:
+		case TOK_TYPE_S16:
+		case TOK_TYPE_S32:
+		case TOK_TYPE_S64:
+		case TOK_TYPE_U8:
+		case TOK_TYPE_U16:
+		case TOK_TYPE_U32:
+		case TOK_TYPE_U64:
 			break;
 
 		default:
@@ -180,13 +205,20 @@ static Token* create_token(TokenType type, void* val)
 		case TOK_EOF:
 			break;
 
-		case TOK_IDENT:
-			token->val->string = val;
-			break;
-
 		case TOK_INTEGER_LITERAL:
 			token->val->integer = val;
 			break;
+
+		case TOK_IDENT:
+		case TOK_TYPE_S8:
+		case TOK_TYPE_S16:
+		case TOK_TYPE_S32:
+		case TOK_TYPE_S64:
+		case TOK_TYPE_U8:
+		case TOK_TYPE_U16:
+		case TOK_TYPE_U32:
+		case TOK_TYPE_U64:
+			token->val->string = val;
 
 		default:
 			break;
@@ -215,11 +247,34 @@ static void tokenize()
 					return;
 			}
 
+			char* tmp = NULL;
+
 			if (isalpha(_lookahead) || _lookahead == '_') {
-				char* tmp = capture_string();
-				fifo_push(_tokens, create_token(TOK_IDENT, tmp));
+				tmp = capture_string();
+
+				if (strstr(tmp, "u8")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_U8, NULL));
+				} else if (strstr(tmp, "u16")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_U16, NULL));
+				} else if (strstr(tmp, "u32")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_U32, NULL));
+				} else if (strstr(tmp, "u64")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_U64, NULL));
+				} else if (strstr(tmp, "s8")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_S8, NULL));
+				} else if (strstr(tmp, "s16")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_S16, NULL));
+				} else if (strstr(tmp, "s32")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_S32, NULL));
+				} else if (strstr(tmp, "s64")) {
+					fifo_push(_tokens, create_token(TOK_TYPE_S64, NULL));
+				} else {
+					fifo_push(_tokens, create_token(TOK_IDENT, strdup(tmp)));
+				}
+
+				destroy(tmp);
 			} else if (isdigit(_lookahead)) {
-				char* tmp = capture_string();
+				tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));
 				*value = (uint64_t) strtoll(tmp, 0, 0);
 				destroy(tmp);
@@ -233,8 +288,6 @@ static void tokenize()
 	}
 
 	adjust_position();
-
-	/* IF-ELSE chain for types/keywords here */
 }
 
 void lex()
