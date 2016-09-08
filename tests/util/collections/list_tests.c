@@ -107,7 +107,6 @@ void test_list_remove()
 
 void list_tests()
 {
-	log_info("Testing List\n");
 	test_init_list();
 	test_list_append();
 	test_list_prepend();
