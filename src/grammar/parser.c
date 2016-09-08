@@ -97,6 +97,14 @@ static bool parse_ident()
 	return true;
 }
 
+/* Always valid, verified in lexical analysis - just pop */
+static bool parse_type()
+{
+	fifo_pop(_tokens);
+
+	return true;
+}
+
 /**
  * Starting point for parser
  *
@@ -140,6 +148,25 @@ static bool parse_x_lang()
 				}
 
 				break;
+
+			case TOK_TYPE_S8:
+			case TOK_TYPE_S16:
+			case TOK_TYPE_S32:
+			case TOK_TYPE_S64:
+			case TOK_TYPE_U8:
+			case TOK_TYPE_U16:
+			case TOK_TYPE_U32:
+			case TOK_TYPE_U64:
+				if (parse_type()) {
+					list_append(root_construct, token);
+					ASTNode* node = init_ast_node(root_construct);
+					list_append(ast_list, node);
+					ast_dump(ast_list);
+				}
+
+				break;
+
+
 
 			default:
 				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");

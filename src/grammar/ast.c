@@ -7,7 +7,7 @@
 #include "../util/log.h"
 #include "../grammar/lexer.h"
 
-static ASTNode* init_ast_ident(Token* tok)
+static ASTNode* _allocate_node(Token* tok)
 {
 	ASTNode* node = malloc(sizeof(ASTNode));
 	node->token = tok;
@@ -15,12 +15,19 @@ static ASTNode* init_ast_ident(Token* tok)
 	return node;
 }
 
+static ASTNode* init_ast_type(Token* tok)
+{
+	return _allocate_node(tok);
+}
+
+static ASTNode* init_ast_ident(Token* tok)
+{
+	return _allocate_node(tok);
+}
+
 static ASTNode* init_ast_integer_literal(Token* tok)
 {
-	ASTNode* node = malloc(sizeof(ASTNode));
-	node->token = tok;
-
-	return node;
+	return _allocate_node(tok);
 }
 
 ASTNode* init_ast_node(List* tokens)
@@ -38,6 +45,16 @@ ASTNode* init_ast_node(List* tokens)
 
 				case TOK_INTEGER_LITERAL:
 					return init_ast_integer_literal(token);
+
+				case TOK_TYPE_S8:
+				case TOK_TYPE_S16:
+				case TOK_TYPE_S32:
+				case TOK_TYPE_S64:
+				case TOK_TYPE_U8:
+				case TOK_TYPE_U16:
+				case TOK_TYPE_U32:
+				case TOK_TYPE_U64:
+					return init_ast_type(token);
 
 				default:
 					log_err("expected one of <ident>, ...\n");
@@ -87,6 +104,23 @@ static void ast_dump_integer_literal(ASTNode* integer_literal, int depth)
 	}
 }
 
+static void ast_dump_type(ASTNode* type, int depth)
+{
+	if (type) {
+		print_depth(depth);
+		printf("<%zu:%zu:type:%s>\n",
+			   type->token->pos.line, type->token->pos.column,
+			   (type->token->type == TOK_TYPE_S8 ? "s8" :
+				type->token->type == TOK_TYPE_S16 ? "s16" :
+				type->token->type == TOK_TYPE_S32 ? "s32" :
+				type->token->type == TOK_TYPE_S64 ? "s64" :
+				type->token->type == TOK_TYPE_U8 ? "u8" :
+				type->token->type == TOK_TYPE_U16 ? "u16" :
+				type->token->type == TOK_TYPE_U32 ? "u32" :
+				type->token->type == TOK_TYPE_U64 ? "u64" : "not a type"));
+	}
+}
+
 void ast_dump(List* ast)
 {
 	int depth = 0;
@@ -105,6 +139,17 @@ void ast_dump(List* ast)
 
 				case TOK_IDENT:
 					ast_dump_ident(node, depth);
+					break;
+
+				case TOK_TYPE_S8:
+				case TOK_TYPE_S16:
+				case TOK_TYPE_S32:
+				case TOK_TYPE_S64:
+				case TOK_TYPE_U8:
+				case TOK_TYPE_U16:
+				case TOK_TYPE_U32:
+				case TOK_TYPE_U64:
+					ast_dump_type(node, depth);
 					break;
 
 				default:
