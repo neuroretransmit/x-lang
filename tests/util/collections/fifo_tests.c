@@ -56,7 +56,6 @@ static void test_fifo_empty()
 
 void fifo_tests()
 {
-	log_info("Testing FIFO\n");
 	test_init();
 	test_push_pop();
 	test_fifo_empty();
