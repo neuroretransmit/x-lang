@@ -14,8 +14,8 @@ The X language aims to be a system level language that incorporates functional p
 ## Requirements
 
 * LLVM-C
-* valgrind
-* gcc
+* Valgrind
+* GCC
 
 ## Building
 
