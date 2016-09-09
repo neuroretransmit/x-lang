@@ -13,11 +13,12 @@ extern FIFO* _tokens;
 static void ident_test()
 {
 	char* fname = "res/lexer_tests.x";
-	
+
 	if (file_exists(fname))
 		init_lexer(fname);
 	else
 		log_kill("test file does not exist");
+
 	lex();
 
 	const char* expected[] = {
@@ -40,12 +41,12 @@ static void ident_test()
 static void integer_literal_test()
 {
 	char* fname = "res/integer_literal.x";
-	
+
 	if (file_exists(fname))
 		init_lexer(fname);
 	else
 		log_kill("test file does not exist");
-	
+
 	lex();
 
 	const int64_t expected[] = {
@@ -69,12 +70,12 @@ static void integer_literal_test()
 static void type_test()
 {
 	char* fname = "res/type.x";
-	
+
 	if (file_exists(fname))
 		init_lexer(fname);
 	else
 		log_kill("test file does not exist");
-	
+
 	lex();
 
 	const unsigned EXPECTED[] = {

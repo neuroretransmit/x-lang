@@ -30,7 +30,9 @@ void destroy_token(void* tok)
 					break;
 
 				case TOK_INTEGER_LITERAL:
-					destroy(token->val->integer);
+					if (token->val->integer)
+						destroy(token->val->integer);
+
 					break;
 
 				case TOK_TYPE_S8:
@@ -51,7 +53,9 @@ void destroy_token(void* tok)
 					break;
 
 				case TOK_IDENT:
-					destroy(token->val->string);
+					if (token->val->string)
+						destroy(token->val->string);
+
 					break;
 
 				default:
@@ -271,8 +275,9 @@ static void tokenize()
 				} else {
 					fifo_push(_tokens, create_token(TOK_IDENT, strdup(tmp)));
 				}
+				destroy(tmp);
 
-				
+
 			} else if (isdigit(_lookahead)) {
 				tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));

@@ -6,13 +6,15 @@
 
 #include "lexer.h"
 #include "../util/debug.h"
+#include "../util/mem_utils.h"
 #include "../grammar/ast.h"
 #include "../util/regex_utils.h"
 #include "../util/collections/fifo.h"
 
 static const bool FINISHED = true;
 static char* _current_file = "";
-static List* _ast;
+extern List* root_construct;
+extern List* _ast;
 extern FIFO* _tokens;
 
 void init_parser(char* fname)
@@ -25,14 +27,11 @@ void init_parser(char* fname)
 
 void destroy_parser()
 {
-	if (_ast) {
-		for (unsigned i = 0; i < _ast->size; i++) {
-			destroy_ast_node(list_get(_ast, i));
-		}
-
+	/*if (root_construct)
+		destroy_list(root_construct);*/
+	if (_ast)
 		destroy_list(_ast);
-	}
-
+	
 	destroy_lexer();
 }
 
@@ -115,7 +114,7 @@ static bool parse_x_lang()
 	Token* token = (Token*) fifo_peek(_tokens);
 
 	if (token) {
-		List* root_construct = init_list_objects(&destroy_token);
+		root_construct = init_list_objects(&destroy_token);
 		_ast = init_list(&destroy_ast_node);
 
 
@@ -124,8 +123,7 @@ static bool parse_x_lang()
 				while (_tokens->size)
 					destroy_token(fifo_pop(_tokens));
 
-				destroy_list(_ast);
-				destroy_list(root_construct);
+				//destroy_list(_ast);
 				return true;
 
 			case TOK_IDENT:
@@ -157,13 +155,12 @@ static bool parse_x_lang()
 				if (parse_type()) {
 					Token* ident = fifo_pop(_tokens);
 					list_append(root_construct, token);
-					
+
 					if (parse_ident())
 						list_append(root_construct, ident);
-					
+
 					list_append(root_construct, ident);
-					ASTNode* node = init_ast_node(root_construct);
-					list_append(_ast, node);
+					list_append(_ast, init_ast_node(root_construct));
 				}
 
 				break;
@@ -173,7 +170,7 @@ static bool parse_x_lang()
 				return true;
 		}
 		
-		destroy_list(root_construct);
+		//destroy_list(_ast);
 		return false;
 	}
 
