@@ -31,7 +31,7 @@ void destroy_parser()
 		destroy_list(root_construct);*/
 	if (_ast)
 		destroy_list(_ast);
-	
+
 	destroy_lexer();
 }
 
@@ -169,7 +169,7 @@ static bool parse_x_lang()
 				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");
 				return true;
 		}
-		
+
 		//destroy_list(_ast);
 		return false;
 	}
@@ -180,6 +180,7 @@ static bool parse_x_lang()
 void parse()
 {
 	while (parse_x_lang() != FINISHED);
+
 	ast_dump(_ast);
 }
 

@@ -104,7 +104,7 @@ ASTNode* init_ast_node(List* tokens)
 					list_append(var_decl_tokens, ident);
 					return init_ast_variable_declaration(var_decl_tokens, AST_TYPE_VARIABLE_DECLARATION); /**/
 				}
-				
+
 			}
 
 			default:
@@ -122,6 +122,7 @@ static void destroy_ast_variable_declaration(ASTVariableDeclaration* variable_de
 	if (variable_declaration) {
 		if (variable_declaration->ident)
 			destroy_token(variable_declaration->ident);
+
 		if (variable_declaration->type)
 			destroy_token(variable_declaration->type);
 
@@ -142,7 +143,7 @@ static void destroy_ast_variable_declaration(ASTVariableDeclaration* variable_de
 		else if (variable_declaration->u64)
 			destroy(variable_declaration->u64);
 		*/
-		
+
 		destroy(variable_declaration);
 	}
 }
@@ -178,7 +179,7 @@ void destroy_ast_node(void* node)
 			default:
 				log_err("unsupported ast type\n");
 		}
-		
+
 		if (converted)
 			destroy(converted);
 	}
@@ -236,10 +237,11 @@ static void ast_dump_variable_declaration(ASTNode* variable_declaration, int dep
 			printf("<%zu:%zu:variable_declaration>\n",
 				   variable_declaration->variable_declaration->type->pos.line, variable_declaration->variable_declaration->type->pos.column);
 			depth += 1;
-			
+
 			ASTNode* type = init_ast_type(variable_declaration->variable_declaration->type);
 			ast_dump_type(type, depth);
 			destroy_ast_node(type);
+
 			if (variable_declaration->variable_declaration->ident) {
 				ASTNode* node = init_ast_ident(variable_declaration->variable_declaration->ident);
 				ast_dump_ident(node, depth);

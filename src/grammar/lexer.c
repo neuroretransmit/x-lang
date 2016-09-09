@@ -275,6 +275,7 @@ static void tokenize()
 				} else {
 					fifo_push(_tokens, create_token(TOK_IDENT, strdup(tmp)));
 				}
+
 				destroy(tmp);
 
 
