@@ -54,14 +54,11 @@ void init_lexer(char* fname)
 
 void destroy_lexer()
 {
-	if (_tokens)
-		destroy_fifo(_tokens);
-
 	if (_current_file)
 		fclose(_current_file);
 }
 
-static void lexer_error(const char* fmt, ...)
+static void log_lexer_error(const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
@@ -215,51 +212,46 @@ static void tokenize()
 		case ' ':
 		case '\t':
 		case '\n':
+		case EOF:
 			return;
 
-			/* Token symbols here */
 		default: {
-			switch (_lookahead) {
-				case EOF:
-					//fifo_push(_tokens, create_token(TOK_EOF, NULL));
-					return;
-			}
-
 			char* tmp = NULL;
 
 			if (isalpha(_lookahead) || _lookahead == '_') {
 				tmp = capture_string();
 
-				if (strstr(tmp, "u8")) {
+				if (strstr(tmp, "u8"))
 					fifo_push(_tokens, create_token(TOK_TYPE_U8, NULL));
-				} else if (strstr(tmp, "u16")) {
+				else if (strstr(tmp, "u16"))
 					fifo_push(_tokens, create_token(TOK_TYPE_U16, NULL));
-				} else if (strstr(tmp, "u32")) {
+				else if (strstr(tmp, "u32"))
 					fifo_push(_tokens, create_token(TOK_TYPE_U32, NULL));
-				} else if (strstr(tmp, "u64")) {
+				else if (strstr(tmp, "u64"))
 					fifo_push(_tokens, create_token(TOK_TYPE_U64, NULL));
-				} else if (strstr(tmp, "s8")) {
+				else if (strstr(tmp, "s8"))
 					fifo_push(_tokens, create_token(TOK_TYPE_S8, NULL));
-				} else if (strstr(tmp, "s16")) {
+				else if (strstr(tmp, "s16"))
 					fifo_push(_tokens, create_token(TOK_TYPE_S16, NULL));
-				} else if (strstr(tmp, "s32")) {
+				else if (strstr(tmp, "s32"))
 					fifo_push(_tokens, create_token(TOK_TYPE_S32, NULL));
-				} else if (strstr(tmp, "s64")) {
+				else if (strstr(tmp, "s64"))
 					fifo_push(_tokens, create_token(TOK_TYPE_S64, NULL));
-				} else {
+				else
 					fifo_push(_tokens, create_token(TOK_IDENT, strdup(tmp)));
-				}
 				
 				destroy(tmp);
 				
 			} else if (isdigit(_lookahead)) {
+				/* TODO - Only does positive integers */
+				
 				tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));
 				*value = (uint64_t) strtoll(tmp, 0, 0);
 				destroy(tmp);
 				fifo_push(_tokens, create_token(TOK_INTEGER_LITERAL, value));
 			} else {
-				lexer_error("unknown grammar\n");
+				log_lexer_error("unknown grammar\n");
 			}
 
 			break;

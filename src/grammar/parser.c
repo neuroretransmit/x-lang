@@ -20,13 +20,13 @@ void init_parser(char* fname)
 {
 	_current_file = fname;
 	init_lexer(_current_file);
-	//_ast = init_list_objects(&destroy_ast_node);
 	lex();
 }
 
 void destroy_parser()
 {
 	destroy_lexer();
+	destroy_fifo(_tokens);
 	destroy_list(_current_tokens);
 }
 
@@ -115,9 +115,6 @@ static ASTNode* parse_x_lang()
 
 		switch (token->type) {
 			case TOK_EOF:
-				destroy_fifo(_tokens);
-				destroy_token(token);
-
 				return NULL;
 
 			case TOK_IDENT:
