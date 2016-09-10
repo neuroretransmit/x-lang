@@ -24,15 +24,14 @@ void destroy_token_value(void* tok_val)
 	TokenValue* value = (TokenValue*) tok_val;
 
 	if (value) {
-		
 		if (value->integer)
-			destroy(value->string);
-		
+			destroy(value->integer);
 		if (value->string)
 			destroy(value->string);
-
+		
 		destroy(value);
 	}
+	
 }
 
 void destroy_token(void* tok)
@@ -41,8 +40,7 @@ void destroy_token(void* tok)
 
 	if (token) {
 		if (token->val)
-			destroy_token_value(token->val);
-
+			destroy(token->val);
 		destroy(token);
 	}
 }
@@ -251,10 +249,9 @@ static void tokenize()
 				} else {
 					fifo_push(_tokens, create_token(TOK_IDENT, strdup(tmp)));
 				}
-
+				
 				destroy(tmp);
-
-
+				
 			} else if (isdigit(_lookahead)) {
 				tmp = capture_string();
 				uint64_t* value = malloc(sizeof(uint64_t));

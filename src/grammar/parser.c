@@ -14,21 +14,20 @@
 //static const bool FINISHED = true;
 static char* _current_file = "";
 static List* _current_tokens;
-extern List* _ast;
 extern FIFO* _tokens;
 
 void init_parser(char* fname)
 {
 	_current_file = fname;
 	init_lexer(_current_file);
-	_ast = init_list_objects(&destroy_ast_node);
+	//_ast = init_list_objects(&destroy_ast_node);
 	lex();
 }
 
 void destroy_parser()
 {
-	destroy_list(_ast);
 	destroy_lexer();
+	destroy_list(_current_tokens);
 }
 
 static void parse_error(Token* token, const char* fmt, ...)
@@ -36,7 +35,8 @@ static void parse_error(Token* token, const char* fmt, ...)
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
 
-	sprintf(msg, "[%s:%zu:%zu] ", _current_file, token->pos.line, token->pos.column);
+	sprintf(msg, "[%s:%zu:%zu] ",
+			_current_file, token->pos.line, token->pos.column);
 	strcat(msg, fmt);
 
 	va_list args;
@@ -111,23 +111,19 @@ static ASTNode* parse_x_lang()
 	Token* token = (Token*) fifo_peek(_tokens);
 
 	if (token) {
-		ASTNode* node = NULL;
-
 		_current_tokens = init_list_objects(&destroy_token);
-		_ast = init_list(&destroy_ast_node);
 
 		switch (token->type) {
 			case TOK_EOF:
 				destroy_fifo(_tokens);
 				destroy_token(token);
 
-				return node;
+				return NULL;
 
 			case TOK_IDENT:
 				if (parse_ident()) {
 					list_append(_current_tokens, token);
-					node = init_ast_node(_current_tokens);
-					list_append(_ast, node);
+					return init_ast_node(_current_tokens);
 				}
 
 				break;
@@ -135,8 +131,7 @@ static ASTNode* parse_x_lang()
 			case TOK_INTEGER_LITERAL:
 				if (parse_integer_literal()) {
 					list_append(_current_tokens, token);
-					node = init_ast_node(_current_tokens);
-					list_append(_ast, node);
+					return init_ast_node(_current_tokens);
 				}
 
 				break;
@@ -157,27 +152,30 @@ static ASTNode* parse_x_lang()
 					if (parse_ident())
 						list_append(_current_tokens, ident);
 
-					list_append(_ast, init_ast_node(_current_tokens));
+					return init_ast_node(_current_tokens);
 				}
 
 				break;
 
 			default:
-				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");
+				parse_error(token, 
+							"expected one of <ident, integer_literal, EOF>\n");
 				return NULL;
 		}
-
-
-		return node;
 	}
 
 	return NULL;
 }
 
-void parse()
+List* parse()
 {
-	while (parse_x_lang() != NULL);
-
-	ast_dump(_ast);
+	List* ast = init_list(&destroy_ast_node);
+	
+	ASTNode* node = NULL;
+	
+	while ((node = parse_x_lang()) != NULL)
+		list_append(ast, node);
+	
+	return ast;
 }
 

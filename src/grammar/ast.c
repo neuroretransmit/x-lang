@@ -29,10 +29,11 @@ static ASTNode* init_ast_integer_literal(Token* tok)
 static ASTNode* init_ast_variable_declaration(Token* type, Token* ident, ASTType ast_type)
 {
 	ASTNode* node = malloc(sizeof(ASTNode));
+	ASTVariableDeclaration* var_decl = malloc(sizeof(ASTVariableDeclaration));
 	node->type = ast_type;
-	node->variable_declaration = malloc(sizeof(ASTVariableDeclaration));
-	node->variable_declaration->ident = ident;
-	node->variable_declaration->type = type;
+	var_decl->ident = ident;
+	var_decl->type = type;
+	node->variable_declaration = var_decl;
 
 	return node;
 }
@@ -122,6 +123,7 @@ static void ast_dump_ident(Token* ident, int depth)
 		printf("<%zu:%zu:ident:\"%s\">\n",
 			   ident->pos.line, ident->pos.column,
 			   ident->val->string);
+		destroy(ident->val->string);
 	}
 }
 
@@ -166,6 +168,7 @@ static void ast_dump_variable_declaration(ASTVariableDeclaration* variable_decla
 
 			if (variable_declaration->ident) {
 				ast_dump_ident(variable_declaration->ident, depth);
+				//destroy_ast_variable_declaration(variable_declaration);
 			}
 		}
 	}
@@ -174,7 +177,7 @@ static void ast_dump_variable_declaration(ASTVariableDeclaration* variable_decla
 void ast_dump(List* ast)
 {
 	int depth = 0;
-
+	
 	for (unsigned i = 0; i < ast->size; i++) {
 		ASTNode* node = list_get(ast, i);
 

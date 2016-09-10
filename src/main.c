@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "grammar/ast.h"
 #include "grammar/parser.h"
 #include "util/mem_utils.h"
 #include "util/file_utils.h"
@@ -62,8 +63,13 @@ int main(int argc, char** argv)
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
 				init_parser(fname);
-				parse();
+				
+				List* ast = parse();
+				
+				ast_dump(ast);
+				
 				destroy_parser();
+				destroy_list(ast);
 			}
 
 			prev = fname;

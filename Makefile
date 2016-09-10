@@ -52,7 +52,7 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 	$(CC) $(CFLAGS) -Isrc -c $< -o $@
 
 run-%: $(BINARY)
-	valgrind --leak-check=full $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
+	valgrind --leak-check=full --show-leak-kinds=all $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt
 
 run-tests: $(TESTS_BINARY)
 	valgrind --leak-check=full $< 2>&1 | tee -a LEAK_REPORT_TESTS.txt
