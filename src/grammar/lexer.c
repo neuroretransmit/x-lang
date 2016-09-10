@@ -16,8 +16,8 @@ static char _previous;
 static size_t _current_tok_len = 0;
 FIFO* _tokens;
 
-TokenPos _current_pos = { 1, 1 };
-TokenPos _current_tok_start = { 1, 1 };
+static TokenPos _current_pos = { 1, 1 };
+static TokenPos _current_tok_start = { 1, 1 };
 
 void destroy_token_value(void* tok_val)
 {
@@ -194,7 +194,8 @@ static Token* create_token(TokenType type, void* val)
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
 			token->val->string = val;
-
+			break;
+			
 		default:
 			break;
 	}
