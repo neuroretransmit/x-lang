@@ -21,7 +21,7 @@ typedef struct {
 	int type;
 	union {
 		Token* token;
-		ASTVariableDeclaration* variable_declaration;
+		ASTVariableDeclaration* var_decl;
 	};
 } ASTNode;
 

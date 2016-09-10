@@ -33,7 +33,7 @@ static ASTNode* init_ast_variable_declaration(Token* type, Token* ident, ASTType
 	node->type = ast_type;
 	var_decl->ident = ident;
 	var_decl->type = type;
-	node->variable_declaration = var_decl;
+	node->var_decl = var_decl;
 
 	return node;
 }
@@ -77,21 +77,20 @@ ASTNode* init_ast_node(List* tokens)
 				return NULL;
 		}
 	}
-
-
+	
 	return NULL;
 }
 
-static void destroy_ast_variable_declaration(ASTVariableDeclaration* variable_declaration)
+static void destroy_ast_variable_declaration(ASTVariableDeclaration* var_decl)
 {
-	if (variable_declaration) {
-		if (variable_declaration->ident)
-			destroy_token(variable_declaration->ident);
+	if (var_decl) {
+		if (var_decl->ident)
+			destroy_token(var_decl->ident);
 
-		if (variable_declaration->type)
-			destroy_token(variable_declaration->type);
+		if (var_decl->type)
+			destroy_token(var_decl->type);
 
-		destroy(variable_declaration);
+		destroy(var_decl);
 	}
 }
 
@@ -103,8 +102,8 @@ void destroy_ast_node(void* node)
 		if (converted->token)
 			destroy_token(converted->token);
 
-		if (converted->variable_declaration)
-			destroy_ast_variable_declaration(converted->variable_declaration);
+		if (converted->var_decl)
+			destroy_ast_variable_declaration(converted->var_decl);
 
 		destroy(converted);
 	}
@@ -154,21 +153,20 @@ static void ast_dump_type(Token* type, int depth)
 	}
 }
 
-static void ast_dump_variable_declaration(ASTVariableDeclaration* variable_declaration, int depth)
+static void ast_dump_variable_declaration(ASTVariableDeclaration* var_decl, int depth)
 {
-	if (variable_declaration) {
+	if (var_decl) {
 		print_depth(depth);
 
-		if (variable_declaration->type) {
+		if (var_decl->type) {
 			printf("<%zu:%zu:variable_declaration>\n",
-				   variable_declaration->type->pos.line, variable_declaration->type->pos.column);
+				   var_decl->type->pos.line, var_decl->type->pos.column);
 			depth += 1;
 
-			ast_dump_type(variable_declaration->type, depth);
+			ast_dump_type(var_decl->type, depth);
 
-			if (variable_declaration->ident) {
-				ast_dump_ident(variable_declaration->ident, depth);
-				//destroy_ast_variable_declaration(variable_declaration);
+			if (var_decl->ident) {
+				ast_dump_ident(var_decl->ident, depth);
 			}
 		}
 	}
@@ -206,7 +204,7 @@ void ast_dump(List* ast)
 					break;
 
 				case AST_TYPE_VARIABLE_DECLARATION:
-					ast_dump_variable_declaration(node->variable_declaration, depth);
+					ast_dump_variable_declaration(node->var_decl, depth);
 					break;
 
 				default:
