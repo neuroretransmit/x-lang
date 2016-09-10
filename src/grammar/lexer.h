@@ -42,7 +42,7 @@ extern FIFO* _tokens;
 
 void init_lexer(char* fname);
 void destroy_lexer();
-void destroy_token();
+void destroy_token(void* tok);
 
 void lex();
 void dump_tokens();

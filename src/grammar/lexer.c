@@ -24,9 +24,10 @@ void destroy_token_value(void* tok_val)
 	TokenValue* value = (TokenValue*) tok_val;
 
 	if (value) {
+		
 		if (value->integer)
-			destroy(value->integer);
-
+			destroy(value->string);
+		
 		if (value->string)
 			destroy(value->string);
 
@@ -222,7 +223,7 @@ static void tokenize()
 		default: {
 			switch (_lookahead) {
 				case EOF:
-					fifo_push(_tokens, create_token(TOK_EOF, NULL));
+					//fifo_push(_tokens, create_token(TOK_EOF, NULL));
 					return;
 			}
 

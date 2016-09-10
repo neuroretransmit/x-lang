@@ -157,8 +157,7 @@ static ASTNode* parse_x_lang()
 					if (parse_ident())
 						list_append(_current_tokens, ident);
 
-					node = init_ast_node(_current_tokens);
-					list_append(_ast, node);
+					list_append(_ast, init_ast_node(_current_tokens));
 				}
 
 				break;

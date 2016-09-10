@@ -13,7 +13,7 @@ List* init_list()
 List* init_list_objects(void (*destructor)(void* obj))
 {
 	List* list = calloc(1, sizeof(List));
-	list->destructor = destructor;
+	list->destructor = (destructor) ? destructor : &destroy;
 
 	return list;
 }

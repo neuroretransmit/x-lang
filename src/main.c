@@ -63,6 +63,7 @@ int main(int argc, char** argv)
 			if (file_exists(fname)) {
 				init_parser(fname);
 				parse();
+				destroy_parser();
 			}
 
 			prev = fname;
@@ -70,6 +71,4 @@ int main(int argc, char** argv)
 
 		destroy(arguments.argz);
 	}
-
-	destroy_parser();
 }

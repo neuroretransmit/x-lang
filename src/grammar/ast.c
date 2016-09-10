@@ -16,22 +16,12 @@ static ASTNode* _allocate_node(Token* tok)
 	return node;
 }
 
-/*static ASTNode* init_ast_type(Token* tok)
-{
-	return _allocate_node(tok);
-}*/
-
 static ASTNode* init_ast_ident(Token* tok)
 {
 	return _allocate_node(tok);
 }
 
 static ASTNode* init_ast_integer_literal(Token* tok)
-{
-	return _allocate_node(tok);
-}
-
-static ASTNode* init_ast_type(Token* tok)
 {
 	return _allocate_node(tok);
 }
@@ -125,13 +115,13 @@ static void print_depth(int depth)
 		printf("  ");
 }
 
-static void ast_dump_ident(ASTNode* ident, int depth)
+static void ast_dump_ident(Token* ident, int depth)
 {
 	if (ident) {
 		print_depth(depth);
 		printf("<%zu:%zu:ident:\"%s\">\n",
-			   ident->token->pos.line, ident->token->pos.column,
-			   ident->token->val->string);
+			   ident->pos.line, ident->pos.column,
+			   ident->val->string);
 	}
 }
 
@@ -145,41 +135,37 @@ static void ast_dump_integer_literal(ASTNode* integer_literal, int depth)
 	}
 }
 
-static void ast_dump_type(ASTNode* type, int depth)
+static void ast_dump_type(Token* type, int depth)
 {
 	if (type) {
 		print_depth(depth);
 		printf("<%zu:%zu:type:%s>\n",
-			   type->token->pos.line, type->token->pos.column,
-			   (type->token->type == TOK_TYPE_S8 ? "s8" :
-				type->token->type == TOK_TYPE_S16 ? "s16" :
-				type->token->type == TOK_TYPE_S32 ? "s32" :
-				type->token->type == TOK_TYPE_S64 ? "s64" :
-				type->token->type == TOK_TYPE_U8 ? "u8" :
-				type->token->type == TOK_TYPE_U16 ? "u16" :
-				type->token->type == TOK_TYPE_U32 ? "u32" :
-				type->token->type == TOK_TYPE_U64 ? "u64" : "not a type"));
+			   type->pos.line, type->pos.column,
+			   (type->type == TOK_TYPE_S8 ? "s8" :
+				type->type == TOK_TYPE_S16 ? "s16" :
+				type->type == TOK_TYPE_S32 ? "s32" :
+				type->type == TOK_TYPE_S64 ? "s64" :
+				type->type == TOK_TYPE_U8 ? "u8" :
+				type->type == TOK_TYPE_U16 ? "u16" :
+				type->type == TOK_TYPE_U32 ? "u32" :
+				type->type == TOK_TYPE_U64 ? "u64" : "not a type"));
 	}
 }
 
-static void ast_dump_variable_declaration(ASTNode* variable_declaration, int depth)
+static void ast_dump_variable_declaration(ASTVariableDeclaration* variable_declaration, int depth)
 {
 	if (variable_declaration) {
 		print_depth(depth);
 
-		if (variable_declaration->token) {
+		if (variable_declaration->type) {
 			printf("<%zu:%zu:variable_declaration>\n",
-				   variable_declaration->variable_declaration->type->pos.line, variable_declaration->variable_declaration->type->pos.column);
+				   variable_declaration->type->pos.line, variable_declaration->type->pos.column);
 			depth += 1;
 
-			ASTNode* type = init_ast_type(variable_declaration->variable_declaration->type);
-			ast_dump_type(type, depth);
-			destroy(type);
+			ast_dump_type(variable_declaration->type, depth);
 
-			if (variable_declaration->variable_declaration->ident) {
-				ASTNode* node = init_ast_ident(variable_declaration->variable_declaration->ident);
-				ast_dump_ident(node, depth);
-				destroy(node);
+			if (variable_declaration->ident) {
+				ast_dump_ident(variable_declaration->ident, depth);
 			}
 		}
 	}
@@ -202,7 +188,7 @@ void ast_dump(List* ast)
 					break;
 
 				case TOK_IDENT:
-					ast_dump_ident(node, depth);
+					ast_dump_ident(node->token, depth);
 					break;
 
 				case TOK_TYPE_S8:
@@ -213,11 +199,11 @@ void ast_dump(List* ast)
 				case TOK_TYPE_U16:
 				case TOK_TYPE_U32:
 				case TOK_TYPE_U64:
-					ast_dump_type(node, depth);
+					ast_dump_type(node->token, depth);
 					break;
 
 				case AST_TYPE_VARIABLE_DECLARATION:
-					ast_dump_variable_declaration(node, depth);
+					ast_dump_variable_declaration(node->variable_declaration, depth);
 					break;
 
 				default:
