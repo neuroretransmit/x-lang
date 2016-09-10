@@ -19,53 +19,28 @@ FIFO* _tokens;
 TokenPos _current_pos = { 1, 1 };
 TokenPos _current_tok_start = { 1, 1 };
 
+void destroy_token_value(void* tok_val)
+{
+	TokenValue* value = (TokenValue*) tok_val;
+
+	if (value) {
+		if (value->integer)
+			destroy(value->integer);
+
+		if (value->string)
+			destroy(value->string);
+
+		destroy(value);
+	}
+}
+
 void destroy_token(void* tok)
 {
 	Token* token = (Token*) tok;
 
 	if (token) {
-		if (token->type) {
-			switch (token->type) {
-				case TOK_EOF:
-					break;
-
-				case TOK_INTEGER_LITERAL:
-					if (token->val->integer)
-						destroy(token->val->integer);
-
-					break;
-
-				case TOK_TYPE_S8:
-
-				case TOK_TYPE_S16:
-
-				case TOK_TYPE_S32:
-
-				case TOK_TYPE_S64:
-
-				case TOK_TYPE_U8:
-
-				case TOK_TYPE_U16:
-
-				case TOK_TYPE_U32:
-
-				case TOK_TYPE_U64:
-					break;
-
-				case TOK_IDENT:
-					if (token->val->string)
-						destroy(token->val->string);
-
-					break;
-
-				default:
-					log_err("type not supported\n");
-					break;
-			}
-		}
-
 		if (token->val)
-			destroy(token->val);
+			destroy_token_value(token->val);
 
 		destroy(token);
 	}

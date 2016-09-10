@@ -11,7 +11,7 @@
 #include "../util/regex_utils.h"
 #include "../util/collections/fifo.h"
 
-static const bool FINISHED = true;
+//static const bool FINISHED = true;
 static char* _current_file = "";
 static List* _current_tokens;
 extern List* _ast;
@@ -27,9 +27,7 @@ void init_parser(char* fname)
 
 void destroy_parser()
 {
-	if (_ast)
-		destroy_list(_ast);
-	
+	destroy_list(_ast);
 	destroy_lexer();
 }
 
@@ -108,22 +106,22 @@ static bool parse_type()
  *
  * @return Terminate?
  */
-static bool parse_x_lang()
+static ASTNode* parse_x_lang()
 {
 	Token* token = (Token*) fifo_peek(_tokens);
 
 	if (token) {
 		ASTNode* node = NULL;
-		
+
 		_current_tokens = init_list_objects(&destroy_token);
 		_ast = init_list(&destroy_ast_node);
 
 		switch (token->type) {
 			case TOK_EOF:
-				while (_tokens->size)
-					destroy_token(fifo_pop(_tokens));
-				
-				return true;
+				destroy_fifo(_tokens);
+				destroy_token(token);
+
+				return node;
 
 			case TOK_IDENT:
 				if (parse_ident()) {
@@ -153,8 +151,9 @@ static bool parse_x_lang()
 			case TOK_TYPE_U64:
 				if (parse_type()) {
 					list_append(_current_tokens, token);
-					
+
 					Token* ident = fifo_pop(_tokens);
+
 					if (parse_ident())
 						list_append(_current_tokens, ident);
 
@@ -166,19 +165,19 @@ static bool parse_x_lang()
 
 			default:
 				parse_error(token, "expected one of <ident, integer_literal, EOF>\n");
-				return true;
+				return NULL;
 		}
-		
-		
-		return false;
+
+
+		return node;
 	}
-	
-	return true;
+
+	return NULL;
 }
 
 void parse()
 {
-	while (parse_x_lang() != FINISHED);
+	while (parse_x_lang() != NULL);
 
 	ast_dump(_ast);
 }

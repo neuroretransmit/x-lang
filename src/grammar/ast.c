@@ -111,10 +111,10 @@ void destroy_ast_node(void* node)
 	if (converted) {
 		if (converted->token)
 			destroy_token(converted->token);
-		
+
 		if (converted->variable_declaration)
 			destroy_ast_variable_declaration(converted->variable_declaration);
-		
+
 		destroy(converted);
 	}
 }
