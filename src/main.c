@@ -64,7 +64,8 @@ int main(int argc, char** argv)
 			if (file_exists(fname)) {
 				ParserContext* parser = init_parser(fname);
 				
-				List* ast = parse(parser, lex(parser->lexer_context));
+				
+				List* ast = parse(parser);
 				
 				ast_dump(ast);
 				

@@ -13,5 +13,5 @@ typedef struct {
 
 ParserContext* init_parser(char* fname);
 void destroy_parser(ParserContext* context);
-List* parse(ParserContext* context, FIFO* tokens);
+List* parse(ParserContext* context);
 

@@ -1,5 +1,6 @@
 ### Directories ###
 obj/
+lib/
 bin/
 
 ### Special Files ###

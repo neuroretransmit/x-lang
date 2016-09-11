@@ -47,12 +47,13 @@ typedef struct {
 	char previous;
 	TokenPos current_pos;
 	TokenPos start;
+	FIFO* tokens;
 } LexerContext;
 
 LexerContext* init_lexer(char* fname);
 void destroy_lexer();
 void destroy_token(void* tok);
 
-FIFO* lex(LexerContext* lexer);
+void lex(LexerContext* lexer);
 void dump_tokens();
 

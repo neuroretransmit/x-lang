@@ -23,7 +23,12 @@ ParserContext* init_parser(char* fname)
 void destroy_parser(ParserContext* context)
 {
 	//destroy_list(context->current_tokens);
-	destroy_lexer(context->lexer_context);
+	if (context) {
+		if (context->lexer_context)
+			destroy_lexer(context->lexer_context);
+		
+		destroy(context);
+	}
 }
 
 static void log_parser_error(ParserContext* context, Token* token, const char* fmt, ...)
@@ -67,7 +72,7 @@ static bool valid_ident(Token* ident)
 	return true;
 }
 
-/* Always valid, just pop and return true; */
+/* Possible FIXME - Always valid */
 static bool parse_integer_literal()
 {
 	return true;
@@ -84,17 +89,12 @@ static bool parse_ident(ParserContext* context, Token* ident)
 	return true;
 }
 
-/* Always valid, verified in lexical analysis - just pop */
+/* Always valid, verified in lexical analysis */
 static bool parse_type()
 {
 	return true;
 }
 
-/**
- * Starting point for parser
- *
- * @return Terminate?
- */
 static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 {
 	Token* token = (Token*) fifo_pop(tokens);
@@ -153,15 +153,18 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 	return NULL;
 }
 
-List* parse(ParserContext* context, FIFO* tokens)
+List* parse(ParserContext* context)
 {
+	lex(context->lexer_context);
 	List* ast = init_list(&destroy_ast_node);
 	
 	ASTNode* node = NULL;
 	
-	while ((node = parse_x_lang(context, tokens)))
+	while ((node = parse_x_lang(context, context->lexer_context->tokens)))
 		list_append(ast, node);
-
+	
+	//destroy(tokens);
+	
 	return ast;
 }
 

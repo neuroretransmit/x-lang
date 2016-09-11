@@ -214,25 +214,17 @@ static Token* tokenize(LexerContext* context)
 		default: {
 			if (isalpha(context->lookahead) || context->lookahead == '_') {
 				capture = capture_string(context);
-
-				if (strstr(capture.str, "u8"))
-					token = create_token(context, TOK_TYPE_U8, NULL);
-				else if (strstr(capture.str, "u16"))
-					token = create_token(context, TOK_TYPE_U16, NULL);
-				else if (strstr(capture.str, "u32"))
-					token = create_token(context, TOK_TYPE_U32, NULL);
-				else if (strstr(capture.str, "u64"))
-					token = create_token(context, TOK_TYPE_U64, NULL);
-				else if (strstr(capture.str, "s8"))
-					token = create_token(context, TOK_TYPE_S8, NULL);
-				else if (strstr(capture.str, "s16"))
-					token = create_token(context, TOK_TYPE_S16, NULL);
-				else if (strstr(capture.str, "s32"))
-					token = create_token(context, TOK_TYPE_S32, NULL);
-				else if (strstr(capture.str, "s64"))
-					token = create_token(context, TOK_TYPE_S64, NULL);
-				else
-					token = create_token(context, TOK_IDENT, strdup(capture.str));
+				
+				token = 
+					strstr(capture.str, "u8") 	? create_token(context, TOK_TYPE_U8, 	NULL) :
+					strstr(capture.str, "u16") 	? create_token(context, TOK_TYPE_U16, 	NULL) :
+					strstr(capture.str, "u32") 	? create_token(context, TOK_TYPE_U32, 	NULL) :
+					strstr(capture.str, "u64") 	? create_token(context, TOK_TYPE_U64, 	NULL) :
+					strstr(capture.str, "s8") 	? create_token(context, TOK_TYPE_S8, 	NULL) :
+					strstr(capture.str, "s16") 	? create_token(context, TOK_TYPE_S16, 	NULL) :
+					strstr(capture.str, "s32") 	? create_token(context, TOK_TYPE_S32, 	NULL) :
+					strstr(capture.str, "s64") 	? create_token(context, TOK_TYPE_S64, 	NULL) :
+												  create_token(context, TOK_IDENT, 		strdup(capture.str));
 				
 				destroy(capture.str);
 				
@@ -256,7 +248,7 @@ static Token* tokenize(LexerContext* context)
 	return token;
 }
 
-FIFO* lex(LexerContext* context)
+void lex(LexerContext* context)
 {
 	FIFO* tokens = init_fifo_objects(&destroy_token);
 	Token* token;
@@ -264,5 +256,5 @@ FIFO* lex(LexerContext* context)
 	while ((token = tokenize(context)) != NULL)
 		fifo_push(tokens, tokenize(context));
 	
-	return tokens;
+	context->tokens = tokens;
 }

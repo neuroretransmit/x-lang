@@ -2,12 +2,13 @@ BINDIR := bin
 OBJDIR := obj
 SRCDIR := src
 DOCDIR := doc
+LIBDIR := lib
 RESDIR := res
 TESTDIR := tests
-TESTOBJDIR := obj/tests
+TESTOBJDIR := $(OBJDIR)/tests
 
 BINARY := $(BINDIR)/x-lang
-LIBRARY := $(BINDIR)/libx-lang.so
+LIBRARY := $(LIBDIR)/libx-lang.so
 TESTS_BINARY := $(BINDIR)/x-lang-tests
 
 SOURCES := $(shell find src -name **.c)
@@ -25,17 +26,17 @@ CXX := g++
 CXXSTD := -std=g++14
 CXXFLAGS := $(CXXSTD) $(WARNINGS) -rdynamic -pthread
 
-#LIBS := `llvm-config --libs core analysis` -ldl -lz
+#LIBS := -Lbin `llvm-config --libs core analysis` -ldl -lz
 #LDFLAGS := `llvm-config --ldflags`
 
 
-all: $(BINARY) $(TESTS_BINARY) $(LIBRARY)
+all: $(BINARY) $(TESTS_BINARY)
 
 $(BINARY): $(OBJECTS) 
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-$(LIBRARY): $(filter-out obj/main.o, $(OBJECTS)) $(LIBS)
+$(LIBRARY): $(filter-out obj/main.o, $(OBJECTS))
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -shared $^ $(LIBS) -o $@
 
@@ -58,4 +59,4 @@ run-tests: $(TESTS_BINARY)
 	valgrind --leak-check=full $< 2>&1 | tee -a LEAK_REPORT_TESTS.txt
 
 clean:
-	rm -rfv bin obj LEAK_REPORT.txt LEAK_REPORT_TESTS.txt
+	rm -rfv bin obj lib LEAK_REPORT.txt LEAK_REPORT_TESTS.txt
