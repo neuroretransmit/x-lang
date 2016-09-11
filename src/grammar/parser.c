@@ -11,28 +11,28 @@
 #include "../util/regex_utils.h"
 #include "../util/collections/fifo.h"
 
-ParserContext init_parser(char* fname)
+ParserContext* init_parser(char* fname)
 {
-	ParserContext context;
-	context.lexer_context = init_lexer(fname);
-	lex(context.lexer_context);
+	ParserContext* context = malloc(sizeof(ParserContext));
+	context->lexer_context = init_lexer(fname);
+	lex(context->lexer_context);
 	
 	return context;
 }
 
-void destroy_parser(ParserContext context)
+void destroy_parser(ParserContext* context)
 {
-	destroy_lexer();
-	destroy_list(context.current_tokens);
+	//destroy_list(context->current_tokens);
+	destroy_lexer(context->lexer_context);
 }
 
-static void log_parser_error(ParserContext context, Token* token, const char* fmt, ...)
+static void log_parser_error(ParserContext* context, Token* token, const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
 
 	sprintf(msg, "[%s:%zu:%zu] ",
-			context.fname, token->pos.line, token->pos.column);
+			context->fname, token->pos.line, token->pos.column);
 	strcat(msg, fmt);
 
 	va_list args;
@@ -73,7 +73,7 @@ static bool parse_integer_literal()
 	return true;
 }
 
-static bool parse_ident(ParserContext context, Token* ident)
+static bool parse_ident(ParserContext* context, Token* ident)
 {
 	if (!valid_ident(ident)) {
 		log_parser_error(context, ident, "not a valid identifier\n");
@@ -95,12 +95,12 @@ static bool parse_type()
  *
  * @return Terminate?
  */
-static ASTNode* parse_x_lang(ParserContext context, FIFO* tokens)
+static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 {
 	Token* token = (Token*) fifo_pop(tokens);
 	
 	if (token) {
-		context.current_tokens = init_list_objects(&destroy_token);
+		context->current_tokens = init_list_objects(&destroy_token);
 
 		switch (token->type) {
 			case TOK_EOF:
@@ -108,16 +108,16 @@ static ASTNode* parse_x_lang(ParserContext context, FIFO* tokens)
 
 			case TOK_IDENT:
 				if (parse_ident(context, token)) {
-					list_append(context.current_tokens, token);
-					return init_ast_node(context.current_tokens);
+					list_append(context->current_tokens, token);
+					return init_ast_node(context->current_tokens);
 				}
 
 				break;
 
 			case TOK_INTEGER_LITERAL:
 				if (parse_integer_literal()) {
- 					list_append(context.current_tokens, token);
-					return init_ast_node(context.current_tokens);
+ 					list_append(context->current_tokens, token);
+					return init_ast_node(context->current_tokens);
 				}
 
 				break;
@@ -132,14 +132,14 @@ static ASTNode* parse_x_lang(ParserContext context, FIFO* tokens)
 			case TOK_TYPE_U64:
 				
 				if (parse_type()) {
-					list_append(context.current_tokens, token);
+					list_append(context->current_tokens, token);
 
 					Token* ident = fifo_pop(tokens);
 
 					if (parse_ident(context, ident))
-						list_append(context.current_tokens, ident);
+						list_append(context->current_tokens, ident);
 
-					return init_ast_node(context.current_tokens);
+					return init_ast_node(context->current_tokens);
 				}
 
 				break;
@@ -153,7 +153,7 @@ static ASTNode* parse_x_lang(ParserContext context, FIFO* tokens)
 	return NULL;
 }
 
-List* parse(ParserContext context, FIFO* tokens)
+List* parse(ParserContext* context, FIFO* tokens)
 {
 	List* ast = init_list(&destroy_ast_node);
 	

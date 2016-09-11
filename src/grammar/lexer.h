@@ -49,10 +49,10 @@ typedef struct {
 	TokenPos start;
 } LexerContext;
 
-LexerContext init_lexer(char* fname);
+LexerContext* init_lexer(char* fname);
 void destroy_lexer();
 void destroy_token(void* tok);
 
-FIFO* lex(LexerContext lexer);
+FIFO* lex(LexerContext* lexer);
 void dump_tokens();
 

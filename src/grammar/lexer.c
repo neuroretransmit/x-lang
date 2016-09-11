@@ -37,26 +37,26 @@ void destroy_token(void* tok)
 	}
 }
 
-LexerContext init_lexer(char* fname)
+LexerContext* init_lexer(char* fname)
 {
-	LexerContext context;
-	context.fname = fname;
-	context.fp = fopen(fname, "r");
+	LexerContext* context = malloc(sizeof(LexerContext));
+	context->fname = fname;
+	context->fp = fopen(fname, "r");
 	return context;
 }
 
-void destroy_lexer(LexerContext context)
+void destroy_lexer(LexerContext* context)
 {
-	if (context.fp)
-		fclose(context.fp);
+	if (context->fp)
+		fclose(context->fp);
 }
 
-static void log_lexer_error(LexerContext context, const char* fmt, ...)
+static void log_lexer_error(LexerContext* context, const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	char msg[250];
 
-	sprintf(msg, "[%s:%zu:%zu] ", context.fname, context.current_pos.line, context.current_pos.column);
+	sprintf(msg, "[%s:%zu:%zu] ", context->fname, context->current_pos.line, context->current_pos.column);
 	strcat(msg, fmt);
 
 	va_list args;
@@ -66,31 +66,31 @@ static void log_lexer_error(LexerContext context, const char* fmt, ...)
 	va_end(args);
 }
 
-static void next_token(LexerContext context)
+static void next_token(LexerContext* context)
 {
-	context.previous = context.lookahead;
-	context.lookahead = fgetc(context.fp);
+	context->previous = context->lookahead;
+	context->lookahead = fgetc(context->fp);
 }
 
-static void adjust_position(LexerContext context, size_t tok_len)
+static void adjust_position(LexerContext* context, size_t tok_len)
 {
-	if (isprint(context.lookahead)) {
-		if (isdigit(context.previous)) {
-			context.current_pos.column += tok_len;
-		} else if (context.lookahead == '\n') {
-			++context.current_pos.line;
-			context.current_pos.column = 1;
-		} else if (context.lookahead == '\t') {
-			context.current_pos.column += 4;
+	if (isprint(context->lookahead)) {
+		if (isdigit(context->previous)) {
+			context->current_pos.column += tok_len;
+		} else if (context->lookahead == '\n') {
+			++context->current_pos.line;
+			context->current_pos.column = 1;
+		} else if (context->lookahead == '\t') {
+			context->current_pos.column += 4;
 		} else {
-			context.current_pos.column += 1;
+			context->current_pos.column += 1;
 		}
 	}
 }
 
-static bool is_separator(LexerContext context)
+static bool is_separator(LexerContext* context)
 {
-	switch (context.lookahead) {
+	switch (context->lookahead) {
 		case '(':
 		case ')':
 		case ',':
@@ -106,20 +106,20 @@ static bool is_separator(LexerContext context)
 	return false;
 }
 
-static StringCapture capture_string(LexerContext context)
+static StringCapture capture_string(LexerContext* context)
 {
 	StringCapture capture;
 
-	fseek(context.fp, -1, SEEK_CUR);
-	unsigned long start = ftell(context.fp);
+	fseek(context->fp, -1, SEEK_CUR);
+	unsigned long start = ftell(context->fp);
 
 	for (capture.len = 0; !is_separator(context); capture.len++)
 		next_token(context);
 
-	fseek(context.fp, start, SEEK_SET);
+	fseek(context->fp, start, SEEK_SET);
 	capture.str = malloc(capture.len + 1);
 
-	if (fgets(capture.str, capture.len, context.fp) == 0)
+	if (fgets(capture.str, capture.len, context->fp) == 0)
 		log_kill("failed to retrieve string\n");
 
 	capture.str[capture.len] = '\0';
@@ -127,10 +127,10 @@ static StringCapture capture_string(LexerContext context)
 	return capture;
 }
 
-static inline void save_token_start(LexerContext context)
+static inline void save_token_start(LexerContext* context)
 {
-	context.start.line = context.current_pos.line;
-	context.start.column = context.current_pos.column;
+	context->start.line = context->current_pos.line;
+	context->start.column = context->current_pos.column;
 }
 
 static TokenValue* init_token_value(TokenType type)
@@ -160,13 +160,13 @@ static TokenValue* init_token_value(TokenType type)
 	return val;
 }
 
-static Token* create_token(LexerContext context, TokenType type, void* val)
+static Token* create_token(LexerContext* context, TokenType type, void* val)
 {
 	Token* token = malloc(sizeof(Token));
 	token->val = init_token_value(type);
 	token->type = type;
-	token->pos.line = context.start.line;
-	token->pos.column = context.start.column;
+	token->pos.line = context->start.line;
+	token->pos.column = context->start.column;
 
 	switch (type) {
 		case TOK_INTEGER_LITERAL:
@@ -196,7 +196,7 @@ static Token* create_token(LexerContext context, TokenType type, void* val)
 }
 
 
-static Token* tokenize(LexerContext context)
+static Token* tokenize(LexerContext* context)
 {
 	next_token(context);
 	save_token_start(context);
@@ -204,7 +204,7 @@ static Token* tokenize(LexerContext context)
 	StringCapture capture;
 	Token* token = NULL;
 	
-	switch (context.lookahead) {
+	switch (context->lookahead) {
 		case ' ':
 		case '\t':
 		case '\n':
@@ -212,7 +212,7 @@ static Token* tokenize(LexerContext context)
 			return NULL;
 
 		default: {
-			if (isalpha(context.lookahead) || context.lookahead == '_') {
+			if (isalpha(context->lookahead) || context->lookahead == '_') {
 				capture = capture_string(context);
 
 				if (strstr(capture.str, "u8"))
@@ -236,7 +236,7 @@ static Token* tokenize(LexerContext context)
 				
 				destroy(capture.str);
 				
-			} else if (isdigit(context.lookahead)) {
+			} else if (isdigit(context->lookahead)) {
 				/* TODO - Only does positive integers */
 				
 				capture = capture_string(context);
@@ -256,7 +256,7 @@ static Token* tokenize(LexerContext context)
 	return token;
 }
 
-FIFO* lex(LexerContext context)
+FIFO* lex(LexerContext* context)
 {
 	FIFO* tokens = init_fifo_objects(&destroy_token);
 	Token* token;

@@ -62,9 +62,9 @@ int main(int argc, char** argv)
 
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
-				ParserContext parser = init_parser(fname);
+				ParserContext* parser = init_parser(fname);
 				
-				List* ast = parse(parser, lex(parser.lexer_context));
+				List* ast = parse(parser, lex(parser->lexer_context));
 				
 				ast_dump(ast);
 				
