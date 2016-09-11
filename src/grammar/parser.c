@@ -16,7 +16,7 @@ ParserContext* init_parser(char* fname)
 	ParserContext* context = malloc(sizeof(ParserContext));
 	context->lexer_context = init_lexer(fname);
 	lex(context->lexer_context);
-	
+
 	return context;
 }
 
@@ -26,7 +26,7 @@ void destroy_parser(ParserContext* context)
 	if (context) {
 		if (context->lexer_context)
 			destroy_lexer(context->lexer_context);
-		
+
 		destroy(context);
 	}
 }
@@ -98,7 +98,7 @@ static bool parse_type()
 static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 {
 	Token* token = (Token*) fifo_pop(tokens);
-	
+
 	if (token) {
 		context->current_tokens = init_list_objects(&destroy_token);
 
@@ -114,13 +114,13 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 
 			case TOK_INTEGER_LITERAL:
 				if (parse_integer_literal()) {
- 					list_append(context->current_tokens, token);
+					list_append(context->current_tokens, token);
 					return init_ast_node(context->current_tokens);
 				}
 
 				break;
-			
-			
+
+
 			case TOK_TYPE_S8:
 			case TOK_TYPE_S16:
 			case TOK_TYPE_S32:
@@ -129,7 +129,8 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64:
-			// --- variable declaration
+
+				// --- variable declaration
 				if (parse_type()) {
 					list_append(context->current_tokens, token);
 
@@ -140,15 +141,17 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 
 					return init_ast_node(context->current_tokens);
 				}
-			// --- end variable declaration
+
+				// --- end variable declaration
 				break;
 
 			default:
-				log_parser_error(context, token, 
-							"expected one of <ident, integer_literal, EOF>\n");
+				log_parser_error(context, token,
+								 "expected one of <ident, integer_literal, EOF>\n");
 				return NULL;
 		}
 	}
+
 	return NULL;
 }
 
@@ -156,14 +159,14 @@ List* parse(ParserContext* context)
 {
 	lex(context->lexer_context);
 	List* ast = init_list(&destroy_ast_node);
-	
+
 	ASTNode* node = NULL;
-	
+
 	while ((node = parse_x_lang(context, context->lexer_context->tokens)))
 		list_append(ast, node);
-	
+
 	//destroy(tokens);
-	
+
 	return ast;
 }
 

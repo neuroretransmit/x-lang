@@ -12,6 +12,7 @@ static void check_token_val(TokenType type, TokenValue* actual, TokenValue* expe
 	if (actual && expected) {
 		switch (type) {
 			case TOK_IDENT:
+				printf("%s %s\n", actual->string, expected->string);
 				assert(strcmp(actual->string, expected->string) == MATCH);
 				break;
 

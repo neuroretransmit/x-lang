@@ -24,7 +24,7 @@ void destroy_token_value(void* tok_val)
 			destroy(value->integer);*/
 		if (value->string)
 			destroy(value->string);
-		
+
 		destroy(value);
 	}
 }
@@ -36,6 +36,7 @@ void destroy_token(void* tok)
 	if (token) {
 		if (token->val)
 			destroy_token_value(token->val);
+
 		destroy(token);
 	}
 }
@@ -56,10 +57,10 @@ void destroy_lexer(LexerContext* context)
 	if (context) {
 		if (context->fp)
 			fclose(context->fp);
-		
+
 		if (context->tokens)
 			destroy_fifo(context->tokens);
-		
+
 		destroy(context);
 	}
 }
@@ -118,24 +119,34 @@ static bool is_separator(LexerContext* context)
 	return false;
 }
 
-static StringCapture capture_string(LexerContext* context)
+void destroy_string_capture(StringCapture* capture)
 {
-	StringCapture capture;
+	if (capture) {
+		destroy(capture->str);
+		destroy(capture);
+	}
+}
 
+static StringCapture* capture_string(LexerContext* context)
+{
+	StringCapture* capture = malloc(sizeof(StringCapture));
+	size_t len = 0;
+	
 	fseek(context->fp, -1, SEEK_CUR);
 	unsigned long start = ftell(context->fp);
 
-	for (capture.len = 0; !is_separator(context); capture.len++)
+	for (len = 0; !is_separator(context); len++)
 		next_token(context);
 
 	fseek(context->fp, start, SEEK_SET);
-	capture.str = malloc(capture.len + 1);
+	capture->str = malloc(len + 1);
 
-	if (fgets(capture.str, capture.len, context->fp) == 0)
+	if (fgets(capture->str, len, context->fp) == 0)
 		log_kill("failed to retrieve string\n");
 
-	capture.str[capture.len] = '\0';
-
+	capture->str[len] = '\0';
+	capture->len = strlen(capture->str);
+	
 	return capture;
 }
 
@@ -159,12 +170,12 @@ static TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
 			break;
-			
+
 		case TOK_INTEGER_LITERAL:
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
 			break;
-			
+
 		default:
 			log_err("unknown token type\n");
 			break;
@@ -173,13 +184,14 @@ static TokenValue* init_token_value(TokenType type)
 	return val;
 }
 
-static Token* create_token(LexerContext* context, TokenType type, void* val)
+static Token* create_token(LexerContext* context, TokenType type, void* val, size_t len)
 {
 	Token* token = malloc(sizeof(Token));
 	token->val = init_token_value(type);
 	token->type = type;
 	token->pos.line = context->start.line;
 	token->pos.column = context->start.column;
+	token->len = len;
 
 	switch (type) {
 		case TOK_INTEGER_LITERAL:
@@ -189,7 +201,7 @@ static Token* create_token(LexerContext* context, TokenType type, void* val)
 		case TOK_IDENT:
 			token->val->string = val;
 			break;
-			
+
 		case TOK_TYPE_S8:
 		case TOK_TYPE_S16:
 		case TOK_TYPE_S32:
@@ -213,9 +225,9 @@ static Token* tokenize(LexerContext* context)
 	next_token(context);
 	save_token_start(context);
 
-	StringCapture capture;
+	StringCapture* capture;
 	Token* token = NULL;
-	
+
 	switch (context->lookahead) {
 		case ' ':
 		case '\t':
@@ -226,30 +238,38 @@ static Token* tokenize(LexerContext* context)
 		default: {
 			if (isalpha(context->lookahead) || context->lookahead == '_') {
 				capture = capture_string(context);
-				
-				token = 
+
+				token =
 					// Types
-					strstr(capture.str, "u8")  ? create_token(context, TOK_TYPE_U8, 	NULL) :
-					strstr(capture.str, "u16") ? create_token(context, TOK_TYPE_U16, 	NULL) :
-					strstr(capture.str, "u32") ? create_token(context, TOK_TYPE_U32, 	NULL) :
-					strstr(capture.str, "u64") ? create_token(context, TOK_TYPE_U64, 	NULL) :
-					strstr(capture.str, "s8")  ? create_token(context, TOK_TYPE_S8, 	NULL) :
-					strstr(capture.str, "s16") ? create_token(context, TOK_TYPE_S16, 	NULL) :
-					strstr(capture.str, "s32") ? create_token(context, TOK_TYPE_S32, 	NULL) :
-					strstr(capture.str, "s64") ? create_token(context, TOK_TYPE_S64, 	NULL) :
-					// Identifier
-												 create_token(context, TOK_IDENT, 		strdup(capture.str));
-				
-				destroy(capture.str);
-				
+					strstr(capture->str, "u8")  
+						? create_token(context, TOK_TYPE_U8,  NULL, capture->len) :
+					strstr(capture->str, "u16") 
+						? create_token(context, TOK_TYPE_U16, NULL, capture->len) :
+					strstr(capture->str, "u32") 
+						? create_token(context, TOK_TYPE_U32, NULL, capture->len) :
+					strstr(capture->str, "u64") 
+						? create_token(context, TOK_TYPE_U64, NULL, capture->len) :
+					strstr(capture->str, "s8")  
+						? create_token(context, TOK_TYPE_S8,  NULL, capture->len) :
+					strstr(capture->str, "s16") 
+						? create_token(context, TOK_TYPE_S16, NULL, capture->len) :
+					strstr(capture->str, "s32") 
+						? create_token(context, TOK_TYPE_S32, NULL, capture->len) :
+					strstr(capture->str, "s64") 
+						? create_token(context, TOK_TYPE_S64, NULL, capture->len) :
+					// OTHERWISE - Identifier
+						create_token(context, TOK_IDENT, strdup(capture->str), capture->len);
+
+				destroy_string_capture(capture);
+
 			} else if (isdigit(context->lookahead)) {
 				/* TODO - Only does positive integers */
-				
+
 				capture = capture_string(context);
 				uint64_t* value = malloc(sizeof(uint64_t));
-				*value = (uint64_t) strtoll(capture.str, 0, 0);
-				destroy(capture.str);
-				return create_token(context, TOK_INTEGER_LITERAL, value);
+				*value = (uint64_t) strtoll(capture->str, 0, 0);
+				destroy_string_capture(capture);
+				return create_token(context, TOK_INTEGER_LITERAL, value, capture->len);
 			} else {
 				log_lexer_error(context, "unknown grammar\n");
 			}
@@ -258,14 +278,14 @@ static Token* tokenize(LexerContext* context)
 		}
 	}
 
-	adjust_position(context, capture.len);
+	adjust_position(context, capture->len);
 	return token;
 }
 
 void lex(LexerContext* context)
 {
 	Token* token;
-	
+
 	while ((token = tokenize(context)))
 		fifo_push(context->tokens, token);
 }
