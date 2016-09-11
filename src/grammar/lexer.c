@@ -19,8 +19,9 @@ void destroy_token_value(void* tok_val)
 	TokenValue* value = (TokenValue*) tok_val;
 
 	if (value) {
-		if (value->integer)
-			destroy(value->integer);
+		// LOLWUT - Why is this segfaulting....
+		/*if (value->integer)
+			destroy(value->integer);*/
 		if (value->string)
 			destroy(value->string);
 		
