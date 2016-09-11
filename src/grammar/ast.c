@@ -45,9 +45,6 @@ ASTNode* init_ast_node(List* tokens)
 
 	if (token) {
 		switch (token->type) {
-			case TOK_EOF:
-				break;
-
 			case TOK_IDENT:
 				return init_ast_ident(token);
 
@@ -182,9 +179,6 @@ void ast_dump(List* ast)
 
 		if (node && node->token) {
 			switch (node->type) {
-				case TOK_EOF:
-					break;
-
 				case TOK_INTEGER_LITERAL:
 					ast_dump_integer_literal(node, depth);
 					break;

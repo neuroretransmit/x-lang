@@ -103,8 +103,6 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 		context->current_tokens = init_list_objects(&destroy_token);
 
 		switch (token->type) {
-			case TOK_EOF:
-				return NULL;
 
 			case TOK_IDENT:
 				if (parse_ident(context, token)) {
@@ -121,7 +119,8 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 				}
 
 				break;
-
+			
+			
 			case TOK_TYPE_S8:
 			case TOK_TYPE_S16:
 			case TOK_TYPE_S32:
@@ -130,7 +129,7 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64:
-				
+			// --- variable declaration
 				if (parse_type()) {
 					list_append(context->current_tokens, token);
 
@@ -141,7 +140,7 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 
 					return init_ast_node(context->current_tokens);
 				}
-
+			// --- end variable declaration
 				break;
 
 			default:

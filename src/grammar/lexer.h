@@ -8,8 +8,7 @@
 
 /* Reserve the top 100 for root ast constructs */
 typedef enum {
-	TOK_EOF = 100,
-	TOK_IDENT,
+	TOK_IDENT = 100,
 	TOK_INTEGER_LITERAL,
 	TOK_TYPE_S8,
 	TOK_TYPE_S16,

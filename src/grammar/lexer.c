@@ -112,7 +112,6 @@ static bool is_separator(LexerContext* context)
 		case ';':
 		case '\t':
 		case '\n':
-		case EOF:
 			return true;
 	}
 
@@ -151,7 +150,6 @@ static TokenValue* init_token_value(TokenType type)
 	TokenValue* val = NULL;
 
 	switch (type) {
-		case TOK_EOF:
 		case TOK_TYPE_S8:
 		case TOK_TYPE_S16:
 		case TOK_TYPE_S32:
@@ -192,7 +190,6 @@ static Token* create_token(LexerContext* context, TokenType type, void* val)
 			token->val->string = val;
 			break;
 			
-		case TOK_EOF:
 		case TOK_TYPE_S8:
 		case TOK_TYPE_S16:
 		case TOK_TYPE_S32:
@@ -231,15 +228,17 @@ static Token* tokenize(LexerContext* context)
 				capture = capture_string(context);
 				
 				token = 
-					strstr(capture.str, "u8") 	? create_token(context, TOK_TYPE_U8, 	NULL) :
-					strstr(capture.str, "u16") 	? create_token(context, TOK_TYPE_U16, 	NULL) :
-					strstr(capture.str, "u32") 	? create_token(context, TOK_TYPE_U32, 	NULL) :
-					strstr(capture.str, "u64") 	? create_token(context, TOK_TYPE_U64, 	NULL) :
-					strstr(capture.str, "s8") 	? create_token(context, TOK_TYPE_S8, 	NULL) :
-					strstr(capture.str, "s16") 	? create_token(context, TOK_TYPE_S16, 	NULL) :
-					strstr(capture.str, "s32") 	? create_token(context, TOK_TYPE_S32, 	NULL) :
-					strstr(capture.str, "s64") 	? create_token(context, TOK_TYPE_S64, 	NULL) :
-												  create_token(context, TOK_IDENT, 		strdup(capture.str));
+					// Types
+					strstr(capture.str, "u8")  ? create_token(context, TOK_TYPE_U8, 	NULL) :
+					strstr(capture.str, "u16") ? create_token(context, TOK_TYPE_U16, 	NULL) :
+					strstr(capture.str, "u32") ? create_token(context, TOK_TYPE_U32, 	NULL) :
+					strstr(capture.str, "u64") ? create_token(context, TOK_TYPE_U64, 	NULL) :
+					strstr(capture.str, "s8")  ? create_token(context, TOK_TYPE_S8, 	NULL) :
+					strstr(capture.str, "s16") ? create_token(context, TOK_TYPE_S16, 	NULL) :
+					strstr(capture.str, "s32") ? create_token(context, TOK_TYPE_S32, 	NULL) :
+					strstr(capture.str, "s64") ? create_token(context, TOK_TYPE_S64, 	NULL) :
+					// Identifier
+												 create_token(context, TOK_IDENT, 		strdup(capture.str));
 				
 				destroy(capture.str);
 				
