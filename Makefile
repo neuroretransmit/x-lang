@@ -25,7 +25,7 @@ WARNINGS := -Wall -Wextra -Werror -fPIC
 CFLAGS := -g $(CSTD) $(WARNINGS) $(INCLUDES)
 
 
-all: $(LIBRARY_BINARY) $(TESTS_BINARY) $(BINARY)
+all: $(TESTS_BINARY) $(BINARY)
 
 $(BINARY): $(LIBRARY_BINARY) $(OBJECTS) 
 	@mkdir -p $(@D)

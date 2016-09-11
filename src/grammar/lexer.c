@@ -19,6 +19,8 @@ void destroy_token_value(void* tok_val)
 	TokenValue* value = (TokenValue*) tok_val;
 
 	if (value) {
+		if (value->integer)
+			destroy(value->integer);
 		if (value->string)
 			destroy(value->string);
 		
@@ -42,6 +44,7 @@ LexerContext* init_lexer(char* fname)
 	LexerContext* context = malloc(sizeof(LexerContext));
 	context->fname = fname;
 	context->fp = fopen(fname, "r");
+	context->tokens = init_fifo_objects(&destroy_token);
 	return context;
 }
 
@@ -139,7 +142,6 @@ static TokenValue* init_token_value(TokenType type)
 
 	switch (type) {
 		case TOK_EOF:
-		case TOK_INTEGER_LITERAL:
 		case TOK_TYPE_S8:
 		case TOK_TYPE_S16:
 		case TOK_TYPE_S32:
@@ -148,6 +150,9 @@ static TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U16:
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
+			break;
+		case TOK_INTEGER_LITERAL:
+			val = malloc(sizeof(int64_t));
 			break;
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
@@ -250,11 +255,8 @@ static Token* tokenize(LexerContext* context)
 
 void lex(LexerContext* context)
 {
-	FIFO* tokens = init_fifo_objects(&destroy_token);
 	Token* token;
 	
-	while ((token = tokenize(context)) != NULL)
-		fifo_push(tokens, tokenize(context));
-	
-	context->tokens = tokens;
+	while ((token = tokenize(context)))
+		fifo_push(context->tokens, token);
 }
