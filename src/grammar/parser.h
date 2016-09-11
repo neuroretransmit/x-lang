@@ -1,11 +1,17 @@
 #pragma once
 
 #include "ast.h"
+#include "lexer.h"
 #include "../util/collections/list.h"
 
-List* _ast;
+typedef struct {
+	char* fname;
+	List* ast;
+	List* current_tokens;
+	LexerContext lexer_context;
+} ParserContext;
 
-void init_parser(char* fname);
-void destroy_parser();
-List* parse();
+ParserContext init_parser(char* fname);
+void destroy_parser(ParserContext context);
+List* parse(ParserContext context, FIFO* tokens);
 

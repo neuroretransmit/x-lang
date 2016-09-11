@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -36,14 +37,22 @@ typedef struct Token {
 	TokenType type;
 	TokenValue* val;
 	TokenPos pos;
+	size_t len;
 } Token;
 
-extern FIFO* _tokens;
+typedef struct {
+	char* fname;
+	FILE* fp;
+	char lookahead;
+	char previous;
+	TokenPos current_pos;
+	TokenPos start;
+} LexerContext;
 
-void init_lexer(char* fname);
+LexerContext init_lexer(char* fname);
 void destroy_lexer();
 void destroy_token(void* tok);
 
-void lex();
+FIFO* lex(LexerContext lexer);
 void dump_tokens();
 

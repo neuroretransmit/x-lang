@@ -122,7 +122,7 @@ static void ast_dump_ident(Token* ident, int depth)
 		printf("<%zu:%zu:ident:\"%s\">\n",
 			   ident->pos.line, ident->pos.column,
 			   ident->val->string);
-		destroy(ident->val->string);
+		//destroy(ident->val->string);
 	}
 }
 

@@ -62,13 +62,13 @@ int main(int argc, char** argv)
 
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
-				init_parser(fname);
+				ParserContext parser = init_parser(fname);
 				
-				List* ast = parse();
+				List* ast = parse(parser, lex(parser.lexer_context));
 				
 				ast_dump(ast);
 				
-				destroy_parser();
+				destroy_parser(parser);
 				destroy_list(ast);
 			}
 
