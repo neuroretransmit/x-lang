@@ -45,13 +45,22 @@ LexerContext* init_lexer(char* fname)
 	context->fname = fname;
 	context->fp = fopen(fname, "r");
 	context->tokens = init_fifo_objects(&destroy_token);
+	context->start.column = context->current_pos.column = 1;
+	context->start.line = context->current_pos.line = 1;
 	return context;
 }
 
 void destroy_lexer(LexerContext* context)
 {
-	if (context->fp)
-		fclose(context->fp);
+	if (context) {
+		if (context->fp)
+			fclose(context->fp);
+		
+		if (context->tokens)
+			destroy_fifo(context->tokens);
+		
+		destroy(context);
+	}
 }
 
 static void log_lexer_error(LexerContext* context, const char* fmt, ...)
@@ -151,12 +160,12 @@ static TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
 			break;
+			
 		case TOK_INTEGER_LITERAL:
-			val = malloc(sizeof(int64_t));
-			break;
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
 			break;
+			
 		default:
 			log_err("unknown token type\n");
 			break;

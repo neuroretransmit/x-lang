@@ -6,6 +6,7 @@
 
 #include <grammar/lexer.h>
 #include <util/file_utils.h>
+#include <util/mem_utils.h>
 #include <util/log.h>
 
 #define MATCH 0
@@ -31,8 +32,7 @@ static void ident_test()
 	for (unsigned i = 0; lexer->tokens->size; i++) {
 		token = (Token*) fifo_pop(lexer->tokens);
 		assert(strcmp(token->val->string, expected[i]) == MATCH);
-
-		//destroy_token(token);
+		destroy(token);
 	}
 
 	log_info("PASS\n");
@@ -60,9 +60,7 @@ static void integer_literal_test()
 	for (size_t i = 0; lexer->tokens->size; i++) {
 		token = fifo_pop(lexer->tokens);
 		assert(*token->val->integer == expected[i]);
-
-		//destroy_token(token);
-
+		destroy(token);
 	}
 
 	log_info("PASS\n");
@@ -88,10 +86,8 @@ static void type_test()
 
 	for (size_t i = 0; lexer->tokens->size; i++) {
 		Token* token = fifo_pop(lexer->tokens);
-
 		assert(token->type == EXPECTED[i]);
-
-		destroy_token(token);
+		destroy(token);
 	}
 
 	log_info("PASS\n");
