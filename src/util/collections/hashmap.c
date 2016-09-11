@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "hashmap.h"
-#include "../mem_utils.h"
-#include "../log.h"
+#include <util/collections/hashmap.h>
+#include <util/mem_utils.h>
+#include <util/log.h>
 
 #define MIN_SLOTS	16
 #define MULTIPLIER	37

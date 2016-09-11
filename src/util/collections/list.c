@@ -1,9 +1,9 @@
-#include "list.h"
+#include <util/collections/list.h>
 
 #include <stdlib.h>
 
-#include "../mem_utils.h"
-#include "../debug.h"
+#include <util/mem_utils.h>
+#include <util/debug.h>
 
 List* init_list()
 {

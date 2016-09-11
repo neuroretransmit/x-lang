@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "grammar/ast.h"
-#include "grammar/parser.h"
-#include "util/mem_utils.h"
-#include "util/file_utils.h"
+#include <grammar/ast.h>
+#include <grammar/parser.h>
+#include <util/mem_utils.h>
+#include <util/file_utils.h>
 
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
 const char* argp_program_version = "x-lang v0.0.1";

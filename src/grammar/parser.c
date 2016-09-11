@@ -1,15 +1,15 @@
-#include "parser.h"
+#include <grammar/parser.h>
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lexer.h"
-#include "../util/debug.h"
-#include "../util/mem_utils.h"
-#include "../grammar/ast.h"
-#include "../util/regex_utils.h"
-#include "../util/collections/fifo.h"
+#include <grammar/ast.h>
+#include <grammar/lexer.h>
+#include <util/debug.h>
+#include <util/mem_utils.h>
+#include <util/regex_utils.h>
+#include <util/collections/fifo.h>
 
 ParserContext* init_parser(char* fname)
 {

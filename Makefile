@@ -8,7 +8,7 @@ TESTDIR := tests
 TESTOBJDIR := $(OBJDIR)/tests
 
 BINARY := $(BINDIR)/x-lang
-LIBRARY := $(LIBDIR)/libx-lang.so
+LIBRARY_BINARY := $(LIBDIR)/libx-lang.so
 TESTS_BINARY := $(BINDIR)/x-lang-tests
 
 SOURCES := $(shell find src -name **.c)
@@ -17,30 +17,25 @@ OBJECTS := $(patsubst src/%.c, obj/%.o, $(SOURCES))
 TEST_SOURCES := $(shell find tests -name **.c)
 TEST_OBJECTS := $(patsubst tests/%.c, obj/tests/%.o, $(TEST_SOURCES))
 
+INCLUDES := -Isrc
+
 CC := gcc
 CSTD := -std=gnu11
 WARNINGS := -Wall -Wextra -Werror -fPIC
-CFLAGS := -g $(CSTD) $(WARNINGS) -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS
-
-CXX := g++
-CXXSTD := -std=g++14
-CXXFLAGS := $(CXXSTD) $(WARNINGS) -rdynamic -pthread
-
-#LIBS := -Lbin `llvm-config --libs core analysis` -ldl -lz
-#LDFLAGS := `llvm-config --ldflags`
+CFLAGS := -g $(CSTD) $(WARNINGS) $(INCLUDES)
 
 
-all: $(BINARY) $(TESTS_BINARY)
+all: $(LIBRARY_BINARY) $(TESTS_BINARY) $(BINARY)
 
-$(BINARY): $(OBJECTS) 
+$(BINARY): $(LIBRARY_BINARY) $(OBJECTS) 
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBS)
 
-$(LIBRARY): $(filter-out obj/main.o, $(OBJECTS))
+$(LIBRARY_BINARY): $(filter-out obj/main.o, $(OBJECTS))
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -shared $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) -shared $^ -o $@
 
-$(TESTS_BINARY): $(TEST_OBJECTS) $(LIBRARY)
+$(TESTS_BINARY): $(LIBRARY_BINARY) $(TEST_OBJECTS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $^ -o $@
 
@@ -50,7 +45,7 @@ $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.c
 
 $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -Isrc -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ 
 
 run-%: $(BINARY)
 	valgrind --leak-check=full --show-leak-kinds=all $< $(RESDIR)/$*.x 2>&1 | tee -a LEAK_REPORT.txt

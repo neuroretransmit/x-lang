@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include <grammar/lexer.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -6,8 +6,8 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "../util/log.h"
-#include "../util/mem_utils.h"
+#include <util/log.h>
+#include <util/mem_utils.h>
 
 typedef struct {
 	size_t len;

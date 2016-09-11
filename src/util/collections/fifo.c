@@ -1,8 +1,8 @@
-#include "fifo.h"
+#include <util/collections/fifo.h>
 
 #include <stdlib.h>
 
-#include "../mem_utils.h"
+#include <util/mem_utils.h>
 
 FIFO* init_fifo()
 {

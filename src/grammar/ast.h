@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "lexer.h"
-#include "../util/collections/list.h"
+#include <grammar/lexer.h>
+#include <util/collections/list.h>
 
 typedef enum {
 	AST_TYPE_NONE,

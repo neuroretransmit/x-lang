@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ast.h"
-#include "lexer.h"
-#include "../util/collections/list.h"
+#include <grammar/ast.h>
+#include <grammar/lexer.h>
+#include <util/collections/list.h>
 
 typedef struct {
 	char* fname;

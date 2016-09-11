@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../util/collections/fifo.h"
+#include <util/collections/fifo.h>
 
 /* Reserve the top 100 for root ast constructs */
 typedef enum {

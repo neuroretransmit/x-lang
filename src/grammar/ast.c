@@ -1,11 +1,11 @@
-#include "ast.h"
+#include <grammar/ast.h>
 
 #include <inttypes.h>
 #include <stdlib.h>
 
-#include "../util/mem_utils.h"
-#include "../util/log.h"
-#include "../grammar/lexer.h"
+#include <util/mem_utils.h>
+#include <util/log.h>
+#include <grammar/lexer.h>
 
 static ASTNode* _allocate_node(Token* tok)
 {
