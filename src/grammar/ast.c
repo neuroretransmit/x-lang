@@ -74,7 +74,7 @@ ASTNode* init_ast_node(List* tokens)
 				return NULL;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -173,7 +173,7 @@ static void ast_dump_variable_declaration(ASTVariableDeclaration* var_decl, int 
 void ast_dump(List* ast)
 {
 	int depth = 0;
-	
+
 	for (unsigned i = 0; i < ast->size; i++) {
 		ASTNode* node = list_get(ast, i);
 
