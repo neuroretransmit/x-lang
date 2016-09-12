@@ -87,7 +87,7 @@ These will not be implicitly set by filename – I want to know what package I�
 
 <variable_definition> ::= <variable_declaration> ‘=’ <expression>
 
-<function_argument> ::= <ident> ‘:’ <type>
+<function_argument> ::= <type> <ident>
 
 <prototype> ::= “fn” <ident> ( ‘(‘ <function_argument> (‘,’ <function_argument>)* ‘)’ ) “->” <type>
 

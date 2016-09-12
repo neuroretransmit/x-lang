@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "grammar/parser.h"
-#include "util/mem_utils.h"
-#include "util/file_utils.h"
+#include <grammar/ast.h>
+#include <grammar/parser.h>
+#include <util/mem_utils.h>
+#include <util/file_utils.h>
 
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
 const char* argp_program_version = "x-lang v0.0.1";
@@ -61,8 +62,15 @@ int main(int argc, char** argv)
 
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
-				init_parser(fname);
-				parse();
+				ParserContext* parser = init_parser(fname);
+
+
+				List* ast = parse(parser);
+
+				ast_dump(ast);
+
+				destroy_parser(parser);
+				destroy_list(ast);
 			}
 
 			prev = fname;
@@ -70,6 +78,4 @@ int main(int argc, char** argv)
 
 		destroy(arguments.argz);
 	}
-
-	destroy_parser();
 }

@@ -1,13 +1,14 @@
 #pragma once
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../util/collections/fifo.h"
+#include <util/collections/fifo.h>
 
+/* Reserve the top 100 for root ast constructs */
 typedef enum {
-	TOK_EOF,
-	TOK_IDENT,
+	TOK_IDENT = 100,
 	TOK_INTEGER_LITERAL,
 	TOK_TYPE_S8,
 	TOK_TYPE_S16,
@@ -35,14 +36,23 @@ typedef struct Token {
 	TokenType type;
 	TokenValue* val;
 	TokenPos pos;
+	size_t len;
 } Token;
 
-extern FIFO* _tokens;
+typedef struct {
+	char* fname;
+	FILE* fp;
+	char lookahead;
+	char previous;
+	TokenPos current_pos;
+	TokenPos start;
+	FIFO* tokens;
+} LexerContext;
 
-void init_lexer(char* fname);
+LexerContext* init_lexer(char* fname);
 void destroy_lexer();
-void destroy_token();
+void destroy_token(void* tok);
 
-void lex();
+void lex(LexerContext* lexer);
 void dump_tokens();
 

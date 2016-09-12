@@ -1,7 +1,17 @@
 #pragma once
 
-void init_parser(char* fname);
-void destroy_parser();
+#include <grammar/ast.h>
+#include <grammar/lexer.h>
+#include <util/collections/list.h>
 
-void parse();
+typedef struct {
+	char* fname;
+	List* ast;
+	List* current_tokens;
+	LexerContext* lexer_context;
+} ParserContext;
+
+ParserContext* init_parser(char* fname);
+void destroy_parser(ParserContext* context);
+List* parse(ParserContext* context);
 
