@@ -15,10 +15,10 @@ static List* setup(void (*destructor)(void*))
 	if (destructor)
 		return init_list_objects(destructor);
 	else
-		return init_list();
+		return init_list_objects(NULL);
 }
 
-static void test_init_list()
+static void init_list_test()
 {
 	// Test proper destructor was assigned with list of objects
 	List* list = init_list_objects(dummy_destructor);
@@ -32,14 +32,11 @@ static void test_init_list()
 	log_info("PASS\n");
 }
 
-static void test_list_append()
+static void list_append_test()
 {
 	List* list = setup(NULL);
 	
-	// Test with primitive types ------------------------------------------
-	int EXPECTED[6] = { 
-		rand(), rand(), rand(), rand(), rand(), rand()
-	};
+	int EXPECTED[6] = {  rand(), rand(), rand(), rand(), rand(), rand() };
 	
 	void* prev;
 	
@@ -59,41 +56,82 @@ static void test_list_append()
 		}
 	}
 	
-	// --------------------------------------------------------------------
+	destroy(list);
+	log_info("PASS\n");
+}
+
+static void list_prepend_test()
+{
+	List* list = setup(NULL);
+	
+	int EXPECTED[6] = {  rand(), rand(), rand(), rand(), rand(), rand() };
+	
+	void* prev;
+	
+	for (size_t i = 0; i < 6; i++) {
+		prev = list->head;
+		list_prepend(list, &EXPECTED[i]);
+		assert(list->size == i+1);
+		
+		// Check that both head and tail were assigned on first append
+		if (list) {
+			if (list->size == 1) {
+				assert(list->head && list->tail && (list->head == list->tail));
+			} else {
+				assert(list->head != prev);
+				assert(*(int*) list->head->data == EXPECTED[i]);
+			}
+		}
+	}
 	
 	destroy(list);
 	log_info("PASS\n");
 }
 
-static void test_list_prepend()
+void list_get_test()
 {
-	List* list = init_list_objects(NULL);
-
-	destroy_list(list);
+	List* list = setup(NULL);
+	
+	int EXPECTED[6] = {  rand(), rand(), rand(), rand(), rand(), rand() };
+	
+	for (size_t i = 0; i < sizeof(EXPECTED) / sizeof(int); i++)
+		list_append(list, &EXPECTED[i]);
+	
+	for (size_t i = 0; i < sizeof(EXPECTED) / sizeof(int); i++)
+		assert(*(int*) list_get(list, i) == EXPECTED[i]);
+	
+	destroy(list);
 	log_info("PASS\n");
 }
 
-void test_list_get()
+void list_remove_test()
 {
-	List* list = init_list_objects(NULL);
+	List* list = setup(NULL);
 
-	destroy_list(list);
-	log_info("PASS\n");
-}
-
-void test_list_remove()
-{
-	List* list = init_list_objects(NULL);
-
-	destroy_list(list);
+	int EXPECTED[6] = {  rand(), rand(), rand(), rand(), rand(), rand() };
+	
+	
+	for (size_t i = 0; i < 6; i++)
+		list_append(list, &EXPECTED[i]);
+	
+	//void* prev;
+	
+	for (size_t i = 0; i < 6; i++) {
+		//prev = list->tail;
+		list_remove(list, i);
+		//assert(list->tail != prev);
+		assert(list->size == (6 - (i+1)));
+	}
+	
+	destroy(list);
 	log_info("PASS\n");
 }
 
 void list_tests()
 {
-	test_init_list();
-	test_list_append();
-	test_list_prepend();
-	test_list_get();
-	test_list_remove();
+	init_list_test();
+	list_append_test();
+	list_prepend_test();
+	list_get_test();
+	list_remove_test();
 }

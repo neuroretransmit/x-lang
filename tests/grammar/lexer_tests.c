@@ -30,43 +30,43 @@ static void ident_test()
 	LexerContext* lexer = setup("res/ident.x");
 	lex(lexer);
 
-	char* EXPECTED_VALUES[7] = {
+	char* EXPECTED_VALUES[] = {
 		"ii", "x", "b", "a", "_a", "__a_", "xylophone_dreams"
 	};
 
 	Token* EXPECTED[7] = {
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[0]),
+		mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[0])),
 		mock_token_pos(1, 1),
 		2
 				  ),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[1]),
+		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[1])),
 		mock_token_pos(2, 1),
 		1
 				  ),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[2]),
+		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[2])),
 		mock_token_pos(3, 1),
 		1
 				  ),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[3]),
+		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[3])),
 		mock_token_pos(4, 1),
 		1
 				  ),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[4]),
+		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[4])),
 		mock_token_pos(5, 1),
 		2
 				  ),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[5]),
+		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[5])),
 		mock_token_pos(6, 1),
 		4
 				  ),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, &EXPECTED_VALUES[6]),
+		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[6])),
 		mock_token_pos(7, 1),
 		16
 				  )

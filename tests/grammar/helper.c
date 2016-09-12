@@ -12,7 +12,6 @@ static void check_token_val(TokenType type, TokenValue* actual, TokenValue* expe
 	if (actual && expected) {
 		switch (type) {
 			case TOK_IDENT:
-				printf("%s %s\n", actual->string, expected->string);
 				assert(strcmp(actual->string, expected->string) == MATCH);
 				break;
 
@@ -116,9 +115,19 @@ TokenValue* mock_token_value(TokenType type, void* value)
 		case TOK_INTEGER_LITERAL:
 			val->integer = value;
 			break;
-
+		
+		case TOK_TYPE_U8:
+		case TOK_TYPE_U16:
+		case TOK_TYPE_U32:
+		case TOK_TYPE_U64:
+		case TOK_TYPE_S8:
+		case TOK_TYPE_S16:
+		case TOK_TYPE_S32:
+		case TOK_TYPE_S64:
+			break;
+		
 		default:
-			log_kill("no case for this token type");
+			log_kill("no case for this token type\n");
 			break;
 	}
 

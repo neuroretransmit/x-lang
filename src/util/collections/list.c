@@ -13,7 +13,7 @@ List* init_list()
 List* init_list_objects(void (*destructor)(void* obj))
 {
 	List* list = calloc(1, sizeof(List));
-	list->destructor = (destructor) ? destructor : &destroy;
+	list->destructor = destructor;
 
 	return list;
 }
@@ -60,8 +60,8 @@ void destroy_list_node(List* list, ListNode* node)
 
 	if (list->destructor != NULL && node->data != NULL)
 		list->destructor(node->data);
-	else if (node->data != NULL)
-		destroy(node->data);
+	/*else if (node->data != NULL)
+		destroy(node->data);*/
 
 	destroy(node);
 }
