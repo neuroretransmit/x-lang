@@ -39,40 +39,40 @@ static void ident_test()
 
 	Token* EXPECTED[7] = {
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[0])),
-		mock_token_pos(1, 1),
-		2
-				  ),
+			mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[0])),
+			mock_token_pos(1, 1),
+			2
+		),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[1])),
-		mock_token_pos(2, 1),
-		1
-				  ),
+			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[1])),
+			mock_token_pos(2, 1),
+			1
+		),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[2])),
-		mock_token_pos(3, 1),
-		1
-				  ),
+			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[2])),
+			mock_token_pos(3, 1),
+			1
+		),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[3])),
-		mock_token_pos(4, 1),
-		1
-				  ),
+			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[3])),
+			mock_token_pos(4, 1),
+			1
+		),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[4])),
-		mock_token_pos(5, 1),
-		2
-				  ),
+			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[4])),
+			mock_token_pos(5, 1),
+			2
+		),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[5])),
-		mock_token_pos(6, 1),
-		4
-				  ),
+			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[5])),
+			mock_token_pos(6, 1),
+			4
+		),
 		mock_token(TOK_IDENT,
-		mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[6])),
-		mock_token_pos(7, 1),
-		16
-				  )
+			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[6])),
+			mock_token_pos(7, 1),
+			16
+		)
 	};
 	
 	Token* token = NULL;
@@ -105,35 +105,35 @@ static void integer_literal_test()
 	
 	Token* EXPECTED[7] = {
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[0]),
-		mock_token_pos(1, 1),
-		1
-				  ),
+			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[0]),
+			mock_token_pos(1, 1),
+			1
+		),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[1]),
-		mock_token_pos(1, 3),
-		2
-				  ),
+			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[1]),
+			mock_token_pos(1, 3),
+			2
+		),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[2]),
-		mock_token_pos(1, 6),
-		5
-				  ),
-		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[3]),
-		mock_token_pos(1, 12),
-		3
-				  ),
-		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[4]),
-		mock_token_pos(1, 16),
-		6
-				  ),
-		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[5]),
-		mock_token_pos(1, 23),
-		3
-				  )
+			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[2]),
+			mock_token_pos(1, 6),
+			5
+		),
+			mock_token(TOK_INTEGER_LITERAL,
+			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[3]),
+			mock_token_pos(1, 12),
+			3
+		),
+			mock_token(TOK_INTEGER_LITERAL,
+			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[4]),
+			mock_token_pos(1, 16),
+			6
+		),
+			mock_token(TOK_INTEGER_LITERAL,
+			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[5]),
+			mock_token_pos(1, 23),
+			3
+		)
 	};
 
 	Token* token = NULL;
@@ -165,11 +165,12 @@ static void type_test()
 
 	};
 
+	for (size_t i = 0; i < 8; i++)
+		fifo_push(lexer->tokens, EXPECTED[i]);
+	
 	for (size_t i = 0; lexer->tokens->size; i++) {
 		Token* token = fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
-		destroy_token(token);
-		destroy(EXPECTED[i]->val);
 		destroy(EXPECTED[i]);
 	}
 
