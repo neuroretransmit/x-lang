@@ -59,7 +59,7 @@ static void list_append_test()
 		}
 	}
 	
-	destroy(list);
+	destroy_list(list);
 	log_info("PASS\n");
 }
 
@@ -87,7 +87,7 @@ static void list_prepend_test()
 		}
 	}
 	
-	destroy(list);
+	destroy_list(list);
 	log_info("PASS\n");
 }
 
@@ -103,7 +103,7 @@ void list_get_test()
 	for (size_t i = 0; i < sizeof(EXPECTED) / sizeof(int); i++)
 		assert(*(int*) list_get(list, i) == EXPECTED[i]);
 	
-	destroy(list);
+	destroy_list(list);
 	log_info("PASS\n");
 }
 
@@ -123,7 +123,7 @@ void list_remove_test()
 		assert(list->size == (6 - (i+1)));
 	}
 	
-	destroy(list);
+	destroy_list(list);
 	log_info("PASS\n");
 }
 
