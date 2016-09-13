@@ -49,7 +49,7 @@ void destroy_list_node(List* list, ListNode* node)
 	// Join surrounding nodes
 	if (list->head == node) {			// Head - reassign
 		list->head = node->next;
-		list->head->prev = node->next;
+		list->head->prev = node->next;	// Set head's previous to itself
 	} else if (list->tail == node) { 	// Tail - reassign
 		list->tail = node->prev;
 		list->tail->next = node->prev;
@@ -60,8 +60,6 @@ void destroy_list_node(List* list, ListNode* node)
 
 	if (list->destructor != NULL && node->data != NULL)
 		list->destructor(node->data);
-	/*else if (node->data != NULL)
-		destroy(node->data);*/
 
 	destroy(node);
 }

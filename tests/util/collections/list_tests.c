@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 #include <util/log.h>
 #include <util/mem_utils.h>
@@ -12,6 +13,8 @@
 
 static List* setup(void (*destructor)(void*))
 {
+	srand(time(NULL));
+	
 	if (destructor)
 		return init_list_objects(destructor);
 	else
@@ -107,19 +110,16 @@ void list_get_test()
 void list_remove_test()
 {
 	List* list = setup(NULL);
-
+	
 	int EXPECTED[6] = {  rand(), rand(), rand(), rand(), rand(), rand() };
 	
 	
 	for (size_t i = 0; i < 6; i++)
 		list_append(list, &EXPECTED[i]);
 	
-	//void* prev;
-	
-	for (size_t i = 0; i < 6; i++) {
-		//prev = list->tail;
-		list_remove(list, i);
-		//assert(list->tail != prev);
+	for (size_t i = 6; i < 6; i--) {
+		printf("%zu\n", i);
+		list_remove(list, 1);
 		assert(list->size == (6 - (i+1)));
 	}
 	
