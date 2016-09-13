@@ -109,7 +109,7 @@ TokenValue* mock_token_value(TokenType type, void* value)
 	
 	switch (type) {
 		case TOK_IDENT:
-			val->string = strdup(value);
+			val->string = value;
 			break;
 			
 		case TOK_INTEGER_LITERAL:

@@ -99,36 +99,38 @@ static void integer_literal_test()
 	};
 
 	int64_t* expected_ptr = malloc(sizeof(int64_t) * 6);
-	memcpy(expected_ptr, &EXPECTED_VALUES, sizeof(int64_t) * 6);
+	
+	for (int i = 0; i < 6; i++)
+		expected_ptr[i] = EXPECTED_VALUES[i];
 	
 	Token* EXPECTED[7] = {
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, (void*) expected_ptr[0]),
+		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[0]),
 		mock_token_pos(1, 1),
 		1
 				  ),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, (void*) expected_ptr[1]),
+		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[1]),
 		mock_token_pos(1, 3),
 		2
 				  ),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, (void*) expected_ptr[2]),
+		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[2]),
 		mock_token_pos(1, 6),
 		5
 				  ),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, (void*) expected_ptr[3]),
+		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[3]),
 		mock_token_pos(1, 12),
 		3
 				  ),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, (void*) expected_ptr[4]),
+		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[4]),
 		mock_token_pos(1, 16),
 		6
 				  ),
 		mock_token(TOK_INTEGER_LITERAL,
-		mock_token_value(TOK_INTEGER_LITERAL, (void*) expected_ptr[5]),
+		mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[5]),
 		mock_token_pos(1, 23),
 		3
 				  )

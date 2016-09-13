@@ -169,8 +169,9 @@ TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U16:
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
+			log_warn("token type doesn't hold a value\n");
 			break;
-
+			
 		case TOK_INTEGER_LITERAL:
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
@@ -284,6 +285,7 @@ void lex(LexerContext* context)
 {
 	Token* token;
 
-	while ((token = tokenize(context)))
+	while ((token = tokenize(context))) {
 		fifo_push(context->tokens, token);
+	}
 }
