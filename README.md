@@ -1,4 +1,4 @@
-# x-lang
+# x-lang (UNDER HEAVY REFACTOR, against my better judgement - it made its way into master. Be patient.)
 
 The X language aims to be a system level language that incorporates functional paradigms - it may even become functional.
 
