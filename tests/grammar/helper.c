@@ -30,7 +30,7 @@ static void check_token_val(TokenType type, TokenValue* actual, TokenValue* expe
 				break;
 
 			default:
-				log_kill("no case for this token type");
+				log_kill("no case for this token type\n");
 				break;
 		}
 	}
@@ -105,30 +105,19 @@ ASTNode* mock_ast_node(ASTType type, void* val)
 
 TokenValue* mock_token_value(TokenType type, void* value)
 {
-	TokenValue* val = malloc(sizeof(TokenValue));
-
+	TokenValue* val = init_token_value(type);
+	
 	switch (type) {
 		case TOK_IDENT:
-			val->string = value;
+			val->string = strdup(value);
 			break;
-
+			
 		case TOK_INTEGER_LITERAL:
 			val->integer = value;
 			break;
-		
-		case TOK_TYPE_U8:
-		case TOK_TYPE_U16:
-		case TOK_TYPE_U32:
-		case TOK_TYPE_U64:
-		case TOK_TYPE_S8:
-		case TOK_TYPE_S16:
-		case TOK_TYPE_S32:
-		case TOK_TYPE_S64:
-			break;
-		
+			
 		default:
-			log_kill("no case for this token type\n");
-			break;
+			log_kill("no case statement for this type\n");
 	}
 
 	return val;

@@ -156,7 +156,7 @@ static inline void save_token_start(LexerContext* context)
 	context->start.column = context->current_pos.column;
 }
 
-static TokenValue* init_token_value(TokenType type)
+TokenValue* init_token_value(TokenType type)
 {
 	TokenValue* val = NULL;
 
@@ -259,17 +259,13 @@ static Token* tokenize(LexerContext* context)
 						? create_token(context, TOK_TYPE_S64, NULL, capture->len) :
 					// OTHERWISE - Identifier
 						create_token(context, TOK_IDENT, strdup(capture->str), capture->len);
-
-				destroy_string_capture(capture);
-
 			} else if (isdigit(context->lookahead)) {
 				/* TODO - Only does positive integers */
 
 				capture = capture_string(context);
 				uint64_t* value = malloc(sizeof(uint64_t));
 				*value = (uint64_t) strtoll(capture->str, 0, 0);
-				destroy_string_capture(capture);
-				return create_token(context, TOK_INTEGER_LITERAL, value, capture->len);
+				token = create_token(context, TOK_INTEGER_LITERAL, value, capture->len);
 			} else {
 				log_lexer_error(context, "unknown grammar\n");
 			}
@@ -279,6 +275,8 @@ static Token* tokenize(LexerContext* context)
 	}
 
 	adjust_position(context, capture->len);
+	destroy_string_capture(capture);
+	
 	return token;
 }
 

@@ -50,6 +50,7 @@ typedef struct {
 } LexerContext;
 
 LexerContext* init_lexer(char* fname);
+TokenValue* init_token_value(TokenType type);
 void destroy_lexer();
 void destroy_token(void* tok);
 
