@@ -98,7 +98,7 @@ void destroy_ast_node(void* node)
 	if (converted) {
 		if (converted->token)
 			destroy_token(converted->token);
-
+		
 		if (converted->var_decl)
 			destroy_ast_variable_declaration(converted->var_decl);
 

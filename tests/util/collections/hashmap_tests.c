@@ -61,11 +61,13 @@ static void hashmap_remove_test()
 		hashmap_remove(map, key);
 		assert(map->count == i);
 		assert(!hashmap_get(map, key));
-		destroy(node[i]);
 	}
 
 	log_info("PASS\n");
 
+	for (unsigned i = 0; i < 1024; i++)
+		destroy(node[i]);
+	
 	destroy_list(node_ptrs);
 	destroy_hashmap(map);
 }

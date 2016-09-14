@@ -20,22 +20,21 @@ void destroy_token_value(void* tok_val)
 
 	if (value) {
 		// LOLWUT - Why is this segfaulting....
-		/*if (value->integer)
-			destroy(value->integer);*/
 		if (value->string)
 			destroy(value->string);
-
-		destroy(value);
+		//else if (value->integer)
+		//	destroy(value->integer);
+		
+		if (value)
+			destroy(value);
 	}
 }
 
-void destroy_token(void* tok)
+void destroy_token(void* token)
 {
-	Token* token = (Token*) tok;
 
 	if (token) {
-		if (token->val)
-			destroy_token_value(token->val);
+		destroy_token_value(((Token*) token)->val);
 
 		destroy(token);
 	}
@@ -173,6 +172,8 @@ TokenValue* init_token_value(TokenType type)
 			break;
 			
 		case TOK_INTEGER_LITERAL:
+			val = malloc(sizeof(TokenValue));
+			break;
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
 			break;

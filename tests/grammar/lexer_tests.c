@@ -80,12 +80,14 @@ static void ident_test()
 	for (unsigned i = 0; lexer->tokens->size; i++) {
 		token = (Token*) fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
-		destroy_token(EXPECTED[i]);
-		destroy_token(token);
 	}
-
+	
 	log_info("PASS\n");
 	
+	for (int i = 0; i < 7; i++)
+		destroy_token(EXPECTED[i]);
+	
+	destroy_token(token);
 	destroy_lexer(lexer);
 }
 
@@ -97,56 +99,69 @@ static void integer_literal_test()
 	int64_t EXPECTED_VALUES[] = {
 		0, 66, 23976, 238, 129238, 000
 	};
-
-	int64_t* expected_ptr = malloc(sizeof(int64_t) * 6);
 	
-	for (int i = 0; i < 6; i++)
-		expected_ptr[i] = EXPECTED_VALUES[i];
+	int64_t* expected_ptr = malloc(sizeof(int64_t*) * 6);
 	
-	Token* EXPECTED[7] = {
+	memcpy(expected_ptr, &EXPECTED_VALUES, sizeof(int64_t) * 6);
+	
+	Token** EXPECTED = malloc(sizeof(Token) * 6);
+	
+	EXPECTED[0] =  
 		mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[0]),
 			mock_token_pos(1, 1),
 			1
-		),
+		);
+	EXPECTED[1] = 
 		mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[1]),
 			mock_token_pos(1, 3),
 			2
-		),
+		);
+	EXPECTED[2] = 
 		mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[2]),
 			mock_token_pos(1, 6),
 			5
-		),
+		);
+	EXPECTED[3] = 
 			mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[3]),
 			mock_token_pos(1, 12),
-			3
-		),
+			3);
+			
+	EXPECTED[4] =
 			mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[4]),
 			mock_token_pos(1, 16),
-			6
-		),
+			6);
+			
+	EXPECTED[5] = 
 			mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[5]),
 			mock_token_pos(1, 23),
-			3
-		)
-	};
+			3);
 	
 	Token* token = NULL;
 
-	for (size_t i = 0; lexer->tokens->size; i++) {
+	for (size_t i = 0; i < 6; i++) {
 		token = fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
 		destroy_token(token);
-		destroy_token(EXPECTED[i]);
+		
 	}
-
+	
 	log_info("PASS\n");
+	
+	for (int i = 0; i < 6; i++) {
+		
+		destroy(EXPECTED[i]->val);
+		destroy(EXPECTED[i]);
+	}
+		
+	destroy(EXPECTED);
 	destroy_lexer(lexer);
+	destroy(expected_ptr);
 }
 
 static void type_test()
@@ -171,10 +186,12 @@ static void type_test()
 	for (size_t i = 0; lexer->tokens->size; i++) {
 		Token* token = fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
-		destroy(EXPECTED[i]);
 	}
 
 	log_info("PASS\n");
+	
+	for (int i = 0; i < 8; i++)
+		destroy_token(EXPECTED[i]);
 	
 	destroy_lexer(lexer);
 }

@@ -22,7 +22,7 @@ ParserContext* init_parser(char* fname)
 
 void destroy_parser(ParserContext* context)
 {
-	//destroy_list(context->current_tokens);
+	destroy_list(context->current_tokens);
 	if (context) {
 		if (context->lexer_context)
 			destroy_lexer(context->lexer_context);
