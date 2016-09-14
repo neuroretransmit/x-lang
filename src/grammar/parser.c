@@ -165,7 +165,6 @@ List* parse(ParserContext* context)
 	while ((node = parse_x_lang(context, context->lexer_context->tokens)))
 		list_append(ast, node);
 
-	//destroy(tokens);
 
 	return ast;
 }

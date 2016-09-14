@@ -43,12 +43,15 @@ void variable_declaration_test()
 
 	ASTNode* node = NULL;
 
-	for (size_t i = 0; i < ast->size; i++) {
+	for (size_t i = 0; i < 2; i++) {
 		node = list_get(ast, i);
 		check_ast_node(node, EXPECTED[i]);
-		destroy_ast_node(node);
 	}
 
+	for (int i = 0; i < 2; i++) {
+		destroy_ast_node(&EXPECTED[i]);
+	}
+	
 	log_info("PASS\n");
 	destroy_parser(parser);
 }
