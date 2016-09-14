@@ -1,4 +1,4 @@
-# x-lang (UNDER HEAVY REFACTOR, against my better judgement - it made its way into master. Be patient.)
+# x-lang
 
 The X language aims to be a system level language that incorporates functional paradigms - it may even become functional.
 
@@ -16,6 +16,10 @@ The X language aims to be a system level language that incorporates functional p
 * LLVM-C
 * Valgrind
 * GCC
+
+## Bugs
+
+* Currently leaks 16 bytes
 
 ## Building
 
