@@ -90,6 +90,8 @@ static void adjust_position(LexerContext* context, size_t tok_len)
 	if (isprint(context->lookahead)) {
 		if (isdigit(context->previous)) {
 			context->current_pos.column += tok_len;
+		} else if (context->lookahead == ' ') {
+			++context->current_pos.column;
 		} else if (context->lookahead == '\n') {
 			++context->current_pos.line;
 			context->current_pos.column = 1;
@@ -168,7 +170,6 @@ TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U16:
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
-			log_warn("token type doesn't hold a value\n");
 			break;
 			
 		case TOK_INTEGER_LITERAL:
@@ -232,6 +233,8 @@ static Token* tokenize(LexerContext* context)
 
 	switch (context->lookahead) {
 		case ' ':
+			adjust_position(context, 1);
+			return NULL;
 		case '\t':
 		case '\n':
 		case EOF:

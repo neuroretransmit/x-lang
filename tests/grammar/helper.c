@@ -69,16 +69,19 @@ void check_ast_node(ASTNode* actual, ASTNode* expected)
 {
 	if (actual && expected) {
 		assert(actual->type == expected->type);
-		check_token(actual->token, expected->token);
-
+		
 		if (actual->var_decl)
 			check_ast_variable_declaration(actual->var_decl, expected->var_decl);
+		else
+			check_token(actual->token, expected->token);
+
+		
 	}
 }
 
 ASTVariableDeclaration* mock_ast_variable_declaration(Token* type, Token* ident)
 {
-	ASTVariableDeclaration* var_decl = malloc(sizeof(var_decl));
+	ASTVariableDeclaration* var_decl = malloc(sizeof(ASTVariableDeclaration));
 	var_decl->type = type;
 	var_decl->ident = ident;
 
@@ -96,7 +99,7 @@ ASTNode* mock_ast_node(ASTType type, void* val)
 			break;
 
 		default:
-			log_kill("no case for this token type");
+			log_kill("no case for this token type\n");
 			break;
 	}
 
@@ -118,6 +121,7 @@ TokenValue* mock_token_value(TokenType type, void* value)
 			
 		default:
 			log_kill("no case statement for this type\n");
+			break;
 	}
 
 	return val;
@@ -129,7 +133,6 @@ TokenPos mock_token_pos(size_t line, size_t column)
 
 	return pos;
 }
-
 
 Token* mock_token(TokenType type, TokenValue* val, TokenPos pos, size_t len)
 {

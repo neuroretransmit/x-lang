@@ -95,9 +95,9 @@ static bool parse_type()
 	return true;
 }
 
-static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
+static ASTNode* parse_x_lang(ParserContext* context)
 {
-	Token* token = (Token*) fifo_pop(tokens);
+	Token* token = (Token*) fifo_pop(context->lexer_context->tokens);
 
 	if (token) {
 		context->current_tokens = init_list_objects(&destroy_token);
@@ -134,7 +134,7 @@ static ASTNode* parse_x_lang(ParserContext* context, FIFO* tokens)
 				if (parse_type()) {
 					list_append(context->current_tokens, token);
 
-					Token* ident = fifo_pop(tokens);
+					Token* ident = fifo_pop(context->lexer_context->tokens);
 
 					if (parse_ident(context, ident))
 						list_append(context->current_tokens, ident);
@@ -162,7 +162,7 @@ List* parse(ParserContext* context)
 
 	ASTNode* node = NULL;
 
-	while ((node = parse_x_lang(context, context->lexer_context->tokens)))
+	while ((node = parse_x_lang(context)))
 		list_append(ast, node);
 
 

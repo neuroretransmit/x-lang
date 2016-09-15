@@ -44,22 +44,22 @@ static void ident_test()
 			2
 		),
 		mock_token(TOK_IDENT,
-			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[1])),
+			mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[1])),
 			mock_token_pos(2, 1),
 			1
 		),
 		mock_token(TOK_IDENT,
-			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[2])),
+			mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[2])),
 			mock_token_pos(3, 1),
 			1
 		),
 		mock_token(TOK_IDENT,
-			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[3])),
+			mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[3])),
 			mock_token_pos(4, 1),
 			1
 		),
 		mock_token(TOK_IDENT,
-			mock_token_value(TOK_IDENT,  strdup(EXPECTED_VALUES[4])),
+			mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[4])),
 			mock_token_pos(5, 1),
 			2
 		),
