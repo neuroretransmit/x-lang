@@ -5,6 +5,7 @@
 #include <grammar/lexer.h>
 #include <grammar/parser.h>
 #include <util/file_utils.h>
+#include <util/mem_utils.h>
 #include <util/log.h>
 
 #include "helper.h"
@@ -26,7 +27,7 @@ void variable_declaration_test()
 	ParserContext* parser = setup("res/variable_declaration.x");
 	List* ast = parse(parser);
 
-	ASTNode** EXPECTED = malloc(sizeof(ASTNode) * 2);
+	ASTNode** EXPECTED = malloc(sizeof(ASTNode) * 1);
 	
 	EXPECTED[0] = 
 		mock_ast_node(AST_TYPE_VARIABLE_DECLARATION,
@@ -35,7 +36,6 @@ void variable_declaration_test()
 				mock_token(TOK_IDENT, mock_token_value(TOK_IDENT, "x"), mock_token_pos(1, 4), 1)
 			)
 		);
-	//ast_dump(EXPECTED[0]);
 	EXPECTED[1] =
 		mock_ast_node(AST_TYPE_VARIABLE_DECLARATION,
 			mock_ast_variable_declaration(
@@ -43,12 +43,12 @@ void variable_declaration_test()
 				mock_token(TOK_IDENT, mock_token_value(TOK_IDENT, "y"), mock_token_pos(3, 4), 1)
 			)
 		);
-	//ast_dump(EXPECTED[0]);
+	
 	ASTNode* node = NULL;
 	
 	List* list = init_list_objects(&destroy_ast_node);
 	
-	for (size_t i = 0; i < 2; i++) {
+	for (size_t i = 0; i < ast->size; i++) {
 		node = list_get(ast, i);
 		list_append(list, node);
 		//ast_dump(list);
@@ -56,10 +56,11 @@ void variable_declaration_test()
 	}
 
 	for (int i = 0; i < 2; i++)
-		destroy_ast_node(&EXPECTED[i]);
+		destroy_ast_node(EXPECTED[i]);
 	
 	log_info("PASS\n");
 	destroy_parser(parser);
+	destroy_list(list);
 }
 
 void parser_tests()

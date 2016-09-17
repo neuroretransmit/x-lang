@@ -78,7 +78,7 @@ ASTNode* init_ast_node(List* tokens)
 	return NULL;
 }
 
-static void destroy_ast_variable_declaration(ASTVariableDeclaration* var_decl)
+/*static void destroy_ast_variable_declaration(ASTVariableDeclaration* var_decl)
 {
 	if (var_decl) {
 		if (var_decl->ident)
@@ -89,18 +89,18 @@ static void destroy_ast_variable_declaration(ASTVariableDeclaration* var_decl)
 
 		destroy(var_decl);
 	}
-}
+}*/
 
 void destroy_ast_node(void* node)
 {
 	ASTNode* converted = (ASTNode*) node;
 
 	if (converted) {
-		if (converted->token)
-			destroy_token(converted->token);
+		/*if (converted->token)
+			destroy_token(converted->token);*/
 		
 		if (converted->var_decl)
-			destroy_ast_variable_declaration(converted->var_decl);
+			destroy(converted->var_decl);
 
 		destroy(converted);
 	}

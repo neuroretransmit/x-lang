@@ -78,10 +78,9 @@ static bool parse_integer_literal()
 	return true;
 }
 
-static bool parse_ident(ParserContext* context, Token* ident)
+static bool parse_ident(Token* ident)
 {
 	if (!valid_ident(ident)) {
-		log_parser_error(context, ident, "not a valid identifier\n");
 		destroy_token(ident);
 		return false;
 	}
@@ -97,6 +96,8 @@ static bool parse_type()
 
 static ASTNode* parse_x_lang(ParserContext* context)
 {
+	debug("hit_x_lang\n");
+	ASTNode* node = NULL;
 	Token* token = (Token*) fifo_pop(context->lexer_context->tokens);
 
 	if (token) {
@@ -105,17 +106,19 @@ static ASTNode* parse_x_lang(ParserContext* context)
 		switch (token->type) {
 
 			case TOK_IDENT:
-				if (parse_ident(context, token)) {
+				debug("hit_ident\n");
+				if (parse_ident(token)) {
 					list_append(context->current_tokens, token);
-					return init_ast_node(context->current_tokens);
+					node = init_ast_node(context->current_tokens);
 				}
 
 				break;
 
 			case TOK_INTEGER_LITERAL:
+				debug("hit_integer\n");
 				if (parse_integer_literal()) {
 					list_append(context->current_tokens, token);
-					return init_ast_node(context->current_tokens);
+					node = init_ast_node(context->current_tokens);
 				}
 
 				break;
@@ -129,17 +132,21 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64:
-
+				debug("hit_var_decl\n");
 				// --- variable declaration
 				if (parse_type()) {
+					debug("hit_type\n");
 					list_append(context->current_tokens, token);
 
 					Token* ident = fifo_pop(context->lexer_context->tokens);
-
-					if (parse_ident(context, ident))
+					
+					if (parse_ident(ident)) {
+						debug("hit_ident\n");
 						list_append(context->current_tokens, ident);
-
-					return init_ast_node(context->current_tokens);
+						node = init_ast_node(context->current_tokens);
+					} else {
+						log_parser_error(context, ident, "invalid identifier\n");
+					}
 				}
 
 				// --- end variable declaration
@@ -148,11 +155,11 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			default:
 				log_parser_error(context, token,
 								 "expected one of <ident, integer_literal, EOF>\n");
-				return NULL;
+				break;
 		}
 	}
 
-	return NULL;
+	return node;
 }
 
 List* parse(ParserContext* context)
@@ -162,8 +169,11 @@ List* parse(ParserContext* context)
 
 	ASTNode* node = NULL;
 
-	while ((node = parse_x_lang(context)))
+	int i = 1;
+	while ((node = parse_x_lang(context)) != NULL) {
+		debug("node %d parsed\n", i++);
 		list_append(ast, node);
+	}
 
 
 	return ast;

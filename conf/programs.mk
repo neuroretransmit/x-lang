@@ -10,7 +10,7 @@ export MKDIR := @mkdir -p
 export CSTD := -std=gnu11
 export WARNINGS := -Wall -Wextra -Werror -fPIC
 export INCLUDES := -Isrc
-export CFLAGS := -g $(CSTD) $(WARNINGS) $(INCLUDES)
+export CFLAGS := -g $(CSTD) $(WARNINGS) $(INCLUDES) -DDEBUG
 export CC += $(CFLAGS)
 
 ### Tool Options ###
