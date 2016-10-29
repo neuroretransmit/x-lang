@@ -9,6 +9,8 @@
 #include <util/log.h>
 #include <util/mem_utils.h>
 
+#define WHITESPACE ( -1 )
+
 typedef struct {
 	size_t len;
 	char* str;
@@ -233,10 +235,10 @@ static Token* tokenize(LexerContext* context)
 
 	switch (context->lookahead) {
 		case ' ':
-			adjust_position(context, 1);
-			return NULL;
 		case '\t':
 		case '\n':
+			adjust_position(context, WHITESPACE);
+            return (Token*) -1;
 		case EOF:
 			return NULL;
 
@@ -290,6 +292,9 @@ void lex(LexerContext* context)
 	Token* token;
 
 	while ((token = tokenize(context))) {
-		fifo_push(context->tokens, token);
+        if (token == ((Token*) -1))
+            continue;
+        else
+            fifo_push(context->tokens, token);
 	}
 }
