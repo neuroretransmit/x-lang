@@ -10,6 +10,7 @@
 #include <util/mem_utils.h>
 
 #define WHITESPACE ( -1 )
+#define FAKE_TOKEN ( (Token*) WHITESPACE )
 
 typedef struct {
 	size_t len;
@@ -238,7 +239,7 @@ static Token* tokenize(LexerContext* context)
 		case '\t':
 		case '\n':
 			adjust_position(context, WHITESPACE);
-            return (Token*) -1;
+            return FAKE_TOKEN;
 		case EOF:
 			return NULL;
 
@@ -292,7 +293,7 @@ void lex(LexerContext* context)
 	Token* token;
 
 	while ((token = tokenize(context))) {
-        if (token == ((Token*) -1))
+        if (token == FAKE_TOKEN)
             continue;
         else
             fifo_push(context->tokens, token);
