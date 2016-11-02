@@ -22,11 +22,12 @@ ParserContext* init_parser(char* fname)
 
 void destroy_parser(ParserContext* context)
 {
-	destroy_list(context->current_tokens);
 	if (context) {
+		
 		if (context->lexer_context)
 			destroy_lexer(context->lexer_context);
-
+		
+		
 		destroy(context);
 	}
 }
@@ -98,9 +99,8 @@ static ASTNode* parse_x_lang(ParserContext* context)
 {
 	ASTNode* node = NULL;
 	Token* token = (Token*) fifo_pop(context->lexer_context->tokens);
-
 	if (token) {
-		context->current_tokens = init_list_objects(&destroy_token);
+		context->current_tokens = init_list(&destroy_token);
 
 		switch (token->type) {
 
@@ -152,7 +152,9 @@ static ASTNode* parse_x_lang(ParserContext* context)
 				break;
 		}
 	}
-
+	
+	destroy_list(context->current_tokens);
+	
 	return node;
 }
 

@@ -30,11 +30,14 @@ void destroy_list(List* list)
 {
 	if (!list)
 		log_kill("list was null\n");
-
-	while (list->size)
-		list_remove(list, list->size - 1);
-
-	destroy(list);
+	else {
+		if (list->size) {
+			while (list->size)
+				list_remove(list, list->size - 1);
+		
+			destroy(list);
+		}
+	}
 }
 
 void destroy_list_node(List* list, ListNode* node)

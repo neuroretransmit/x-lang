@@ -25,11 +25,10 @@ void destroy_token_value(void* tok_val)
 		// LOLWUT - Why is this segfaulting....
 		if (value->string)
 			destroy(value->string);
-		//else if (value->integer)
-		//	destroy(value->integer);
+		else if (value->integer)
+			destroy(value->integer);
 		
-		if (value)
-			destroy(value);
+		destroy(value);
 	}
 }
 
@@ -62,7 +61,7 @@ void destroy_lexer(LexerContext* context)
 
 		if (context->tokens)
 			destroy_fifo(context->tokens);
-
+		
 		destroy(context);
 	}
 }

@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 				ParserContext* parser = init_parser(fname);
 				List* ast = parse(parser);
 				ast_dump(ast);
-				destroy_parser(parser);
+				destroy_parser(parser);				
 				destroy_list(ast);
 			}
 
