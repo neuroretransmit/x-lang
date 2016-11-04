@@ -34,9 +34,9 @@ void destroy_list(List* list)
 		if (list->size) {
 			while (list->size)
 				list_remove(list, list->size - 1);
-		
-			destroy(list);
 		}
+		
+		destroy(list);
 	}
 }
 
