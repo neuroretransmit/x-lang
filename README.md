@@ -2,6 +2,10 @@
 
 The X language aims to be a system level language that incorporates functional paradigms - it may even become functional.
 
+## Current State
+
+X language currently has only its parser built for variable declarations. I will be plugging this into LLVM over the next week or so and we will see our first generated IR program.
+
 ## Slated Features
 
 * LLVM-C backend for code generation (Support all the things!)
@@ -19,7 +23,7 @@ The X language aims to be a system level language that incorporates functional p
 
 ## Bugs
 
-* Currently leaks 16 bytes
+* One small leak to patch in my tests.
 
 ## Building
 
