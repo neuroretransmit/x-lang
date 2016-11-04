@@ -6,6 +6,7 @@ log/
 
 ### Special Files ###
 *.kate-swp
+vgcore*
 
 # Created by https://www.gitignore.io/api/linux,windows,macos,vim,eclipse,kdevelop4,emacs,c,c++,assembler
 

@@ -22,11 +22,11 @@ ParserContext* init_parser(char* fname)
 
 void destroy_parser(ParserContext* context)
 {
-	destroy_list(context->current_tokens);
-	if (context) {
+	if (context) {		
 		if (context->lexer_context)
 			destroy_lexer(context->lexer_context);
-
+		
+		
 		destroy(context);
 	}
 }
@@ -96,17 +96,14 @@ static bool parse_type()
 
 static ASTNode* parse_x_lang(ParserContext* context)
 {
-	debug("hit_x_lang\n");
 	ASTNode* node = NULL;
 	Token* token = (Token*) fifo_pop(context->lexer_context->tokens);
-
 	if (token) {
-		context->current_tokens = init_list_objects(&destroy_token);
+		context->current_tokens = init_list(&destroy_ast_node);
 
 		switch (token->type) {
 
 			case TOK_IDENT:
-				debug("hit_ident\n");
 				if (parse_ident(token)) {
 					list_append(context->current_tokens, token);
 					node = init_ast_node(context->current_tokens);
@@ -115,7 +112,6 @@ static ASTNode* parse_x_lang(ParserContext* context)
 				break;
 
 			case TOK_INTEGER_LITERAL:
-				debug("hit_integer\n");
 				if (parse_integer_literal()) {
 					list_append(context->current_tokens, token);
 					node = init_ast_node(context->current_tokens);
@@ -132,16 +128,13 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64:
-				debug("hit_var_decl\n");
 				// --- variable declaration
 				if (parse_type()) {
-					debug("hit_type\n");
 					list_append(context->current_tokens, token);
 
 					Token* ident = fifo_pop(context->lexer_context->tokens);
 					
 					if (parse_ident(ident)) {
-						debug("hit_ident\n");
 						list_append(context->current_tokens, ident);
 						node = init_ast_node(context->current_tokens);
 					} else {
@@ -158,24 +151,28 @@ static ASTNode* parse_x_lang(ParserContext* context)
 				break;
 		}
 	}
-
+	
 	return node;
 }
 
-List* parse(ParserContext* context)
+ASTNode* parse(ParserContext* context)
 {
+	// TODO: init ROOT type
+	//		 append children to it
+	//		 dump, destroy children for root type
 	lex(context->lexer_context);
-	List* ast = init_list(&destroy_ast_node);
 
-	ASTNode* node = NULL;
-
-	int i = 1;
-	while ((node = parse_x_lang(context)) != NULL) {
-		debug("node %d parsed\n", i++);
-		list_append(ast, node);
+	ASTNode* node = calloc(1, sizeof(ASTNode));
+	node->type = AST_TYPE_ROOT;
+	
+	for (ASTNode* tmp = parse_x_lang(context); tmp != NULL; tmp = parse_x_lang(context)) {
+		if (node->children == NULL)
+			node->children = init_list_objects(&destroy_ast_node);
+		
+		list_append(node->children, tmp);
+		destroy_list(context->current_tokens);
 	}
-
-
-	return ast;
+	
+	return node;
 }
 

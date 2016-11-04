@@ -90,9 +90,10 @@ static void ident_test()
 	destroy_token(token);
 	destroy_lexer(lexer);
 }
-
+/*
 static void integer_literal_test()
 {
+    debug("Hit integer literal test.\n");
 	LexerContext* lexer = setup("res/integer_literal.x");
 	lex(lexer);
 
@@ -104,57 +105,50 @@ static void integer_literal_test()
 	
 	memcpy(expected_ptr, &EXPECTED_VALUES, sizeof(int64_t) * 6);
 	
-	Token** EXPECTED = malloc(sizeof(Token) * 6);
-	
-	EXPECTED[0] =  
-		mock_token(TOK_INTEGER_LITERAL,
+	Token* EXPECTED[6] = {
+        mock_token(TOK_INTEGER_LITERAL,
 			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[0]),
 			mock_token_pos(1, 1),
 			1
-		);
-	EXPECTED[1] = 
-		mock_token(TOK_INTEGER_LITERAL,
-			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[1]),
-			mock_token_pos(1, 3),
-			2
-		);
-	EXPECTED[2] = 
-		mock_token(TOK_INTEGER_LITERAL,
-			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[2]),
-			mock_token_pos(1, 6),
-			5
-		);
-	EXPECTED[3] = 
-			mock_token(TOK_INTEGER_LITERAL,
-			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[3]),
-			mock_token_pos(1, 12),
-			3);
-			
-	EXPECTED[4] =
-			mock_token(TOK_INTEGER_LITERAL,
-			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[4]),
-			mock_token_pos(1, 16),
-			6);
-			
-	EXPECTED[5] = 
-			mock_token(TOK_INTEGER_LITERAL,
-			mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[5]),
-			mock_token_pos(1, 23),
-			3);
+		),
+        mock_token(TOK_INTEGER_LITERAL,
+                mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[1]),
+                mock_token_pos(1, 3),
+                2
+            ),
+        mock_token(TOK_INTEGER_LITERAL,
+                mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[2]),
+                mock_token_pos(1, 6),
+                5
+            ),
+        mock_token(TOK_INTEGER_LITERAL,
+                mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[3]),
+                mock_token_pos(1, 12),
+                3),
+                
+        mock_token(TOK_INTEGER_LITERAL,
+                mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[4]),
+                mock_token_pos(1, 16),
+                6),
+        mock_token(TOK_INTEGER_LITERAL,
+                mock_token_value(TOK_INTEGER_LITERAL, &expected_ptr[5]),
+                mock_token_pos(1, 23),
+                3)
+    };
 	
 	Token* token = NULL;
 
 	for (size_t i = 0; i < 6; i++) {
+        debug("First for-loop iter %zu\n", i);
 		token = fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
 		destroy_token(token);
-		
 	}
 	
 	log_info("PASS\n");
 	
 	for (int i = 0; i < 6; i++) {
-		
+		debug("Second for-loop iter %d\n", i);
 		destroy(EXPECTED[i]->val);
 		destroy(EXPECTED[i]);
 	}
@@ -163,7 +157,7 @@ static void integer_literal_test()
 	destroy_lexer(lexer);
 	destroy(expected_ptr);
 }
-
+*/
 static void type_test()
 {
 	LexerContext* lexer = setup("res/type.x");
@@ -199,6 +193,6 @@ static void type_test()
 void lexer_tests()
 {
 	ident_test();
-	integer_literal_test();
+	//integer_literal_test();
 	type_test();
 }

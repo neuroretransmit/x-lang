@@ -9,6 +9,9 @@
 #include <util/log.h>
 #include <util/mem_utils.h>
 
+#define WHITESPACE ( -1 )
+#define FAKE_TOKEN ( (Token*) WHITESPACE )
+
 typedef struct {
 	size_t len;
 	char* str;
@@ -22,11 +25,10 @@ void destroy_token_value(void* tok_val)
 		// LOLWUT - Why is this segfaulting....
 		if (value->string)
 			destroy(value->string);
-		//else if (value->integer)
-		//	destroy(value->integer);
+		else if (value->integer)
+			destroy(value->integer);
 		
-		if (value)
-			destroy(value);
+		destroy(value);
 	}
 }
 
@@ -34,7 +36,8 @@ void destroy_token(void* token)
 {
 
 	if (token) {
-		destroy_token_value(((Token*) token)->val);
+		if (((Token*) token)->val)
+			destroy_token_value(((Token*) token)->val);
 
 		destroy(token);
 	}
@@ -59,7 +62,7 @@ void destroy_lexer(LexerContext* context)
 
 		if (context->tokens)
 			destroy_fifo(context->tokens);
-
+		
 		destroy(context);
 	}
 }
@@ -86,19 +89,15 @@ static void next_token(LexerContext* context)
 }
 
 static void adjust_position(LexerContext* context, size_t tok_len)
-{
-	if (isprint(context->lookahead)) {
+{   
+    if (tok_len == (size_t) -1) {
+        ++context->current_pos.line;
+        context->current_pos.column = 1;
+    } else if (isprint(context->lookahead)) {
 		if (isdigit(context->previous)) {
 			context->current_pos.column += tok_len;
-		} else if (context->lookahead == ' ') {
-			++context->current_pos.column;
-		} else if (context->lookahead == '\n') {
-			++context->current_pos.line;
-			context->current_pos.column = 1;
-		} else if (context->lookahead == '\t') {
-			context->current_pos.column += 4;
 		} else {
-			context->current_pos.column += 1;
+			context->current_pos.column += tok_len;
 		}
 	}
 }
@@ -233,10 +232,14 @@ static Token* tokenize(LexerContext* context)
 
 	switch (context->lookahead) {
 		case ' ':
-			adjust_position(context, 1);
-			return NULL;
+            adjust_position(context, 1);
+            return FAKE_TOKEN;
 		case '\t':
+            adjust_position(context, 4);
+            return FAKE_TOKEN;
 		case '\n':
+			adjust_position(context, WHITESPACE);
+            return FAKE_TOKEN;
 		case EOF:
 			return NULL;
 
@@ -290,6 +293,9 @@ void lex(LexerContext* context)
 	Token* token;
 
 	while ((token = tokenize(context))) {
-		fifo_push(context->tokens, token);
+        if (token == FAKE_TOKEN)
+            continue;
+        else
+            fifo_push(context->tokens, token);
 	}
 }
