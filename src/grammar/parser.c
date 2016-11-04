@@ -22,8 +22,7 @@ ParserContext* init_parser(char* fname)
 
 void destroy_parser(ParserContext* context)
 {
-	if (context) {
-		
+	if (context) {		
 		if (context->lexer_context)
 			destroy_lexer(context->lexer_context);
 		
@@ -100,7 +99,7 @@ static ASTNode* parse_x_lang(ParserContext* context)
 	ASTNode* node = NULL;
 	Token* token = (Token*) fifo_pop(context->lexer_context->tokens);
 	if (token) {
-		context->current_tokens = init_list(&destroy_token);
+		context->current_tokens = init_list(&destroy_ast_node);
 
 		switch (token->type) {
 
@@ -153,22 +152,27 @@ static ASTNode* parse_x_lang(ParserContext* context)
 		}
 	}
 	
-	destroy_list(context->current_tokens);
-	
 	return node;
 }
 
-List* parse(ParserContext* context)
+ASTNode* parse(ParserContext* context)
 {
+	// TODO: init ROOT type
+	//		 append children to it
+	//		 dump, destroy children for root type
 	lex(context->lexer_context);
-	List* ast = init_list(&destroy_ast_node);
 
-	ASTNode* node = NULL;
-
-	while ((node = parse_x_lang(context)) != NULL)
-		list_append(ast, node);
-
-
-	return ast;
+	ASTNode* node = calloc(1, sizeof(ASTNode));
+	node->type = AST_TYPE_ROOT;
+	
+	for (ASTNode* tmp = parse_x_lang(context); tmp != NULL; tmp = parse_x_lang(context)) {
+		if (node->children == NULL)
+			node->children = init_list_objects(&destroy_ast_node);
+		
+		list_append(node->children, tmp);
+		destroy_list(context->current_tokens);
+	}
+	
+	return node;
 }
 

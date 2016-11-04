@@ -36,7 +36,8 @@ void destroy_token(void* token)
 {
 
 	if (token) {
-		destroy_token_value(((Token*) token)->val);
+		if (((Token*) token)->val)
+			destroy_token_value(((Token*) token)->val);
 
 		destroy(token);
 	}

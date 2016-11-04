@@ -63,10 +63,10 @@ int main(int argc, char** argv)
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
 			if (file_exists(fname)) {
 				ParserContext* parser = init_parser(fname);
-				List* ast = parse(parser);
+				ASTNode* ast = parse(parser);
 				ast_dump(ast);
 				destroy_parser(parser);				
-				destroy_list(ast);
+				destroy_ast_node(ast);
 			}
 
 			prev = fname;

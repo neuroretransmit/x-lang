@@ -7,17 +7,20 @@
 
 typedef enum {
 	AST_TYPE_NONE,
+	AST_TYPE_ROOT,
 	AST_TYPE_VARIABLE_DECLARATION
 } ASTType;
 
 struct ASTNode;
 
 typedef struct {
+	
 	Token* type;
 	Token* ident;
 } ASTVariableDeclaration;
 
 typedef struct {
+	List* children;
 	int type;
 	union {
 		Token* token;
@@ -27,4 +30,4 @@ typedef struct {
 
 ASTNode* init_ast_node(List* tokens);
 void destroy_ast_node(void* node);
-void ast_dump(List* ast);
+void ast_dump(ASTNode* ast);
