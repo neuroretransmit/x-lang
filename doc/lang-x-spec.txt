@@ -91,7 +91,7 @@ These will not be implicitly set by filename – I want to know what package I�
 
 <prototype> ::= “fn” <ident> ( ‘(‘ <function_argument> (‘,’ <function_argument>)* ‘)’ ) “->” <type>
 
-<function_definition> ::= <prototype> ‘{‘ <expression>+ ‘}’
+<function_definition> ::= <prototype> ( ( ‘{‘ <expression>+ ‘}’ ) | expression )
 
 <package> ::= /<ident> ( \. <ident> )*/
 
