@@ -94,6 +94,9 @@ ASTNode* mock_ast_node(ASTType type, void* val)
 	node->type = type;
 
 	switch (type) {
+		case AST_TYPE_ROOT:
+			node->type = AST_TYPE_ROOT;
+			break;
 		case AST_TYPE_VARIABLE_DECLARATION:
 			node->var_decl = val;
 			break;
