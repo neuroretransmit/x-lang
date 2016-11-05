@@ -1,6 +1,7 @@
 #include <codegen/codegen.h>
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <llvm-c/Target.h>
 
@@ -26,15 +27,15 @@ static LLVMTypeRef deduce_llvm_type(int type)
 	return NULL;
 }
 
-static LLVMValueRef codegen_var_decl(CodegenContext* context, ASTVariableDeclaration* node)
+static LLVMValueRef codegen_var_decl(CodegenContext* context, ASTNode* node)
 {
-	LLVMValueRef var = LLVMGetNamedGlobal(context->module, node->ident->val->string);
+	LLVMValueRef var = LLVMGetNamedGlobal(context->module, node->var_decl->ident->val->string);
 	
 	if (var) {
 		log_err("variable already exists with the same name\n");
 	} else {
-		LLVMTypeRef type = deduce_llvm_type(node->type->type);
-		return LLVMAddGlobal(context->module, type, node->ident->val->string);
+		LLVMTypeRef type = deduce_llvm_type(node->var_decl->type->type);
+		return LLVMAddGlobal(context->module, type, node->var_decl->ident->val->string);
 	}
 	
 	return NULL;
@@ -44,18 +45,25 @@ LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 {
 	LLVMValueRef root = NULL;
 	
-	if (node->children) {
-		for (size_t i = 0; i < node->children->size; i++) {
-			ASTNode* node = list_get(node->children, i);
-			
-			switch (node->type) {
-				case AST_TYPE_VARIABLE_DECLARATION:
-					root = codegen_var_decl(context, node->var_decl);
-					break;
-				default:
-					log_info("a case statement doesn't exist for that node type.");
-					break;
-			}
+	
+	if (node) {
+		switch (node->type) {
+			case AST_TYPE_ROOT:
+				for (size_t i = 0; i < node->children->size; i++) {
+					// TODO: get child
+					ASTNode* child = list_get(node->children, i);
+					
+					if (child) {
+						root = codegen(context, child);
+					}
+				}
+				break;
+			case AST_TYPE_VARIABLE_DECLARATION:
+				codegen_var_decl(context, node);
+				break;
+			default:
+				log_warn("no case for this AST type %d.\n", node->type);
+				break;
 		}
 	}
 	
@@ -65,9 +73,13 @@ LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 CodegenContext* init_codegen()
 {
 	CodegenContext* context = malloc(sizeof(CodegenContext));
-	context->module = LLVMModuleCreateWithName("x-lang");
-	context->builder = LLVMCreateBuilder();
-	context->named_values = init_hashmap(NULL, NULL);
+	context->root_context = LLVMGetGlobalContext();
+	context->module = LLVMModuleCreateWithNameInContext("x-lang", context->root_context);
+	context->builder = LLVMCreateBuilderInContext(context->root_context);
+	LLVMTypeRef main_type = LLVMFunctionType(LLVMVoidType(), NULL, 0, 0);
+	LLVMValueRef main_func = LLVMAddFunction(context->module, "main", main_type);
+	LLVMBasicBlockRef entry = LLVMGetEntryBasicBlock(main_func);
+	LLVMPositionBuilderAtEnd(context->builder, entry);
 	LLVMInitializeNativeTarget();
 	
 	return context;
@@ -78,7 +90,6 @@ void destroy_codegen(CodegenContext* context)
 	if (context) {
 		LLVMDisposeModule(context->module);
 		LLVMDisposeBuilder(context->builder);
-		destroy_hashmap(context->named_values);
 		
 		destroy(context);
 	}

@@ -2,13 +2,12 @@
 
 #include <llvm-c/Core.h>
 #include <grammar/ast.h>
-#include <util/collections/hashmap.h>
 
 typedef struct {
+	LLVMContextRef root_context;
 	LLVMModuleRef module;
 	LLVMBuilderRef builder;
 	LLVMPassManagerRef pass_manager;
-	HashMap* named_values;
 } CodegenContext;
 
 typedef struct {
