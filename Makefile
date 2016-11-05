@@ -15,11 +15,11 @@ all: $(TESTS_BINARY) $(BINARY)
 
 $(BINARY): $(LIBRARY_BINARY) $(OBJECTS) 
 	$(MKDIR) $(@D)
-	$(CC) $^ -o $@
+	$(CXX) $^ -o $@ $(LIBS) $(LDFLAGS)
 
 $(LIBRARY_BINARY): $(filter-out obj/main.o, $(OBJECTS))
 	$(MKDIR) $(@D)
-	$(CC) -shared $^ -o $@
+	$(CC) `llvm-config --cflags` -shared $^ -o $@ $(LIBS)
 
 $(TESTS_BINARY): $(LIBRARY_BINARY) $(TEST_OBJECTS)
 	$(MKDIR) $(@D)
@@ -35,7 +35,7 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 
 run-%: $(BINARY)
 	$(MKDIR) $(LOGDIR)
-	$(VALGRIND) --show-leak-kinds=all $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
+	$(VALGRIND) --track-origins=yes $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
 
 run-tests: $(TESTS_BINARY)
 	$(MKDIR) $(LOGDIR)

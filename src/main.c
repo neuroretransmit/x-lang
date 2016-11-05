@@ -5,6 +5,7 @@
 
 #include <grammar/ast.h>
 #include <grammar/parser.h>
+#include <codegen/codegen.h>
 #include <util/mem_utils.h>
 #include <util/file_utils.h>
 
@@ -64,9 +65,16 @@ int main(int argc, char** argv)
 			if (file_exists(fname)) {
 				ParserContext* parser = init_parser(fname);
 				ASTNode* ast = parse(parser);
+				CodegenContext* context = init_codegen();
+				__attribute__((__unused__)) LLVMValueRef code = codegen(context, ast);
+				LLVMBuildRetVoid(context->builder);
+				LLVMDumpModule(context->module);
+				puts("===============================================================\n");
 				ast_dump(ast);
+				destroy_codegen(context);
 				destroy_parser(parser);				
 				destroy_ast_node(ast);
+				
 			}
 
 			prev = fname;

@@ -168,8 +168,6 @@ static void ast_dump_variable_declaration(ASTVariableDeclaration* var_decl, int 
 
 			if (var_decl->ident)
 				ast_dump_ident(var_decl->ident, depth);
-			
-			//destroy_ast_variable_declaration(var_decl);
 		}
 	}
 }

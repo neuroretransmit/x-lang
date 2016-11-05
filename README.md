@@ -4,7 +4,7 @@ The X language aims to be a system level language that incorporates functional p
 
 ## Current State
 
-X language currently has only its parser built for variable declarations. I will be plugging this into LLVM over the next week or so and we will see our first generated IR program.
+X language currently able to generate LLVM IR for variable declarations only. No other syntax is supported at this time.
 
 ## Slated Features
 
