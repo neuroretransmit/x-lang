@@ -1,0 +1,3 @@
+VALGRIND := valgrind
+VALGRIND_OPTIONS := --leak-check=full
+VALGRIND += $(VALGRIND_OPTIONS)
