@@ -6,6 +6,53 @@ The X language aims to be a system level language that incorporates functional p
 
 X language currently able to generate LLVM IR for its main module and implicit entry and global variable declarations. No other syntax is supported at this time, it is being added.
 
+Generated IR by this compiler and an AST dump of the source.
+
+```
+; ModuleID = '__x_lang'
+source_filename = "__x_lang"
+
+@a_fdf = external global i8
+@x__ = external global i16
+@y123 = external global i32
+@z34 = external global i64
+@zwer = external global i8
+@e324 = external global i16
+@iwe = external global i32
+@sdif = external global i64
+
+define void @main() {
+entry:
+  ret void
+}
+===============================================================
+
+<1:1:variable_declaration>
+  <1:1:type:u8>
+  <1:4:ident:"a_fdf">
+<2:1:variable_declaration>
+  <2:1:type:u16>
+  <2:5:ident:"x__">
+<3:1:variable_declaration>
+  <3:1:type:u32>
+  <3:5:ident:"y123">
+<4:1:variable_declaration>
+  <4:1:type:u64>
+  <4:5:ident:"z34">
+<5:1:variable_declaration>
+  <5:1:type:s8>
+  <5:4:ident:"zwer">
+<6:1:variable_declaration>
+  <6:1:type:s16>
+  <6:5:ident:"e324">
+<7:1:variable_declaration>
+  <7:1:type:s32>
+  <7:5:ident:"iwe">
+<8:1:variable_declaration>
+  <8:1:type:s64>
+  <8:5:ident:"sdif">
+```
+
 ## Slated Features
 
 * LLVM-C backend for code generation (Support all the things!)
