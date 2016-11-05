@@ -4,7 +4,7 @@ The X language aims to be a system level language that incorporates functional p
 
 ## Current State
 
-X language currently able to generate LLVM IR for variable declarations only. No other syntax is supported at this time.
+X language currently able to generate LLVM IR for its main module and implicit entry and global variable declarations. No other syntax is supported at this time, it is being added.
 
 ## Slated Features
 
