@@ -66,8 +66,10 @@ int main(int argc, char** argv)
 				ParserContext* parser = init_parser(fname);
 				ASTNode* ast = parse(parser);
 				CodegenContext* context = init_codegen();
-				LLVMValueRef code = codegen(context, ast);
-				LLVMDumpValue(code);
+				__attribute__((__unused__)) LLVMValueRef code = codegen(context, ast);
+				LLVMBuildRetVoid(context->builder);
+				LLVMDumpModule(context->module);
+				puts("===============================================================\n");
 				ast_dump(ast);
 				destroy_codegen(context);
 				destroy_parser(parser);				

@@ -29,13 +29,17 @@ static LLVMTypeRef deduce_llvm_type(int type)
 
 static LLVMValueRef codegen_var_decl(CodegenContext* context, ASTNode* node)
 {
-	LLVMValueRef var = LLVMGetNamedGlobal(context->module, node->var_decl->ident->val->string);
+	if (node) {
+		LLVMValueRef var = LLVMGetNamedGlobal(context->module, node->var_decl->ident->val->string);
 	
-	if (var) {
-		log_err("variable already exists with the same name\n");
-	} else {
-		LLVMTypeRef type = deduce_llvm_type(node->var_decl->type->type);
-		return LLVMAddGlobal(context->module, type, node->var_decl->ident->val->string);
+		if (var) {
+			log_err("variable already exists with the same name\n");
+		} else {
+			LLVMTypeRef type = 	deduce_llvm_type(node->var_decl->type->type);
+			LLVMValueRef decl = LLVMAddGlobal(context->module, type, node->var_decl->ident->val->string);
+		
+			return decl;
+		}
 	}
 	
 	return NULL;
@@ -43,7 +47,7 @@ static LLVMValueRef codegen_var_decl(CodegenContext* context, ASTNode* node)
 
 LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 {
-	__attribute__((__unused__)) LLVMValueRef root = NULL;
+	LLVMValueRef root = NULL;
 	
 	
 	if (node) {
@@ -56,6 +60,7 @@ LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 					if (child) {
 						root = codegen(context, child);
 					}
+					
 				}
 				break;
 			case AST_TYPE_VARIABLE_DECLARATION:
@@ -66,7 +71,7 @@ LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 				break;
 		}
 	}
-		
+	
 	return root;
 }
 
@@ -74,7 +79,7 @@ CodegenContext* init_codegen()
 {
 	CodegenContext* context = malloc(sizeof(CodegenContext));
 	context->root_context = LLVMGetGlobalContext();
-	context->module = LLVMModuleCreateWithNameInContext("x-lang", context->root_context);
+	context->module = LLVMModuleCreateWithName("__x_lang");
 	context->builder = LLVMCreateBuilderInContext(context->root_context);
 	LLVMTypeRef main_type = LLVMFunctionType(LLVMVoidType(), NULL, 0, 0);
 	LLVMValueRef main_func = LLVMAddFunction(context->module, "main", main_type);
