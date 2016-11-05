@@ -80,6 +80,7 @@ static void ident_test()
 	for (unsigned i = 0; lexer->tokens->size; i++) {
 		token = (Token*) fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
+		destroy_token(token);
 	}
 	
 	log_info("PASS\n");
@@ -87,7 +88,6 @@ static void ident_test()
 	for (int i = 0; i < 7; i++)
 		destroy_token(EXPECTED[i]);
 	
-	destroy_token(token);
 	destroy_lexer(lexer);
 }
 /*
