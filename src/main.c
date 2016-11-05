@@ -65,9 +65,10 @@ int main(int argc, char** argv)
 			if (file_exists(fname)) {
 				ParserContext* parser = init_parser(fname);
 				ASTNode* ast = parse(parser);
-				CodegenContext* codegen = init_codegen();
+				CodegenContext* context = init_codegen();
+				LLVMDumpValue(codegen(context, ast));
 				ast_dump(ast);
-				destroy_codegen(codegen);
+				destroy_codegen(context);
 				destroy_parser(parser);				
 				destroy_ast_node(ast);
 				

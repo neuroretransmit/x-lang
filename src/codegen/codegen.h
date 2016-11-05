@@ -18,4 +18,4 @@ typedef struct {
 
 CodegenContext* init_codegen();
 void destroy_codegen(CodegenContext* context);
-LLVMValueRef codegen(ASTNode* ast);
+LLVMValueRef codegen(CodegenContext* context, ASTNode* ast);
