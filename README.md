@@ -23,7 +23,7 @@ X language currently has only its parser built for variable declarations. I will
 
 ## Bugs
 
-* One small leak to patch in my tests.
+* I track what I find in issues, report what you find.
 
 ## Building
 
