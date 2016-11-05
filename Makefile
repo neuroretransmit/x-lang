@@ -15,11 +15,11 @@ all: $(TESTS_BINARY) $(BINARY)
 
 $(BINARY): $(LIBRARY_BINARY) $(OBJECTS) 
 	$(MKDIR) $(@D)
-	$(CC) $^ -o $@
+	$(CXX) $^ -o $@ $(LIBS) $(LDFLAGS)
 
 $(LIBRARY_BINARY): $(filter-out obj/main.o, $(OBJECTS))
 	$(MKDIR) $(@D)
-	$(CC) -shared $^ -o $@
+	$(CC) `llvm-config --cflags` -shared $^ -o $@ $(LIBS)
 
 $(TESTS_BINARY): $(LIBRARY_BINARY) $(TEST_OBJECTS)
 	$(MKDIR) $(@D)

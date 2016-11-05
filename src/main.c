@@ -5,6 +5,7 @@
 
 #include <grammar/ast.h>
 #include <grammar/parser.h>
+#include <codegen/codegen.h>
 #include <util/mem_utils.h>
 #include <util/file_utils.h>
 
@@ -64,9 +65,12 @@ int main(int argc, char** argv)
 			if (file_exists(fname)) {
 				ParserContext* parser = init_parser(fname);
 				ASTNode* ast = parse(parser);
+				CodegenContext* codegen = init_codegen();
 				ast_dump(ast);
+				destroy_codegen(codegen);
 				destroy_parser(parser);				
 				destroy_ast_node(ast);
+				
 			}
 
 			prev = fname;

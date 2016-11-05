@@ -1,4 +1,4 @@
-#include "hashmap.h"
+#include <util/collections/hashmap.h>
 
 #include <stdlib.h>
 #include <stdbool.h>
