@@ -5,6 +5,7 @@
 
 typedef struct {
 	LLVMContextRef root_context;
+	LLVMBasicBlockRef entry;
 	LLVMModuleRef module;
 	LLVMBuilderRef builder;
 	LLVMPassManagerRef pass_manager;

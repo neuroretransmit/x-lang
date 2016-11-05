@@ -43,7 +43,7 @@ static LLVMValueRef codegen_var_decl(CodegenContext* context, ASTNode* node)
 
 LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 {
-	LLVMValueRef root = NULL;
+	__attribute__((__unused__)) LLVMValueRef root = NULL;
 	
 	
 	if (node) {
@@ -59,14 +59,14 @@ LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 				}
 				break;
 			case AST_TYPE_VARIABLE_DECLARATION:
-				codegen_var_decl(context, node);
+				root = codegen_var_decl(context, node);
 				break;
 			default:
 				log_warn("no case for this AST type %d.\n", node->type);
 				break;
 		}
 	}
-	
+		
 	return root;
 }
 
@@ -78,8 +78,8 @@ CodegenContext* init_codegen()
 	context->builder = LLVMCreateBuilderInContext(context->root_context);
 	LLVMTypeRef main_type = LLVMFunctionType(LLVMVoidType(), NULL, 0, 0);
 	LLVMValueRef main_func = LLVMAddFunction(context->module, "main", main_type);
-	LLVMBasicBlockRef entry = LLVMGetEntryBasicBlock(main_func);
-	LLVMPositionBuilderAtEnd(context->builder, entry);
+	context->entry = LLVMAppendBasicBlock(main_func, "entry");
+	LLVMPositionBuilderAtEnd(context->builder, context->entry);
 	LLVMInitializeNativeTarget();
 	
 	return context;
