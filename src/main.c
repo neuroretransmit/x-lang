@@ -2,12 +2,14 @@
 #include <argz.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <grammar/ast.h>
 #include <grammar/parser.h>
 #include <codegen/codegen.h>
 #include <util/mem_utils.h>
 #include <util/file_utils.h>
+#include <util/collections/list.h>
 
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
 const char* argp_program_version = "x-lang v0.0.1";
@@ -18,6 +20,24 @@ struct arguments {
 	char* argz;
 	size_t argz_len;
 };
+
+static void dump_ir(char* fname)
+{
+	ParserContext* parser = init_parser(fname);
+	ASTNode* ast = parse(parser);
+	CodegenContext* context = init_codegen();
+	
+	codegen(context, ast);
+	LLVMBuildRetVoid(context->builder);
+	
+	LLVMDumpModule(context->module);
+	puts("================================================================================");
+	ast_dump(ast);
+	
+	destroy_codegen(context);
+	destroy_parser(parser);
+	destroy_ast_node(ast);
+}
 
 static int parse_opt(int key, char* arg, struct argp_state* state)
 {
@@ -41,8 +61,10 @@ static int parse_opt(int key, char* arg, struct argp_state* state)
 				argp_failure(state, 1, 0, "Too many source files.");
 			else if (count < 1)
 				argp_failure(state, 1, 0, "Need a source file.");
+			
+			break;
 		}
-		break;
+		
 	}
 
 	return 0;
@@ -51,7 +73,7 @@ static int parse_opt(int key, char* arg, struct argp_state* state)
 int main(int argc, char** argv)
 {
 	struct argp_option options[] = {
-		{ 0 , 0, 0, 0, 0, 0 }
+		{ 0 }
 	};
 
 	struct arguments arguments;
@@ -62,20 +84,8 @@ int main(int argc, char** argv)
 		char* fname;
 
 		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
-			if (file_exists(fname)) {
-				ParserContext* parser = init_parser(fname);
-				ASTNode* ast = parse(parser);
-				CodegenContext* context = init_codegen();
-				__attribute__((__unused__)) LLVMValueRef code = codegen(context, ast);
-				LLVMBuildRetVoid(context->builder);
-				LLVMDumpModule(context->module);
-				puts("===============================================================\n");
-				ast_dump(ast);
-				destroy_codegen(context);
-				destroy_parser(parser);				
-				destroy_ast_node(ast);
-				
-			}
+			if (file_exists(fname))
+				dump_ir(fname);
 
 			prev = fname;
 		}

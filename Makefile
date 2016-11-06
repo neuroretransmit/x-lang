@@ -1,12 +1,14 @@
 include conf/directories.mk
-include conf/programs.mk
+include conf/programs/compiler_linker.mk
+include conf/programs/debug.mk
+include conf/programs/utility.mk
 
 BINARY := $(BINDIR)/x-lang
 LIBRARY_BINARY := $(LIBDIR)/libx-lang.so
 TESTS_BINARY := $(BINDIR)/x-lang-tests
 
-SOURCES := $(shell find src -name **.c)
-TEST_SOURCES := $(shell find tests -name **.c)
+SOURCES := $(shell find src -name '**.c')
+TEST_SOURCES := $(shell find tests -name '**.c')
 
 OBJECTS := $(patsubst src/%.c, obj/%.o, $(SOURCES))
 TEST_OBJECTS := $(patsubst tests/%.c, obj/tests/%.o, $(TEST_SOURCES))
@@ -35,7 +37,7 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 
 run-%: $(BINARY)
 	$(MKDIR) $(LOGDIR)
-	$(VALGRIND) --track-origins=yes $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
+	$(VALGRIND) $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
 
 run-tests: $(TESTS_BINARY)
 	$(MKDIR) $(LOGDIR)
@@ -48,3 +50,5 @@ clean:
 	$(CLEAN) $(BINDIR) $(OBJDIR) $(LIBDIR)
 
 dist-clean: clean-logs clean
+
+print-%  : ; @echo $* = $($*)
