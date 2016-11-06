@@ -37,7 +37,7 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 
 run-%: $(BINARY)
 	$(MKDIR) $(LOGDIR)
-	$(VALGRIND) --track-origins=yes $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
+	$(VALGRIND) $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
 
 run-tests: $(TESTS_BINARY)
 	$(MKDIR) $(LOGDIR)
