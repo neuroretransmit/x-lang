@@ -18,7 +18,7 @@ static void init_hashmap_test()
 	destroy_hashmap(map);
 }
 
-static void hashmap_put_test()
+static void hashmap_get_put_test()
 {
 	HashMap* map = init_hashmap(NULL, NULL);
 	HashNode* node[1024];
@@ -75,6 +75,6 @@ static void hashmap_remove_test()
 void hashmap_tests()
 {
 	init_hashmap_test();
-	hashmap_put_test();
+	hashmap_get_put_test();
 	hashmap_remove_test();
 }

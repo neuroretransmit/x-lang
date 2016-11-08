@@ -21,25 +21,28 @@ void destroy_fifo(FIFO* fifo)
 {
 	FIFONode* node = NULL;
 
-	if (fifo->head) {
-		if (fifo->head->data) {
-			if (fifo->destructor) {
-				fifo->destructor(fifo->head->data);
-
-				while ((node = fifo->head->next)) {
+	if (fifo) {
+		if (fifo->destructor) {
+			if (fifo->head) {
+				if (fifo->head->data)
+					fifo->destructor(fifo->head->data);
+		
+				while ((node = fifo->head->next))
 					fifo->destructor(node->data);
-				}
-			} else {
-				destroy(fifo->head->data);
-
+			}
+		} else {
+			if (fifo->head){
+				if (fifo->head->data) 
+					destroy(fifo->head->data);
+			
 				while ((node = fifo->head->next))
 					destroy(node->data);
 			}
 		}
+		
+		destroy(fifo->head);
+		destroy(fifo);
 	}
-
-	destroy(fifo->head);
-	destroy(fifo);
 }
 
 void fifo_push(FIFO* fifo, void* data)
@@ -70,7 +73,7 @@ void* fifo_pop(FIFO* fifo)
 
 	if ((fifo->head = node->next) == NULL)
 		fifo->tail = NULL;
-
+	
 	destroy(node);
 	fifo->size--;
 

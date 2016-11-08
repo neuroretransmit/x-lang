@@ -7,9 +7,13 @@
 #include <grammar/ast.h>
 #include <grammar/parser.h>
 #include <codegen/codegen.h>
+#include <util/log.h>
 #include <util/mem_utils.h>
 #include <util/file_utils.h>
 #include <util/collections/list.h>
+
+#include <llvm-c/Analysis.h>
+#include <llvm-c/BitWriter.h>
 
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
 const char* argp_program_version = "x-lang v0.0.1";
@@ -21,6 +25,13 @@ struct arguments {
 	size_t argz_len;
 };
 
+static void dump_binary(LLVMModuleRef mod, char* name)
+{
+	if (LLVMWriteBitcodeToFile(mod, name) != 0) {
+		log_err("error writing bitcode to file, skipping\n");
+	}
+}
+
 static void dump_ir(char* fname)
 {
 	ParserContext* parser = init_parser(fname);
@@ -30,8 +41,16 @@ static void dump_ir(char* fname)
 	codegen(context, ast);
 	LLVMBuildRetVoid(context->builder);
 	
+	char *error = NULL;
+	LLVMVerifyModule(context->module, LLVMAbortProcessAction, &error);
+	LLVMDisposeMessage(error);
+	
 	LLVMDumpModule(context->module);
 	puts("================================================================================");
+	LLVMRunFunctionAsMain(context->engine, context->main_func, 0, NULL, NULL);
+	dump_binary(context->module, "bin/x-lang.bc");
+	system("llc -o bin/native.s bin/x-lang.bc");
+	system("cc -o bin/prog.hex bin/native.s");
 	ast_dump(ast);
 	
 	destroy_codegen(context);

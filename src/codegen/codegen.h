@@ -1,6 +1,7 @@
 #pragma once
 
 #include <llvm-c/Core.h>
+#include <llvm-c/ExecutionEngine.h>
 #include <grammar/ast.h>
 
 typedef struct {
@@ -9,6 +10,8 @@ typedef struct {
 	LLVMModuleRef module;
 	LLVMBuilderRef builder;
 	LLVMPassManagerRef pass_manager;
+	LLVMExecutionEngineRef engine;
+	LLVMValueRef main_func;
 } CodegenContext;
 
 typedef struct {
