@@ -15,6 +15,8 @@
 #include <llvm-c/Analysis.h>
 #include <llvm-c/BitWriter.h>
 
+#define DIVIDER ("\n===============================\n")
+
 const char* argp_program_bug_address = "<typ3def@gmail.com>";
 const char* argp_program_version = "x-lang v0.0.1";
 static const char* args_doc = "<file.x> ...";
@@ -36,14 +38,30 @@ static void dump_binary(char* fname)
 	strcat(cc, " tmp/tmp.s");
 	system(llc);
 	system(cc);
-}
-
-static void dump_bitcode(LLVMModuleRef mod, char* name)
-{
-	if (LLVMWriteBitcodeToFile(mod, name) != 0) {
-		log_err("error writing bitcode to file, skipping\n");
-	}
 }*/
+
+static void dump_bitcode(char* fname, char* dest)
+{
+	ParserContext* parser = init_parser(fname);
+	ASTNode* ast = parse(parser);
+	CodegenContext* context = init_codegen();
+	
+	codegen(context, ast);
+	LLVMBuildRetVoid(context->builder);
+	
+	char *error = NULL;
+	LLVMVerifyModule(context->module, LLVMAbortProcessAction, &error);
+	LLVMDisposeMessage(error);
+	
+	LLVMRunFunctionAsMain(context->engine, context->main_func, 0, NULL, NULL);
+	
+	if (LLVMWriteBitcodeToFile(context->module, dest) != 0)
+		log_err("error writing bitcode to file, skipping\n");
+	
+	destroy_codegen(context);
+	destroy_parser(parser);
+	destroy_ast_node(ast);
+}
 
 static void dump_ast(char* fname)
 {
@@ -90,7 +108,7 @@ static int parse_opt(int key, char* arg, struct argp_state* state)
 			a->ir = arg;
 			break;
 		
-		case 670:
+		case 'b':
 			a->bitcode = arg;
 			break;
 		
@@ -129,7 +147,7 @@ int main(int argc, char** argv)
 		{ "ir", 'i', 0, 0, "Dump intermediate representation.", 0 },
 		{ "ast", 'a', 0, 0, "Dump abstract syntax tree.", 0 },
 		{ "asm", 0, "OUTFILE", 669, "Dump the native assembly code.", 0 },
-		{ "bitcode", 0, "OUTFILE", 670, "Dump the LLVM bitcode to a file.", 0 },
+		{ "bitcode", 'b', "OUTFILE", 0, "Dump the LLVM bitcode to a file.", 0 },
 		{ 0 }
 	};
 
@@ -145,8 +163,12 @@ int main(int argc, char** argv)
 				
 				if (arguments.ir) {
 					if (arguments.ast)
-						puts("===============================");
+						puts(DIVIDER);
 					dump_ir(arguments.args[0]);
+				}
+				
+				if (arguments.bitcode) {
+					dump_bitcode(arguments.args[0], arguments.bitcode);
 				}
 				
 				//dump_binary(fname);
