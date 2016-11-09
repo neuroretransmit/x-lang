@@ -1,0 +1,57 @@
+\hypertarget{structASTNode}{}\section{A\+S\+T\+Node Struct Reference}
+\label{structASTNode}\index{A\+S\+T\+Node@{A\+S\+T\+Node}}
+
+
+{\ttfamily \#include $<$ast.\+h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structList}{List} $\ast$ \hyperlink{structASTNode_a435c2e2c65af90b9be825f1e486a8be8}{children}
+\item 
+int \hyperlink{structASTNode_a511b8dc176b14b334d4bf6dddc84ca32}{type}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>\hyperlink{structToken}{Token} $\ast$ \hyperlink{structASTNode_a21259aab48ee3cf3e50dcd7c68c347b6}{token}\\
+\>\hyperlink{structASTVariableDeclaration}{ASTVariableDeclaration} $\ast$ \hyperlink{structASTNode_a15d33dae46f38a469b189522ff24ed38}{var\_decl}\\
+\}; \\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structASTNode_a8484cf2267c4d4b2c43e6162b6aed150}{}\label{structASTNode_a8484cf2267c4d4b2c43e6162b6aed150} 
+\subsubsection{\texorpdfstring{"@1}{@1}}
+{\footnotesize\ttfamily union \{ ... \} }
+
+\hypertarget{structASTNode_a435c2e2c65af90b9be825f1e486a8be8}{}\label{structASTNode_a435c2e2c65af90b9be825f1e486a8be8} 
+\index{A\+S\+T\+Node@{A\+S\+T\+Node}!children@{children}}
+\index{children@{children}!A\+S\+T\+Node@{A\+S\+T\+Node}}
+\subsubsection{\texorpdfstring{children}{children}}
+{\footnotesize\ttfamily \hyperlink{structList}{List}$\ast$ A\+S\+T\+Node\+::children}
+
+\hypertarget{structASTNode_a21259aab48ee3cf3e50dcd7c68c347b6}{}\label{structASTNode_a21259aab48ee3cf3e50dcd7c68c347b6} 
+\index{A\+S\+T\+Node@{A\+S\+T\+Node}!token@{token}}
+\index{token@{token}!A\+S\+T\+Node@{A\+S\+T\+Node}}
+\subsubsection{\texorpdfstring{token}{token}}
+{\footnotesize\ttfamily \hyperlink{structToken}{Token}$\ast$ A\+S\+T\+Node\+::token}
+
+\hypertarget{structASTNode_a511b8dc176b14b334d4bf6dddc84ca32}{}\label{structASTNode_a511b8dc176b14b334d4bf6dddc84ca32} 
+\index{A\+S\+T\+Node@{A\+S\+T\+Node}!type@{type}}
+\index{type@{type}!A\+S\+T\+Node@{A\+S\+T\+Node}}
+\subsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily int A\+S\+T\+Node\+::type}
+
+\hypertarget{structASTNode_a15d33dae46f38a469b189522ff24ed38}{}\label{structASTNode_a15d33dae46f38a469b189522ff24ed38} 
+\index{A\+S\+T\+Node@{A\+S\+T\+Node}!var\+\_\+decl@{var\+\_\+decl}}
+\index{var\+\_\+decl@{var\+\_\+decl}!A\+S\+T\+Node@{A\+S\+T\+Node}}
+\subsubsection{\texorpdfstring{var\+\_\+decl}{var\_decl}}
+{\footnotesize\ttfamily \hyperlink{structASTVariableDeclaration}{A\+S\+T\+Variable\+Declaration}$\ast$ A\+S\+T\+Node\+::var\+\_\+decl}
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/grammar/\hyperlink{ast_8h}{ast.\+h}\end{DoxyCompactItemize}

@@ -1,0 +1,54 @@
+\hypertarget{codegen_8c}{}\section{src/codegen/codegen.c File Reference}
+\label{codegen_8c}\index{src/codegen/codegen.\+c@{src/codegen/codegen.\+c}}
+{\ttfamily \#include $<$codegen/codegen.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$llvm-\/c/\+Target.\+h$>$}\newline
+{\ttfamily \#include $<$util/mem\+\_\+utils.\+h$>$}\newline
+{\ttfamily \#include $<$util/log.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static L\+L\+V\+M\+Type\+Ref \hyperlink{codegen_8c_a4f399dc22bc52272d7fbd8eaf2ba25e8}{deduce\+\_\+llvm\+\_\+type} (int type)
+\item 
+static L\+L\+V\+M\+Value\+Ref \hyperlink{codegen_8c_af1912c00ac80ed53911a14c608d20ae0}{codegen\+\_\+var\+\_\+decl} (\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$context, \hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$node)
+\item 
+L\+L\+V\+M\+Value\+Ref \hyperlink{codegen_8c_ab6dca5aeec65df019925b7cffbcb76f1}{codegen} (\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$context, \hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$node)
+\item 
+\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$ \hyperlink{codegen_8c_a0239ac7bb771a54980593701d162cd5a}{init\+\_\+codegen} ()
+\item 
+void \hyperlink{codegen_8c_ab77c97628cdddc57581bd380fec9818c}{destroy\+\_\+codegen} (\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$context)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{codegen_8c_ab6dca5aeec65df019925b7cffbcb76f1}{}\label{codegen_8c_ab6dca5aeec65df019925b7cffbcb76f1} 
+\index{codegen.\+c@{codegen.\+c}!codegen@{codegen}}
+\index{codegen@{codegen}!codegen.\+c@{codegen.\+c}}
+\subsubsection{\texorpdfstring{codegen()}{codegen()}}
+{\footnotesize\ttfamily L\+L\+V\+M\+Value\+Ref codegen (\begin{DoxyParamCaption}\item[{\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$}]{context,  }\item[{\hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$}]{node }\end{DoxyParamCaption})}
+
+\hypertarget{codegen_8c_af1912c00ac80ed53911a14c608d20ae0}{}\label{codegen_8c_af1912c00ac80ed53911a14c608d20ae0} 
+\index{codegen.\+c@{codegen.\+c}!codegen\+\_\+var\+\_\+decl@{codegen\+\_\+var\+\_\+decl}}
+\index{codegen\+\_\+var\+\_\+decl@{codegen\+\_\+var\+\_\+decl}!codegen.\+c@{codegen.\+c}}
+\subsubsection{\texorpdfstring{codegen\+\_\+var\+\_\+decl()}{codegen\_var\_decl()}}
+{\footnotesize\ttfamily static L\+L\+V\+M\+Value\+Ref codegen\+\_\+var\+\_\+decl (\begin{DoxyParamCaption}\item[{\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$}]{context,  }\item[{\hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$}]{node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{codegen_8c_a4f399dc22bc52272d7fbd8eaf2ba25e8}{}\label{codegen_8c_a4f399dc22bc52272d7fbd8eaf2ba25e8} 
+\index{codegen.\+c@{codegen.\+c}!deduce\+\_\+llvm\+\_\+type@{deduce\+\_\+llvm\+\_\+type}}
+\index{deduce\+\_\+llvm\+\_\+type@{deduce\+\_\+llvm\+\_\+type}!codegen.\+c@{codegen.\+c}}
+\subsubsection{\texorpdfstring{deduce\+\_\+llvm\+\_\+type()}{deduce\_llvm\_type()}}
+{\footnotesize\ttfamily static L\+L\+V\+M\+Type\+Ref deduce\+\_\+llvm\+\_\+type (\begin{DoxyParamCaption}\item[{int}]{type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{codegen_8c_ab77c97628cdddc57581bd380fec9818c}{}\label{codegen_8c_ab77c97628cdddc57581bd380fec9818c} 
+\index{codegen.\+c@{codegen.\+c}!destroy\+\_\+codegen@{destroy\+\_\+codegen}}
+\index{destroy\+\_\+codegen@{destroy\+\_\+codegen}!codegen.\+c@{codegen.\+c}}
+\subsubsection{\texorpdfstring{destroy\+\_\+codegen()}{destroy\_codegen()}}
+{\footnotesize\ttfamily void destroy\+\_\+codegen (\begin{DoxyParamCaption}\item[{\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{codegen_8c_a0239ac7bb771a54980593701d162cd5a}{}\label{codegen_8c_a0239ac7bb771a54980593701d162cd5a} 
+\index{codegen.\+c@{codegen.\+c}!init\+\_\+codegen@{init\+\_\+codegen}}
+\index{init\+\_\+codegen@{init\+\_\+codegen}!codegen.\+c@{codegen.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+codegen()}{init\_codegen()}}
+{\footnotesize\ttfamily \hyperlink{structCodegenContext}{Codegen\+Context}$\ast$ init\+\_\+codegen (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+

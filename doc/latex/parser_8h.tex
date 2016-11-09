@@ -1,0 +1,40 @@
+\hypertarget{parser_8h}{}\section{src/grammar/parser.h File Reference}
+\label{parser_8h}\index{src/grammar/parser.\+h@{src/grammar/parser.\+h}}
+{\ttfamily \#include $<$grammar/ast.\+h$>$}\newline
+{\ttfamily \#include $<$grammar/lexer.\+h$>$}\newline
+{\ttfamily \#include $<$util/collections/list.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structParserContext}{Parser\+Context}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structParserContext}{Parser\+Context} $\ast$ \hyperlink{parser_8h_ae35425509649fe9d5d28cd9b4869e6f7}{init\+\_\+parser} (char $\ast$fname)
+\item 
+void \hyperlink{parser_8h_a1c74460fe4f22a9d4355ab584b7f1f24}{destroy\+\_\+parser} (\hyperlink{structParserContext}{Parser\+Context} $\ast$context)
+\item 
+\hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$ \hyperlink{parser_8h_a71ac94e771c22696fe2d4a34d85fd727}{parse} (\hyperlink{structParserContext}{Parser\+Context} $\ast$context)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{parser_8h_a1c74460fe4f22a9d4355ab584b7f1f24}{}\label{parser_8h_a1c74460fe4f22a9d4355ab584b7f1f24} 
+\index{parser.\+h@{parser.\+h}!destroy\+\_\+parser@{destroy\+\_\+parser}}
+\index{destroy\+\_\+parser@{destroy\+\_\+parser}!parser.\+h@{parser.\+h}}
+\subsubsection{\texorpdfstring{destroy\+\_\+parser()}{destroy\_parser()}}
+{\footnotesize\ttfamily void destroy\+\_\+parser (\begin{DoxyParamCaption}\item[{\hyperlink{structParserContext}{Parser\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{parser_8h_ae35425509649fe9d5d28cd9b4869e6f7}{}\label{parser_8h_ae35425509649fe9d5d28cd9b4869e6f7} 
+\index{parser.\+h@{parser.\+h}!init\+\_\+parser@{init\+\_\+parser}}
+\index{init\+\_\+parser@{init\+\_\+parser}!parser.\+h@{parser.\+h}}
+\subsubsection{\texorpdfstring{init\+\_\+parser()}{init\_parser()}}
+{\footnotesize\ttfamily \hyperlink{structParserContext}{Parser\+Context}$\ast$ init\+\_\+parser (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname }\end{DoxyParamCaption})}
+
+\hypertarget{parser_8h_a71ac94e771c22696fe2d4a34d85fd727}{}\label{parser_8h_a71ac94e771c22696fe2d4a34d85fd727} 
+\index{parser.\+h@{parser.\+h}!parse@{parse}}
+\index{parse@{parse}!parser.\+h@{parser.\+h}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily \hyperlink{structASTNode}{A\+S\+T\+Node}$\ast$ parse (\begin{DoxyParamCaption}\item[{\hyperlink{structParserContext}{Parser\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+

@@ -6,4 +6,5 @@ DOCDIR := doc
 LOGDIR := log
 RESDIR := res
 TESTDIR := tests
+DOXYGENDIRS := doc/html doc/latex
 TESTOBJDIR := $(OBJDIR)/tests

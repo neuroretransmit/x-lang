@@ -1,0 +1,42 @@
+\hypertarget{codegen_8h}{}\section{src/codegen/codegen.h File Reference}
+\label{codegen_8h}\index{src/codegen/codegen.\+h@{src/codegen/codegen.\+h}}
+{\ttfamily \#include $<$llvm-\/c/\+Core.\+h$>$}\newline
+{\ttfamily \#include $<$llvm-\/c/\+Execution\+Engine.\+h$>$}\newline
+{\ttfamily \#include $<$grammar/ast.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structCodegenContext}{Codegen\+Context}
+\item 
+struct \hyperlink{structNamedValue}{Named\+Value}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$ \hyperlink{codegen_8h_a0239ac7bb771a54980593701d162cd5a}{init\+\_\+codegen} ()
+\item 
+void \hyperlink{codegen_8h_ab77c97628cdddc57581bd380fec9818c}{destroy\+\_\+codegen} (\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$context)
+\item 
+L\+L\+V\+M\+Value\+Ref \hyperlink{codegen_8h_a9445141d16c423dc4de58f2c32133d73}{codegen} (\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$context, \hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$ast)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{codegen_8h_a9445141d16c423dc4de58f2c32133d73}{}\label{codegen_8h_a9445141d16c423dc4de58f2c32133d73} 
+\index{codegen.\+h@{codegen.\+h}!codegen@{codegen}}
+\index{codegen@{codegen}!codegen.\+h@{codegen.\+h}}
+\subsubsection{\texorpdfstring{codegen()}{codegen()}}
+{\footnotesize\ttfamily L\+L\+V\+M\+Value\+Ref codegen (\begin{DoxyParamCaption}\item[{\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$}]{context,  }\item[{\hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$}]{ast }\end{DoxyParamCaption})}
+
+\hypertarget{codegen_8h_ab77c97628cdddc57581bd380fec9818c}{}\label{codegen_8h_ab77c97628cdddc57581bd380fec9818c} 
+\index{codegen.\+h@{codegen.\+h}!destroy\+\_\+codegen@{destroy\+\_\+codegen}}
+\index{destroy\+\_\+codegen@{destroy\+\_\+codegen}!codegen.\+h@{codegen.\+h}}
+\subsubsection{\texorpdfstring{destroy\+\_\+codegen()}{destroy\_codegen()}}
+{\footnotesize\ttfamily void destroy\+\_\+codegen (\begin{DoxyParamCaption}\item[{\hyperlink{structCodegenContext}{Codegen\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{codegen_8h_a0239ac7bb771a54980593701d162cd5a}{}\label{codegen_8h_a0239ac7bb771a54980593701d162cd5a} 
+\index{codegen.\+h@{codegen.\+h}!init\+\_\+codegen@{init\+\_\+codegen}}
+\index{init\+\_\+codegen@{init\+\_\+codegen}!codegen.\+h@{codegen.\+h}}
+\subsubsection{\texorpdfstring{init\+\_\+codegen()}{init\_codegen()}}
+{\footnotesize\ttfamily \hyperlink{structCodegenContext}{Codegen\+Context}$\ast$ init\+\_\+codegen (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+

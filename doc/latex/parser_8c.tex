@@ -1,0 +1,82 @@
+\hypertarget{parser_8c}{}\section{src/grammar/parser.c File Reference}
+\label{parser_8c}\index{src/grammar/parser.\+c@{src/grammar/parser.\+c}}
+{\ttfamily \#include $<$grammar/parser.\+h$>$}\newline
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$grammar/ast.\+h$>$}\newline
+{\ttfamily \#include $<$grammar/lexer.\+h$>$}\newline
+{\ttfamily \#include $<$util/debug.\+h$>$}\newline
+{\ttfamily \#include $<$util/mem\+\_\+utils.\+h$>$}\newline
+{\ttfamily \#include $<$util/regex\+\_\+utils.\+h$>$}\newline
+{\ttfamily \#include $<$util/collections/fifo.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structParserContext}{Parser\+Context} $\ast$ \hyperlink{parser_8c_ae35425509649fe9d5d28cd9b4869e6f7}{init\+\_\+parser} (char $\ast$fname)
+\item 
+void \hyperlink{parser_8c_a1c74460fe4f22a9d4355ab584b7f1f24}{destroy\+\_\+parser} (\hyperlink{structParserContext}{Parser\+Context} $\ast$context)
+\item 
+static void \hyperlink{parser_8c_ac35cb3b7180ba72c02b721843aea8f8f}{log\+\_\+parser\+\_\+error} (\hyperlink{structParserContext}{Parser\+Context} $\ast$context, \hyperlink{structToken}{Token} $\ast$token, const char $\ast$fmt,...)
+\item 
+static bool \hyperlink{parser_8c_a41fc9421f10d2d9363a2d02cb89f8e9d}{valid\+\_\+ident} (\hyperlink{structToken}{Token} $\ast$ident)
+\item 
+static bool \hyperlink{parser_8c_a13844d065382c8398f41e7f41aa10d70}{parse\+\_\+ident} (\hyperlink{structToken}{Token} $\ast$ident)
+\item 
+static bool \hyperlink{parser_8c_ac951974b22e455a1bf8b94926d9a466b}{parse\+\_\+type} ()
+\item 
+static \hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$ \hyperlink{parser_8c_a31cbd089db1469bba480ec287d37d79d}{parse\+\_\+x\+\_\+lang} (\hyperlink{structParserContext}{Parser\+Context} $\ast$context)
+\item 
+\hyperlink{structASTNode}{A\+S\+T\+Node} $\ast$ \hyperlink{parser_8c_a71ac94e771c22696fe2d4a34d85fd727}{parse} (\hyperlink{structParserContext}{Parser\+Context} $\ast$context)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{parser_8c_a1c74460fe4f22a9d4355ab584b7f1f24}{}\label{parser_8c_a1c74460fe4f22a9d4355ab584b7f1f24} 
+\index{parser.\+c@{parser.\+c}!destroy\+\_\+parser@{destroy\+\_\+parser}}
+\index{destroy\+\_\+parser@{destroy\+\_\+parser}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{destroy\+\_\+parser()}{destroy\_parser()}}
+{\footnotesize\ttfamily void destroy\+\_\+parser (\begin{DoxyParamCaption}\item[{\hyperlink{structParserContext}{Parser\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{parser_8c_ae35425509649fe9d5d28cd9b4869e6f7}{}\label{parser_8c_ae35425509649fe9d5d28cd9b4869e6f7} 
+\index{parser.\+c@{parser.\+c}!init\+\_\+parser@{init\+\_\+parser}}
+\index{init\+\_\+parser@{init\+\_\+parser}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+parser()}{init\_parser()}}
+{\footnotesize\ttfamily \hyperlink{structParserContext}{Parser\+Context}$\ast$ init\+\_\+parser (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname }\end{DoxyParamCaption})}
+
+\hypertarget{parser_8c_ac35cb3b7180ba72c02b721843aea8f8f}{}\label{parser_8c_ac35cb3b7180ba72c02b721843aea8f8f} 
+\index{parser.\+c@{parser.\+c}!log\+\_\+parser\+\_\+error@{log\+\_\+parser\+\_\+error}}
+\index{log\+\_\+parser\+\_\+error@{log\+\_\+parser\+\_\+error}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{log\+\_\+parser\+\_\+error()}{log\_parser\_error()}}
+{\footnotesize\ttfamily static void log\+\_\+parser\+\_\+error (\begin{DoxyParamCaption}\item[{\hyperlink{structParserContext}{Parser\+Context} $\ast$}]{context,  }\item[{\hyperlink{structToken}{Token} $\ast$}]{token,  }\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{parser_8c_a71ac94e771c22696fe2d4a34d85fd727}{}\label{parser_8c_a71ac94e771c22696fe2d4a34d85fd727} 
+\index{parser.\+c@{parser.\+c}!parse@{parse}}
+\index{parse@{parse}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily \hyperlink{structASTNode}{A\+S\+T\+Node}$\ast$ parse (\begin{DoxyParamCaption}\item[{\hyperlink{structParserContext}{Parser\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{parser_8c_a13844d065382c8398f41e7f41aa10d70}{}\label{parser_8c_a13844d065382c8398f41e7f41aa10d70} 
+\index{parser.\+c@{parser.\+c}!parse\+\_\+ident@{parse\+\_\+ident}}
+\index{parse\+\_\+ident@{parse\+\_\+ident}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{parse\+\_\+ident()}{parse\_ident()}}
+{\footnotesize\ttfamily static bool parse\+\_\+ident (\begin{DoxyParamCaption}\item[{\hyperlink{structToken}{Token} $\ast$}]{ident }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{parser_8c_ac951974b22e455a1bf8b94926d9a466b}{}\label{parser_8c_ac951974b22e455a1bf8b94926d9a466b} 
+\index{parser.\+c@{parser.\+c}!parse\+\_\+type@{parse\+\_\+type}}
+\index{parse\+\_\+type@{parse\+\_\+type}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{parse\+\_\+type()}{parse\_type()}}
+{\footnotesize\ttfamily static bool parse\+\_\+type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{parser_8c_a31cbd089db1469bba480ec287d37d79d}{}\label{parser_8c_a31cbd089db1469bba480ec287d37d79d} 
+\index{parser.\+c@{parser.\+c}!parse\+\_\+x\+\_\+lang@{parse\+\_\+x\+\_\+lang}}
+\index{parse\+\_\+x\+\_\+lang@{parse\+\_\+x\+\_\+lang}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{parse\+\_\+x\+\_\+lang()}{parse\_x\_lang()}}
+{\footnotesize\ttfamily static \hyperlink{structASTNode}{A\+S\+T\+Node}$\ast$ parse\+\_\+x\+\_\+lang (\begin{DoxyParamCaption}\item[{\hyperlink{structParserContext}{Parser\+Context} $\ast$}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{parser_8c_a41fc9421f10d2d9363a2d02cb89f8e9d}{}\label{parser_8c_a41fc9421f10d2d9363a2d02cb89f8e9d} 
+\index{parser.\+c@{parser.\+c}!valid\+\_\+ident@{valid\+\_\+ident}}
+\index{valid\+\_\+ident@{valid\+\_\+ident}!parser.\+c@{parser.\+c}}
+\subsubsection{\texorpdfstring{valid\+\_\+ident()}{valid\_ident()}}
+{\footnotesize\ttfamily static bool valid\+\_\+ident (\begin{DoxyParamCaption}\item[{\hyperlink{structToken}{Token} $\ast$}]{ident }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+

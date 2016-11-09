@@ -1,0 +1,163 @@
+\hypertarget{lexer_8c}{}\section{src/grammar/lexer.c File Reference}
+\label{lexer_8c}\index{src/grammar/lexer.\+c@{src/grammar/lexer.\+c}}
+{\ttfamily \#include $<$grammar/lexer.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include $<$util/log.\+h$>$}\newline
+{\ttfamily \#include $<$util/mem\+\_\+utils.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structStringCapture}{String\+Capture}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{lexer_8c_abfa0d183e035eb9705b5faec98294d0f}{W\+H\+I\+T\+E\+S\+P\+A\+CE}~( -\/1 )
+\item 
+\#define \hyperlink{lexer_8c_ab8f2252542165b3d07e91f737f48ea76}{F\+A\+K\+E\+\_\+\+T\+O\+K\+EN}~( (\hyperlink{structToken}{Token}$\ast$) \hyperlink{lexer_8c_abfa0d183e035eb9705b5faec98294d0f}{W\+H\+I\+T\+E\+S\+P\+A\+CE} )
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{lexer_8c_a21f260621222d947b994cb4457d1fa39}{destroy\+\_\+token\+\_\+value} (void $\ast$tok\+\_\+val)
+\item 
+void \hyperlink{lexer_8c_af1b42d3640d03e697177a86ebaa74c7d}{destroy\+\_\+token} (void $\ast$token)
+\item 
+\hyperlink{structLexerContext}{Lexer\+Context} $\ast$ \hyperlink{lexer_8c_ad536c6b705b9fea98532917522e70bf5}{init\+\_\+lexer} (char $\ast$fname)
+\item 
+void \hyperlink{lexer_8c_aa801f69ff718e393f680d313453f2d01}{destroy\+\_\+lexer} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\item 
+static void \hyperlink{lexer_8c_af0ba78a197f2991c63142c54fddaf27e}{log\+\_\+lexer\+\_\+error} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context, const char $\ast$fmt,...)
+\item 
+static void \hyperlink{lexer_8c_abf3c6ad4f5c953855da3610dae07087c}{next\+\_\+token} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\item 
+static void \hyperlink{lexer_8c_a48633c975b290e096648295480510fc4}{adjust\+\_\+position} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context, size\+\_\+t tok\+\_\+len)
+\item 
+static bool \hyperlink{lexer_8c_ab4370316f013305f9851c0a7c0786dcc}{is\+\_\+separator} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\item 
+void \hyperlink{lexer_8c_abb5d9c8a809bc15adae477ca447067b2}{destroy\+\_\+string\+\_\+capture} (\hyperlink{structStringCapture}{String\+Capture} $\ast$capture)
+\item 
+static \hyperlink{structStringCapture}{String\+Capture} $\ast$ \hyperlink{lexer_8c_a4497ae98a851f5507af62ea0d8a06d1e}{capture\+\_\+string} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\item 
+static void \hyperlink{lexer_8c_afcde91f91d642654d794af04a7653fb0}{save\+\_\+token\+\_\+start} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\item 
+\hyperlink{unionTokenValue}{Token\+Value} $\ast$ \hyperlink{lexer_8c_a1e2dd8fbd881e686043a020dd1e03fc4}{init\+\_\+token\+\_\+value} (\hyperlink{lexer_8h_aa520fbf142ba1e7e659590c07da31921}{Token\+Type} type)
+\item 
+static \hyperlink{structToken}{Token} $\ast$ \hyperlink{lexer_8c_a3f063617e33d047d43f211a934db8a8f}{create\+\_\+token} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context, \hyperlink{lexer_8h_aa520fbf142ba1e7e659590c07da31921}{Token\+Type} type, void $\ast$val, size\+\_\+t len)
+\item 
+static \hyperlink{structToken}{Token} $\ast$ \hyperlink{lexer_8c_a268fe3c5ac732b7cd2fbfade53b68e73}{tokenize} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\item 
+void \hyperlink{lexer_8c_a02ca138e3d6938387c4fd3adeda2bf17}{lex} (\hyperlink{structLexerContext}{Lexer\+Context} $\ast$context)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{lexer_8c_ab8f2252542165b3d07e91f737f48ea76}{}\label{lexer_8c_ab8f2252542165b3d07e91f737f48ea76} 
+\index{lexer.\+c@{lexer.\+c}!F\+A\+K\+E\+\_\+\+T\+O\+K\+EN@{F\+A\+K\+E\+\_\+\+T\+O\+K\+EN}}
+\index{F\+A\+K\+E\+\_\+\+T\+O\+K\+EN@{F\+A\+K\+E\+\_\+\+T\+O\+K\+EN}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{F\+A\+K\+E\+\_\+\+T\+O\+K\+EN}{FAKE\_TOKEN}}
+{\footnotesize\ttfamily \#define F\+A\+K\+E\+\_\+\+T\+O\+K\+EN~( (\hyperlink{structToken}{Token}$\ast$) \hyperlink{lexer_8c_abfa0d183e035eb9705b5faec98294d0f}{W\+H\+I\+T\+E\+S\+P\+A\+CE} )}
+
+\hypertarget{lexer_8c_abfa0d183e035eb9705b5faec98294d0f}{}\label{lexer_8c_abfa0d183e035eb9705b5faec98294d0f} 
+\index{lexer.\+c@{lexer.\+c}!W\+H\+I\+T\+E\+S\+P\+A\+CE@{W\+H\+I\+T\+E\+S\+P\+A\+CE}}
+\index{W\+H\+I\+T\+E\+S\+P\+A\+CE@{W\+H\+I\+T\+E\+S\+P\+A\+CE}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{W\+H\+I\+T\+E\+S\+P\+A\+CE}{WHITESPACE}}
+{\footnotesize\ttfamily \#define W\+H\+I\+T\+E\+S\+P\+A\+CE~( -\/1 )}
+
+
+
+\subsection{Function Documentation}
+\hypertarget{lexer_8c_a48633c975b290e096648295480510fc4}{}\label{lexer_8c_a48633c975b290e096648295480510fc4} 
+\index{lexer.\+c@{lexer.\+c}!adjust\+\_\+position@{adjust\+\_\+position}}
+\index{adjust\+\_\+position@{adjust\+\_\+position}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{adjust\+\_\+position()}{adjust\_position()}}
+{\footnotesize\ttfamily static void adjust\+\_\+position (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context,  }\item[{size\+\_\+t}]{tok\+\_\+len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{lexer_8c_a4497ae98a851f5507af62ea0d8a06d1e}{}\label{lexer_8c_a4497ae98a851f5507af62ea0d8a06d1e} 
+\index{lexer.\+c@{lexer.\+c}!capture\+\_\+string@{capture\+\_\+string}}
+\index{capture\+\_\+string@{capture\+\_\+string}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{capture\+\_\+string()}{capture\_string()}}
+{\footnotesize\ttfamily static \hyperlink{structStringCapture}{String\+Capture}$\ast$ capture\+\_\+string (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{lexer_8c_a3f063617e33d047d43f211a934db8a8f}{}\label{lexer_8c_a3f063617e33d047d43f211a934db8a8f} 
+\index{lexer.\+c@{lexer.\+c}!create\+\_\+token@{create\+\_\+token}}
+\index{create\+\_\+token@{create\+\_\+token}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{create\+\_\+token()}{create\_token()}}
+{\footnotesize\ttfamily static \hyperlink{structToken}{Token}$\ast$ create\+\_\+token (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context,  }\item[{\hyperlink{lexer_8h_aa520fbf142ba1e7e659590c07da31921}{Token\+Type}}]{type,  }\item[{void $\ast$}]{val,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{lexer_8c_aa801f69ff718e393f680d313453f2d01}{}\label{lexer_8c_aa801f69ff718e393f680d313453f2d01} 
+\index{lexer.\+c@{lexer.\+c}!destroy\+\_\+lexer@{destroy\+\_\+lexer}}
+\index{destroy\+\_\+lexer@{destroy\+\_\+lexer}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{destroy\+\_\+lexer()}{destroy\_lexer()}}
+{\footnotesize\ttfamily void destroy\+\_\+lexer (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_abb5d9c8a809bc15adae477ca447067b2}{}\label{lexer_8c_abb5d9c8a809bc15adae477ca447067b2} 
+\index{lexer.\+c@{lexer.\+c}!destroy\+\_\+string\+\_\+capture@{destroy\+\_\+string\+\_\+capture}}
+\index{destroy\+\_\+string\+\_\+capture@{destroy\+\_\+string\+\_\+capture}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{destroy\+\_\+string\+\_\+capture()}{destroy\_string\_capture()}}
+{\footnotesize\ttfamily void destroy\+\_\+string\+\_\+capture (\begin{DoxyParamCaption}\item[{\hyperlink{structStringCapture}{String\+Capture} $\ast$}]{capture }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_af1b42d3640d03e697177a86ebaa74c7d}{}\label{lexer_8c_af1b42d3640d03e697177a86ebaa74c7d} 
+\index{lexer.\+c@{lexer.\+c}!destroy\+\_\+token@{destroy\+\_\+token}}
+\index{destroy\+\_\+token@{destroy\+\_\+token}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{destroy\+\_\+token()}{destroy\_token()}}
+{\footnotesize\ttfamily void destroy\+\_\+token (\begin{DoxyParamCaption}\item[{void $\ast$}]{token }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_a21f260621222d947b994cb4457d1fa39}{}\label{lexer_8c_a21f260621222d947b994cb4457d1fa39} 
+\index{lexer.\+c@{lexer.\+c}!destroy\+\_\+token\+\_\+value@{destroy\+\_\+token\+\_\+value}}
+\index{destroy\+\_\+token\+\_\+value@{destroy\+\_\+token\+\_\+value}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{destroy\+\_\+token\+\_\+value()}{destroy\_token\_value()}}
+{\footnotesize\ttfamily void destroy\+\_\+token\+\_\+value (\begin{DoxyParamCaption}\item[{void $\ast$}]{tok\+\_\+val }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_ad536c6b705b9fea98532917522e70bf5}{}\label{lexer_8c_ad536c6b705b9fea98532917522e70bf5} 
+\index{lexer.\+c@{lexer.\+c}!init\+\_\+lexer@{init\+\_\+lexer}}
+\index{init\+\_\+lexer@{init\+\_\+lexer}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+lexer()}{init\_lexer()}}
+{\footnotesize\ttfamily \hyperlink{structLexerContext}{Lexer\+Context}$\ast$ init\+\_\+lexer (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_a1e2dd8fbd881e686043a020dd1e03fc4}{}\label{lexer_8c_a1e2dd8fbd881e686043a020dd1e03fc4} 
+\index{lexer.\+c@{lexer.\+c}!init\+\_\+token\+\_\+value@{init\+\_\+token\+\_\+value}}
+\index{init\+\_\+token\+\_\+value@{init\+\_\+token\+\_\+value}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{init\+\_\+token\+\_\+value()}{init\_token\_value()}}
+{\footnotesize\ttfamily \hyperlink{unionTokenValue}{Token\+Value}$\ast$ init\+\_\+token\+\_\+value (\begin{DoxyParamCaption}\item[{\hyperlink{lexer_8h_aa520fbf142ba1e7e659590c07da31921}{Token\+Type}}]{type }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_ab4370316f013305f9851c0a7c0786dcc}{}\label{lexer_8c_ab4370316f013305f9851c0a7c0786dcc} 
+\index{lexer.\+c@{lexer.\+c}!is\+\_\+separator@{is\+\_\+separator}}
+\index{is\+\_\+separator@{is\+\_\+separator}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{is\+\_\+separator()}{is\_separator()}}
+{\footnotesize\ttfamily static bool is\+\_\+separator (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{lexer_8c_a02ca138e3d6938387c4fd3adeda2bf17}{}\label{lexer_8c_a02ca138e3d6938387c4fd3adeda2bf17} 
+\index{lexer.\+c@{lexer.\+c}!lex@{lex}}
+\index{lex@{lex}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{lex()}{lex()}}
+{\footnotesize\ttfamily void lex (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})}
+
+\hypertarget{lexer_8c_af0ba78a197f2991c63142c54fddaf27e}{}\label{lexer_8c_af0ba78a197f2991c63142c54fddaf27e} 
+\index{lexer.\+c@{lexer.\+c}!log\+\_\+lexer\+\_\+error@{log\+\_\+lexer\+\_\+error}}
+\index{log\+\_\+lexer\+\_\+error@{log\+\_\+lexer\+\_\+error}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{log\+\_\+lexer\+\_\+error()}{log\_lexer\_error()}}
+{\footnotesize\ttfamily static void log\+\_\+lexer\+\_\+error (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context,  }\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{lexer_8c_abf3c6ad4f5c953855da3610dae07087c}{}\label{lexer_8c_abf3c6ad4f5c953855da3610dae07087c} 
+\index{lexer.\+c@{lexer.\+c}!next\+\_\+token@{next\+\_\+token}}
+\index{next\+\_\+token@{next\+\_\+token}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{next\+\_\+token()}{next\_token()}}
+{\footnotesize\ttfamily static void next\+\_\+token (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{lexer_8c_afcde91f91d642654d794af04a7653fb0}{}\label{lexer_8c_afcde91f91d642654d794af04a7653fb0} 
+\index{lexer.\+c@{lexer.\+c}!save\+\_\+token\+\_\+start@{save\+\_\+token\+\_\+start}}
+\index{save\+\_\+token\+\_\+start@{save\+\_\+token\+\_\+start}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{save\+\_\+token\+\_\+start()}{save\_token\_start()}}
+{\footnotesize\ttfamily static void save\+\_\+token\+\_\+start (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\hypertarget{lexer_8c_a268fe3c5ac732b7cd2fbfade53b68e73}{}\label{lexer_8c_a268fe3c5ac732b7cd2fbfade53b68e73} 
+\index{lexer.\+c@{lexer.\+c}!tokenize@{tokenize}}
+\index{tokenize@{tokenize}!lexer.\+c@{lexer.\+c}}
+\subsubsection{\texorpdfstring{tokenize()}{tokenize()}}
+{\footnotesize\ttfamily static \hyperlink{structToken}{Token}$\ast$ tokenize (\begin{DoxyParamCaption}\item[{\hyperlink{structLexerContext}{Lexer\+Context} $\ast$}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+

@@ -1,0 +1,102 @@
+\hypertarget{list_8h}{}\section{src/util/collections/list.h File Reference}
+\label{list_8h}\index{src/util/collections/list.\+h@{src/util/collections/list.\+h}}
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structListNode}{List\+Node}
+\item 
+struct \hyperlink{structList}{List}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \hyperlink{structListNode}{List\+Node} \hyperlink{list_8h_a3a7415ea83376ebe6ec216fd84e6dc0e}{List\+Node}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structList}{List} $\ast$ \hyperlink{list_8h_a667f88e83f6bcc66f6020eea6fee6277}{init\+\_\+list} ()
+\item 
+\hyperlink{structList}{List} $\ast$ \hyperlink{list_8h_a31cebf1f87ee371d9c0709f8ffd8a8f6}{init\+\_\+list\+\_\+objects} (void($\ast$destructor)(void $\ast$data))
+\item 
+\hyperlink{structListNode}{List\+Node} $\ast$ \hyperlink{list_8h_a39bb6eeacabb02b060eb1f68988d74c3}{init\+\_\+list\+\_\+node} (void $\ast$data)
+\item 
+void \hyperlink{list_8h_abf064e33c1bba1a0db127bd7c418e5e2}{destroy\+\_\+list} (\hyperlink{structList}{List} $\ast$list)
+\item 
+void \hyperlink{list_8h_a623c4f543a4e9a404b2266270820a8f3}{destroy\+\_\+list\+\_\+node} (\hyperlink{structList}{List} $\ast$list, \hyperlink{structListNode}{List\+Node} $\ast$node)
+\item 
+void \hyperlink{list_8h_ad38857a5e65285c554f3ca009013ff8d}{list\+\_\+append} (\hyperlink{structList}{List} $\ast$list, void $\ast$data)
+\item 
+void \hyperlink{list_8h_a6a81fd27da178cd8a48807aae2dfe6a6}{list\+\_\+prepend} (\hyperlink{structList}{List} $\ast$list, void $\ast$data)
+\item 
+void $\ast$ \hyperlink{list_8h_ac840dc82a6557b2f8222901956da43f4}{list\+\_\+get} (\hyperlink{structList}{List} $\ast$list, size\+\_\+t pos)
+\item 
+void \hyperlink{list_8h_a054b26adce0eee7c138f3268913db131}{list\+\_\+remove} (\hyperlink{structList}{List} $\ast$list, size\+\_\+t pos)
+\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{list_8h_a3a7415ea83376ebe6ec216fd84e6dc0e}{}\label{list_8h_a3a7415ea83376ebe6ec216fd84e6dc0e} 
+\index{list.\+h@{list.\+h}!List\+Node@{List\+Node}}
+\index{List\+Node@{List\+Node}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{List\+Node}{ListNode}}
+{\footnotesize\ttfamily typedef struct \hyperlink{structListNode}{List\+Node}  \hyperlink{structListNode}{List\+Node}}
+
+
+
+\subsection{Function Documentation}
+\hypertarget{list_8h_abf064e33c1bba1a0db127bd7c418e5e2}{}\label{list_8h_abf064e33c1bba1a0db127bd7c418e5e2} 
+\index{list.\+h@{list.\+h}!destroy\+\_\+list@{destroy\+\_\+list}}
+\index{destroy\+\_\+list@{destroy\+\_\+list}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{destroy\+\_\+list()}{destroy\_list()}}
+{\footnotesize\ttfamily void destroy\+\_\+list (\begin{DoxyParamCaption}\item[{\hyperlink{structList}{List} $\ast$}]{list }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_a623c4f543a4e9a404b2266270820a8f3}{}\label{list_8h_a623c4f543a4e9a404b2266270820a8f3} 
+\index{list.\+h@{list.\+h}!destroy\+\_\+list\+\_\+node@{destroy\+\_\+list\+\_\+node}}
+\index{destroy\+\_\+list\+\_\+node@{destroy\+\_\+list\+\_\+node}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{destroy\+\_\+list\+\_\+node()}{destroy\_list\_node()}}
+{\footnotesize\ttfamily void destroy\+\_\+list\+\_\+node (\begin{DoxyParamCaption}\item[{\hyperlink{structList}{List} $\ast$}]{list,  }\item[{\hyperlink{structListNode}{List\+Node} $\ast$}]{node }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_a667f88e83f6bcc66f6020eea6fee6277}{}\label{list_8h_a667f88e83f6bcc66f6020eea6fee6277} 
+\index{list.\+h@{list.\+h}!init\+\_\+list@{init\+\_\+list}}
+\index{init\+\_\+list@{init\+\_\+list}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{init\+\_\+list()}{init\_list()}}
+{\footnotesize\ttfamily \hyperlink{structList}{List}$\ast$ init\+\_\+list (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_a39bb6eeacabb02b060eb1f68988d74c3}{}\label{list_8h_a39bb6eeacabb02b060eb1f68988d74c3} 
+\index{list.\+h@{list.\+h}!init\+\_\+list\+\_\+node@{init\+\_\+list\+\_\+node}}
+\index{init\+\_\+list\+\_\+node@{init\+\_\+list\+\_\+node}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{init\+\_\+list\+\_\+node()}{init\_list\_node()}}
+{\footnotesize\ttfamily \hyperlink{structListNode}{List\+Node}$\ast$ init\+\_\+list\+\_\+node (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_a31cebf1f87ee371d9c0709f8ffd8a8f6}{}\label{list_8h_a31cebf1f87ee371d9c0709f8ffd8a8f6} 
+\index{list.\+h@{list.\+h}!init\+\_\+list\+\_\+objects@{init\+\_\+list\+\_\+objects}}
+\index{init\+\_\+list\+\_\+objects@{init\+\_\+list\+\_\+objects}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{init\+\_\+list\+\_\+objects()}{init\_list\_objects()}}
+{\footnotesize\ttfamily \hyperlink{structList}{List}$\ast$ init\+\_\+list\+\_\+objects (\begin{DoxyParamCaption}\item[{void($\ast$)(void $\ast$data)}]{destructor }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_ad38857a5e65285c554f3ca009013ff8d}{}\label{list_8h_ad38857a5e65285c554f3ca009013ff8d} 
+\index{list.\+h@{list.\+h}!list\+\_\+append@{list\+\_\+append}}
+\index{list\+\_\+append@{list\+\_\+append}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{list\+\_\+append()}{list\_append()}}
+{\footnotesize\ttfamily void list\+\_\+append (\begin{DoxyParamCaption}\item[{\hyperlink{structList}{List} $\ast$}]{list,  }\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_ac840dc82a6557b2f8222901956da43f4}{}\label{list_8h_ac840dc82a6557b2f8222901956da43f4} 
+\index{list.\+h@{list.\+h}!list\+\_\+get@{list\+\_\+get}}
+\index{list\+\_\+get@{list\+\_\+get}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{list\+\_\+get()}{list\_get()}}
+{\footnotesize\ttfamily void$\ast$ list\+\_\+get (\begin{DoxyParamCaption}\item[{\hyperlink{structList}{List} $\ast$}]{list,  }\item[{size\+\_\+t}]{pos }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_a6a81fd27da178cd8a48807aae2dfe6a6}{}\label{list_8h_a6a81fd27da178cd8a48807aae2dfe6a6} 
+\index{list.\+h@{list.\+h}!list\+\_\+prepend@{list\+\_\+prepend}}
+\index{list\+\_\+prepend@{list\+\_\+prepend}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{list\+\_\+prepend()}{list\_prepend()}}
+{\footnotesize\ttfamily void list\+\_\+prepend (\begin{DoxyParamCaption}\item[{\hyperlink{structList}{List} $\ast$}]{list,  }\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+\hypertarget{list_8h_a054b26adce0eee7c138f3268913db131}{}\label{list_8h_a054b26adce0eee7c138f3268913db131} 
+\index{list.\+h@{list.\+h}!list\+\_\+remove@{list\+\_\+remove}}
+\index{list\+\_\+remove@{list\+\_\+remove}!list.\+h@{list.\+h}}
+\subsubsection{\texorpdfstring{list\+\_\+remove()}{list\_remove()}}
+{\footnotesize\ttfamily void list\+\_\+remove (\begin{DoxyParamCaption}\item[{\hyperlink{structList}{List} $\ast$}]{list,  }\item[{size\+\_\+t}]{pos }\end{DoxyParamCaption})}
+

@@ -1,0 +1,136 @@
+\hypertarget{arguments_8c}{}\section{src/arguments.c File Reference}
+\label{arguments_8c}\index{src/arguments.\+c@{src/arguments.\+c}}
+{\ttfamily \#include $<$arguments.\+h$>$}\newline
+{\ttfamily \#include $<$argp.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$grammar/ast.\+h$>$}\newline
+{\ttfamily \#include $<$grammar/parser.\+h$>$}\newline
+{\ttfamily \#include $<$codegen/codegen.\+h$>$}\newline
+{\ttfamily \#include $<$util/log.\+h$>$}\newline
+{\ttfamily \#include $<$util/mem\+\_\+utils.\+h$>$}\newline
+{\ttfamily \#include $<$util/file\+\_\+utils.\+h$>$}\newline
+{\ttfamily \#include $<$util/collections/list.\+h$>$}\newline
+{\ttfamily \#include $<$llvm-\/c/\+Analysis.\+h$>$}\newline
+{\ttfamily \#include $<$llvm-\/c/\+Bit\+Writer.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structarguments}{arguments}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{arguments_8c_aec38b9acf8f1f6ba185e5cefb8bd06a3}{D\+I\+V\+I\+D\+ER}~(\char`\"{}\textbackslash{}n===============================\textbackslash{}n\char`\"{})
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{arguments_8c_a3ce56b88cdc78e06c33a8b99d76211b9}{dump\+\_\+bitcode} (char $\ast$fname, char $\ast$dest)
+\item 
+static void \hyperlink{arguments_8c_a71eb65fcee6f446171a711267a9388d3}{dump\+\_\+asm} (char $\ast$fname, char $\ast$dest)
+\item 
+static void \hyperlink{arguments_8c_a7787f34f30c1a96847765c81f90a130c}{dump\+\_\+binary} (char $\ast$fname, char $\ast$dest)
+\item 
+static void \hyperlink{arguments_8c_ad87878fef73e0651a9b22f103d0a9d98}{dump\+\_\+ast} (char $\ast$fname)
+\item 
+static void \hyperlink{arguments_8c_adf439c4e0752a0e392b1d525b63858ed}{dump\+\_\+ir} (char $\ast$fname)
+\item 
+static int \hyperlink{arguments_8c_aaf7bc24f3891f0c63a6043f4dc2ab311}{parse\+\_\+opt} (int key, char $\ast$arg, struct argp\+\_\+state $\ast$state)
+\item 
+void \hyperlink{arguments_8c_ac28906ed3a3a34f6c8b04e2ec1479383}{parse\+\_\+arguments} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const char $\ast$ \hyperlink{arguments_8c_aaa037e59f26a80a8a2e35e6f2364004d}{argp\+\_\+program\+\_\+bug\+\_\+address} = \char`\"{}$<$typ3def@gmail.\+com$>$\char`\"{}
+\item 
+const char $\ast$ \hyperlink{arguments_8c_a62f73ea01c816f1996aed4c66f57c4fb}{argp\+\_\+program\+\_\+version} = \char`\"{}x-\/lang v0.\+0.\+1\char`\"{}
+\item 
+static const char $\ast$ \hyperlink{arguments_8c_a26c53d20a3f2d4bffa46e6a746d53216}{args\+\_\+doc} = \char`\"{}$<$file.\+x$>$ ...\char`\"{}
+\item 
+static const char $\ast$ \hyperlink{arguments_8c_a5092a1bd79826902df03502891db05ce}{doc} = \char`\"{}x-\/lang -\/-\/ Reference compiler for x-\/lang.\textbackslash{}n\char`\"{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{arguments_8c_aec38b9acf8f1f6ba185e5cefb8bd06a3}{}\label{arguments_8c_aec38b9acf8f1f6ba185e5cefb8bd06a3} 
+\index{arguments.\+c@{arguments.\+c}!D\+I\+V\+I\+D\+ER@{D\+I\+V\+I\+D\+ER}}
+\index{D\+I\+V\+I\+D\+ER@{D\+I\+V\+I\+D\+ER}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{D\+I\+V\+I\+D\+ER}{DIVIDER}}
+{\footnotesize\ttfamily \#define D\+I\+V\+I\+D\+ER~(\char`\"{}\textbackslash{}n===============================\textbackslash{}n\char`\"{})}
+
+
+
+\subsection{Function Documentation}
+\hypertarget{arguments_8c_a71eb65fcee6f446171a711267a9388d3}{}\label{arguments_8c_a71eb65fcee6f446171a711267a9388d3} 
+\index{arguments.\+c@{arguments.\+c}!dump\+\_\+asm@{dump\+\_\+asm}}
+\index{dump\+\_\+asm@{dump\+\_\+asm}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{dump\+\_\+asm()}{dump\_asm()}}
+{\footnotesize\ttfamily static void dump\+\_\+asm (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname,  }\item[{char $\ast$}]{dest }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{arguments_8c_ad87878fef73e0651a9b22f103d0a9d98}{}\label{arguments_8c_ad87878fef73e0651a9b22f103d0a9d98} 
+\index{arguments.\+c@{arguments.\+c}!dump\+\_\+ast@{dump\+\_\+ast}}
+\index{dump\+\_\+ast@{dump\+\_\+ast}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{dump\+\_\+ast()}{dump\_ast()}}
+{\footnotesize\ttfamily static void dump\+\_\+ast (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{arguments_8c_a7787f34f30c1a96847765c81f90a130c}{}\label{arguments_8c_a7787f34f30c1a96847765c81f90a130c} 
+\index{arguments.\+c@{arguments.\+c}!dump\+\_\+binary@{dump\+\_\+binary}}
+\index{dump\+\_\+binary@{dump\+\_\+binary}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{dump\+\_\+binary()}{dump\_binary()}}
+{\footnotesize\ttfamily static void dump\+\_\+binary (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname,  }\item[{char $\ast$}]{dest }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{arguments_8c_a3ce56b88cdc78e06c33a8b99d76211b9}{}\label{arguments_8c_a3ce56b88cdc78e06c33a8b99d76211b9} 
+\index{arguments.\+c@{arguments.\+c}!dump\+\_\+bitcode@{dump\+\_\+bitcode}}
+\index{dump\+\_\+bitcode@{dump\+\_\+bitcode}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{dump\+\_\+bitcode()}{dump\_bitcode()}}
+{\footnotesize\ttfamily static void dump\+\_\+bitcode (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname,  }\item[{char $\ast$}]{dest }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{arguments_8c_adf439c4e0752a0e392b1d525b63858ed}{}\label{arguments_8c_adf439c4e0752a0e392b1d525b63858ed} 
+\index{arguments.\+c@{arguments.\+c}!dump\+\_\+ir@{dump\+\_\+ir}}
+\index{dump\+\_\+ir@{dump\+\_\+ir}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{dump\+\_\+ir()}{dump\_ir()}}
+{\footnotesize\ttfamily static void dump\+\_\+ir (\begin{DoxyParamCaption}\item[{char $\ast$}]{fname }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{arguments_8c_ac28906ed3a3a34f6c8b04e2ec1479383}{}\label{arguments_8c_ac28906ed3a3a34f6c8b04e2ec1479383} 
+\index{arguments.\+c@{arguments.\+c}!parse\+\_\+arguments@{parse\+\_\+arguments}}
+\index{parse\+\_\+arguments@{parse\+\_\+arguments}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{parse\+\_\+arguments()}{parse\_arguments()}}
+{\footnotesize\ttfamily void parse\+\_\+arguments (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+\hypertarget{arguments_8c_aaf7bc24f3891f0c63a6043f4dc2ab311}{}\label{arguments_8c_aaf7bc24f3891f0c63a6043f4dc2ab311} 
+\index{arguments.\+c@{arguments.\+c}!parse\+\_\+opt@{parse\+\_\+opt}}
+\index{parse\+\_\+opt@{parse\+\_\+opt}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{parse\+\_\+opt()}{parse\_opt()}}
+{\footnotesize\ttfamily static int parse\+\_\+opt (\begin{DoxyParamCaption}\item[{int}]{key,  }\item[{char $\ast$}]{arg,  }\item[{struct argp\+\_\+state $\ast$}]{state }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\subsection{Variable Documentation}
+\hypertarget{arguments_8c_aaa037e59f26a80a8a2e35e6f2364004d}{}\label{arguments_8c_aaa037e59f26a80a8a2e35e6f2364004d} 
+\index{arguments.\+c@{arguments.\+c}!argp\+\_\+program\+\_\+bug\+\_\+address@{argp\+\_\+program\+\_\+bug\+\_\+address}}
+\index{argp\+\_\+program\+\_\+bug\+\_\+address@{argp\+\_\+program\+\_\+bug\+\_\+address}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{argp\+\_\+program\+\_\+bug\+\_\+address}{argp\_program\_bug\_address}}
+{\footnotesize\ttfamily const char$\ast$ argp\+\_\+program\+\_\+bug\+\_\+address = \char`\"{}$<$typ3def@gmail.\+com$>$\char`\"{}}
+
+\hypertarget{arguments_8c_a62f73ea01c816f1996aed4c66f57c4fb}{}\label{arguments_8c_a62f73ea01c816f1996aed4c66f57c4fb} 
+\index{arguments.\+c@{arguments.\+c}!argp\+\_\+program\+\_\+version@{argp\+\_\+program\+\_\+version}}
+\index{argp\+\_\+program\+\_\+version@{argp\+\_\+program\+\_\+version}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{argp\+\_\+program\+\_\+version}{argp\_program\_version}}
+{\footnotesize\ttfamily const char$\ast$ argp\+\_\+program\+\_\+version = \char`\"{}x-\/lang v0.\+0.\+1\char`\"{}}
+
+\hypertarget{arguments_8c_a26c53d20a3f2d4bffa46e6a746d53216}{}\label{arguments_8c_a26c53d20a3f2d4bffa46e6a746d53216} 
+\index{arguments.\+c@{arguments.\+c}!args\+\_\+doc@{args\+\_\+doc}}
+\index{args\+\_\+doc@{args\+\_\+doc}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{args\+\_\+doc}{args\_doc}}
+{\footnotesize\ttfamily const char$\ast$ args\+\_\+doc = \char`\"{}$<$file.\+x$>$ ...\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}
+
+\hypertarget{arguments_8c_a5092a1bd79826902df03502891db05ce}{}\label{arguments_8c_a5092a1bd79826902df03502891db05ce} 
+\index{arguments.\+c@{arguments.\+c}!doc@{doc}}
+\index{doc@{doc}!arguments.\+c@{arguments.\+c}}
+\subsubsection{\texorpdfstring{doc}{doc}}
+{\footnotesize\ttfamily const char$\ast$ doc = \char`\"{}x-\/lang -\/-\/ Reference compiler for x-\/lang.\textbackslash{}n\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}
+

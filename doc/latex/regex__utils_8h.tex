@@ -1,0 +1,54 @@
+\hypertarget{regex__utils_8h}{}\section{src/util/regex\+\_\+utils.h File Reference}
+\label{regex__utils_8h}\index{src/util/regex\+\_\+utils.\+h@{src/util/regex\+\_\+utils.\+h}}
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$regex.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{regex__utils_8h_ade27bc2687368bccd3fe99f052de786c}{compile\+\_\+regex} (regex\+\_\+t $\ast$r, const char $\ast$regex\+\_\+text)
+\begin{DoxyCompactList}\small\item\em Compile the regular expression described by \char`\"{}regex\+\_\+text\char`\"{} into \char`\"{}r\char`\"{}. \end{DoxyCompactList}\item 
+bool \hyperlink{regex__utils_8h_af20d7d809487b4433676159618558b41}{match\+\_\+regex} (regex\+\_\+t $\ast$r, const char $\ast$to\+\_\+match)
+\begin{DoxyCompactList}\small\item\em Match the string in \char`\"{}to\+\_\+match\char`\"{} against regex in \char`\"{}r\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{regex__utils_8h_ade27bc2687368bccd3fe99f052de786c}{}\label{regex__utils_8h_ade27bc2687368bccd3fe99f052de786c} 
+\index{regex\+\_\+utils.\+h@{regex\+\_\+utils.\+h}!compile\+\_\+regex@{compile\+\_\+regex}}
+\index{compile\+\_\+regex@{compile\+\_\+regex}!regex\+\_\+utils.\+h@{regex\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{compile\+\_\+regex()}{compile\_regex()}}
+{\footnotesize\ttfamily int compile\+\_\+regex (\begin{DoxyParamCaption}\item[{regex\+\_\+t $\ast$}]{r,  }\item[{const char $\ast$}]{regex\+\_\+text }\end{DoxyParamCaption})}
+
+
+
+Compile the regular expression described by \char`\"{}regex\+\_\+text\char`\"{} into \char`\"{}r\char`\"{}. 
+
+\begin{DoxyReturn}{Returns}
+success
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em r} & where to save compiled regex \\
+\hline
+{\em regex\+\_\+text} & regular expression \\
+\hline
+\end{DoxyParams}
+\hypertarget{regex__utils_8h_af20d7d809487b4433676159618558b41}{}\label{regex__utils_8h_af20d7d809487b4433676159618558b41} 
+\index{regex\+\_\+utils.\+h@{regex\+\_\+utils.\+h}!match\+\_\+regex@{match\+\_\+regex}}
+\index{match\+\_\+regex@{match\+\_\+regex}!regex\+\_\+utils.\+h@{regex\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{match\+\_\+regex()}{match\_regex()}}
+{\footnotesize\ttfamily bool match\+\_\+regex (\begin{DoxyParamCaption}\item[{regex\+\_\+t $\ast$}]{r,  }\item[{const char $\ast$}]{to\+\_\+match }\end{DoxyParamCaption})}
+
+
+
+Match the string in \char`\"{}to\+\_\+match\char`\"{} against regex in \char`\"{}r\char`\"{}. 
+
+\begin{DoxyReturn}{Returns}
+match
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em r} & Compiled regex expression \\
+\hline
+{\em to\+\_\+match} & String to match against \\
+\hline
+\end{DoxyParams}
