@@ -37,7 +37,7 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 
 run-%: $(BINARY)
 	$(MKDIR) $(LOGDIR)
-	$(VALGRIND) $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
+	$(VALGRIND) $< $(RESDIR)/$*.x --ast --ir --bitcode bin/worked.bc --asm bin/worked.S -o bin/$* 2>&1 | tee -a $(LOGDIR)/leak-report.txt
 
 run-tests: $(TESTS_BINARY)
 	$(MKDIR) $(LOGDIR)

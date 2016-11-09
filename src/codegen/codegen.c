@@ -112,8 +112,10 @@ CodegenContext* init_codegen()
 void destroy_codegen(CodegenContext* context)
 {
 	if (context) {
-		LLVMDisposeModule(context->module);
-		LLVMDisposeBuilder(context->builder);
+		if (context->builder)
+			LLVMDisposeBuilder(context->builder);
+		if (context->engine)
+			LLVMDisposeExecutionEngine(context->engine);
 		
 		destroy(context);
 	}
