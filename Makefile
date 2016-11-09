@@ -19,7 +19,7 @@ $(BINARY): $(LIBRARY_BINARY) $(OBJECTS)
 	$(MKDIR) $(@D)
 	$(CXX) $^ -o $@ $(LIBS) $(LDFLAGS)
 
-$(LIBRARY_BINARY): $(filter-out obj/main.o, $(OBJECTS))
+$(LIBRARY_BINARY): $(filter-out obj/main.o obj/arguments.o, $(OBJECTS))
 	$(MKDIR) $(@D)
 	$(CC) `llvm-config --cxxflags --ldflags` -shared $^ -o $@ $(LIBS)
 
