@@ -2,6 +2,16 @@
 
 The X language aims to be a system level language that incorporates functional paradigms - it may even become functional.
 
+
+## Slated Features
+
+* LLVM-C backend for code generation (Support all the things!)
+* Good code practices enforced at lexical analysis (no _ or __ for variable identifiers, requiring a leading zero for floating.. etc)
+* Not sure If I will take the scala approach and incorporate functional paradigms, or make it fully functional at this point.
+* Inline LLVM-IR, no more remembering several assembly languages, learn an intermediate language instead.
+* Libraries
+  * Unsafe library for embedded developers and those who still like to roll their own - there will be no standard library, just supplied libraries that you may use. It is unjust to make libraries that users optimize every day. Do what I do, use the best ones, you shouldn't be limited by architecture based on the way this language is designed.
+
 ## Current State
 
 X language is currently able to generate LLVM IR, compile to bitcode, dump native assembly and compile a binary. Top-level statements are supported, the main module and function are implicitly generated. No other syntax but variable declarations are supported at this time - it is being added now that the backend is functional.
@@ -187,15 +197,6 @@ $ hexdump bin/variable_declaration
 -- SNIP --
 
 ```
-
-## Slated Features
-
-* LLVM-C backend for code generation (Support all the things!)
-* Good code practices enforced at lexical analysis (no _ or __ for variable identifiers, requiring a leading zero for floating.. etc)
-* Not sure If I will take the scala approach and incorporate functional paradigms, or make it fully functional at this point.
-* Inline LLVM-IR, no more remembering several assembly languages, learn an intermediate language instead.
-* Libraries
-  * Unsafe library for embedded developers and those who still like to roll their own - there will be no standard library, just supplied libraries that you may use. It is unjust to make libraries that users optimize every day. Do what I do, use the best ones, you shouldn't be limited by architecture based on the way this language is designed.
 
 ## Requirements
 
