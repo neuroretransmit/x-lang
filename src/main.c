@@ -54,7 +54,7 @@ static void dump_ast(char* fname)
 	destroy_ast_node(ast);
 }
 
-/*static void dump_ir(char* fname)
+static void dump_ir(char* fname)
 {
 	ParserContext* parser = init_parser(fname);
 	ASTNode* ast = parse(parser);
@@ -72,12 +72,10 @@ static void dump_ast(char* fname)
 	LLVMRunFunctionAsMain(context->engine, context->main_func, 0, NULL, NULL);
 	//dump_binary(context->module, "bin/x-lang.bc");
 	
-	ast_dump(ast);
-	
 	destroy_codegen(context);
 	destroy_parser(parser);
 	destroy_ast_node(ast);
-}*/
+}
 
 static int parse_opt(int key, char* arg, struct argp_state* state)
 {
@@ -128,7 +126,7 @@ int main(int argc, char** argv)
 {
 	struct argp_option options[] = {
 		{ "output", 'o', "OUTFILE", 0, "Output binary to file.", 0 }, // FIXME
-		{ "ir", 0, "OUTFILE", 667, "Dump intermediate representation.", 0 },
+		{ "ir", 'i', 0, 0, "Dump intermediate representation.", 0 },
 		{ "ast", 'a', 0, 0, "Dump abstract syntax tree.", 0 },
 		{ "asm", 0, "OUTFILE", 669, "Dump the native assembly code.", 0 },
 		{ "bitcode", 0, "OUTFILE", 670, "Dump the LLVM bitcode to a file.", 0 },
@@ -144,6 +142,12 @@ int main(int argc, char** argv)
 			if (file_exists(arguments.args[0])) {
 				if (arguments.ast)
 					dump_ast(arguments.args[0]);
+				
+				if (arguments.ir) {
+					if (arguments.ast)
+						puts("===============================");
+					dump_ir(arguments.args[0]);
+				}
 				
 				//dump_binary(fname);
 			}
