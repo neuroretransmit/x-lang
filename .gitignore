@@ -3,6 +3,8 @@ obj/
 lib/
 bin/
 log/
+doc/latex/
+doc/html/
 
 ### Special Files ###
 *.kate-swp

@@ -81,11 +81,30 @@ CodegenContext* init_codegen()
 	context->root_context = LLVMGetGlobalContext();
 	context->module = LLVMModuleCreateWithName("__x_lang");
 	context->builder = LLVMCreateBuilderInContext(context->root_context);
+	
 	LLVMTypeRef main_type = LLVMFunctionType(LLVMVoidType(), NULL, 0, 0);
-	LLVMValueRef main_func = LLVMAddFunction(context->module, "main", main_type);
-	context->entry = LLVMAppendBasicBlock(main_func, "entry");
+	context->main_func = LLVMAddFunction(context->module, "main", main_type);
+	context->entry = LLVMAppendBasicBlock(context->main_func, "entry");
 	LLVMPositionBuilderAtEnd(context->builder, context->entry);
+	
 	LLVMInitializeNativeTarget();
+	LLVMInitializeNativeAsmPrinter();
+	LLVMInitializeNativeAsmParser();
+	LLVMLinkInMCJIT();
+	
+	
+	char *error = NULL;
+	
+	if (LLVMCreateExecutionEngineForModule(&context->engine, context->module, &error) != 0) {
+		fprintf(stderr, "failed to create execution engine\n");
+		abort();
+	}
+	
+	if (error) {
+		fprintf(stderr, "error: %s\n", error);
+		LLVMDisposeMessage(error);
+		exit(EXIT_FAILURE);
+	}
 	
 	return context;
 }
@@ -93,8 +112,10 @@ CodegenContext* init_codegen()
 void destroy_codegen(CodegenContext* context)
 {
 	if (context) {
-		LLVMDisposeModule(context->module);
-		LLVMDisposeBuilder(context->builder);
+		if (context->builder)
+			LLVMDisposeBuilder(context->builder);
+		if (context->engine)
+			LLVMDisposeExecutionEngine(context->engine);
 		
 		destroy(context);
 	}

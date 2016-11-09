@@ -72,12 +72,6 @@ static bool valid_ident(Token* ident)
 	return true;
 }
 
-/* Possible FIXME - Always valid */
-static bool parse_integer_literal()
-{
-	return true;
-}
-
 static bool parse_ident(Token* ident)
 {
 	if (!valid_ident(ident)) {
@@ -112,10 +106,8 @@ static ASTNode* parse_x_lang(ParserContext* context)
 				break;
 
 			case TOK_INTEGER_LITERAL:
-				if (parse_integer_literal()) {
 					list_append(context->current_tokens, token);
 					node = init_ast_node(context->current_tokens);
-				}
 
 				break;
 
@@ -141,7 +133,6 @@ static ASTNode* parse_x_lang(ParserContext* context)
 						log_parser_error(context, ident, "invalid identifier\n");
 					}
 				}
-
 				// --- end variable declaration
 				break;
 

@@ -13,15 +13,15 @@ TEST_SOURCES := $(shell find tests -name '**.c')
 OBJECTS := $(patsubst src/%.c, obj/%.o, $(SOURCES))
 TEST_OBJECTS := $(patsubst tests/%.c, obj/tests/%.o, $(TEST_SOURCES))
 
-all: $(TESTS_BINARY) $(BINARY)
+all: $(TESTS_BINARY) $(BINARY) docs
 
 $(BINARY): $(LIBRARY_BINARY) $(OBJECTS) 
 	$(MKDIR) $(@D)
 	$(CXX) $^ -o $@ $(LIBS) $(LDFLAGS)
 
-$(LIBRARY_BINARY): $(filter-out obj/main.o, $(OBJECTS))
+$(LIBRARY_BINARY): $(filter-out obj/main.o obj/arguments.o, $(OBJECTS))
 	$(MKDIR) $(@D)
-	$(CC) `llvm-config --cflags` -shared $^ -o $@ $(LIBS)
+	$(CC) `llvm-config --cxxflags --ldflags` -shared $^ -o $@ $(LIBS)
 
 $(TESTS_BINARY): $(LIBRARY_BINARY) $(TEST_OBJECTS)
 	$(MKDIR) $(@D)
@@ -35,9 +35,13 @@ $(TEST_OBJECTS): $(TESTOBJDIR)%.o: $(TESTDIR)%.c
 	$(MKDIR) $(@D)
 	$(CC) -c $< -o $@ 
 
+docs: Doxyfile
+	$(info Generating documentation...)
+	@doxygen $< &>/dev/null
+
 run-%: $(BINARY)
 	$(MKDIR) $(LOGDIR)
-	$(VALGRIND) $< $(RESDIR)/$*.x 2>&1 | tee -a $(LOGDIR)/leak-report.txt
+	$(VALGRIND) $< $(RESDIR)/$*.x --ast --ir --bitcode bin/worked.bc --asm bin/worked.S -o bin/$* 2>&1 | tee -a $(LOGDIR)/leak-report.txt
 
 run-tests: $(TESTS_BINARY)
 	$(MKDIR) $(LOGDIR)
@@ -46,8 +50,8 @@ run-tests: $(TESTS_BINARY)
 clean-logs:
 	$(CLEAN) $(LOGDIR)
 	
-clean:
-	$(CLEAN) $(BINDIR) $(OBJDIR) $(LIBDIR)
+clean: clean-logs
+	$(CLEAN) $(BINDIR) $(OBJDIR) $(LIBDIR) $(DOXYGENDIRS)
 
 dist-clean: clean-logs clean
 

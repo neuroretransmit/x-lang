@@ -34,12 +34,13 @@ void destroy_token_value(void* tok_val)
 
 void destroy_token(void* token)
 {
-
-	if (token) {
-		if (((Token*) token)->val)
-			destroy_token_value(((Token*) token)->val);
-
-		destroy(token);
+	Token* tmp = (Token*) token;
+	
+	if (tmp) {
+		if (tmp->val)
+			destroy_token_value(tmp->val);
+			
+		destroy(tmp);
 	}
 }
 
@@ -265,14 +266,14 @@ static Token* tokenize(LexerContext* context)
 						? create_token(context, TOK_TYPE_S32, NULL, capture->len) :
 					strstr(capture->str, "s64") 
 						? create_token(context, TOK_TYPE_S64, NULL, capture->len) :
-					// OTHERWISE - Identifier
+					// Identifier
 						create_token(context, TOK_IDENT, strdup(capture->str), capture->len);
 			} else if (isdigit(context->lookahead)) {
 				/* TODO - Only does positive integers */
 
 				capture = capture_string(context);
-				uint64_t* value = malloc(sizeof(uint64_t));
-				*value = (uint64_t) strtoll(capture->str, 0, 0);
+				int64_t* value = malloc(sizeof(uint64_t));
+				*value = (int64_t) strtoll(capture->str, 0, 0);
 				token = create_token(context, TOK_INTEGER_LITERAL, value, capture->len);
 			} else {
 				log_lexer_error(context, "unknown grammar\n");
