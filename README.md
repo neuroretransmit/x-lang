@@ -201,8 +201,10 @@ $ hexdump bin/variable_declaration
 ## Requirements
 
 * LLVM-C
+* GCC/G++
 * Valgrind
-* GCC
+* Doxygen
+
 
 ## Bugs
 
