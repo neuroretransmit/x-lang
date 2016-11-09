@@ -133,7 +133,6 @@ static ASTNode* parse_x_lang(ParserContext* context)
 						log_parser_error(context, ident, "invalid identifier\n");
 					}
 				}
-
 				// --- end variable declaration
 				break;
 

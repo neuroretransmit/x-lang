@@ -1,6 +1,6 @@
 #include <argp.h>
-#include <argz.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -21,18 +21,40 @@ static const char* args_doc = "<file.x> ...";
 static const char* doc = "x-lang -- Reference compiler for x-lang.\n";
 
 struct arguments {
-	char* argz;
-	size_t argz_len;
+	char* args[2]; /* ARG1 and ARG2 */
+	char* ir;
+	int ast;
+	char* bitcode;
+	char* outfile;
 };
+/*
+static void dump_binary(char* fname)
+{
+	char* llc = "llc -o tmp/tmp.s tmp/tmp.bc";
+	char* cc = "cc -o ";
+	strcat(cc, fname);
+	strcat(cc, " tmp/tmp.s");
+	system(llc);
+	system(cc);
+}
 
-static void dump_binary(LLVMModuleRef mod, char* name)
+static void dump_bitcode(LLVMModuleRef mod, char* name)
 {
 	if (LLVMWriteBitcodeToFile(mod, name) != 0) {
 		log_err("error writing bitcode to file, skipping\n");
 	}
+}*/
+
+static void dump_ast(char* fname)
+{
+	ParserContext* parser = init_parser(fname);
+	ASTNode* ast = parse(parser);
+	ast_dump(ast);
+	destroy_parser(parser);
+	destroy_ast_node(ast);
 }
 
-static void dump_ir(char* fname)
+/*static void dump_ir(char* fname)
 {
 	ParserContext* parser = init_parser(fname);
 	ASTNode* ast = parse(parser);
@@ -46,43 +68,56 @@ static void dump_ir(char* fname)
 	LLVMDisposeMessage(error);
 	
 	LLVMDumpModule(context->module);
-	puts("================================================================================");
+
 	LLVMRunFunctionAsMain(context->engine, context->main_func, 0, NULL, NULL);
-	dump_binary(context->module, "bin/x-lang.bc");
-	system("llc -o bin/native.s bin/x-lang.bc");
-	system("cc -o bin/prog.hex bin/native.s");
+	//dump_binary(context->module, "bin/x-lang.bc");
+	
 	ast_dump(ast);
 	
 	destroy_codegen(context);
 	destroy_parser(parser);
 	destroy_ast_node(ast);
-}
+}*/
 
 static int parse_opt(int key, char* arg, struct argp_state* state)
 {
 	struct arguments* a = state->input;
 
 	switch (key) {
-
-		case ARGP_KEY_ARG:
-			argz_add(&a->argz, &a->argz_len, arg);
+		case 'o':
+			a->outfile = arg;
 			break;
-
-		case ARGP_KEY_INIT:
-			a->argz = 0;
-			a->argz_len = 0;
+		
+		case 667:
+			a->ir = arg;
 			break;
-
-		case ARGP_KEY_END: {
-			size_t count = argz_count(a->argz, a->argz_len);
-
-			if (count > 2)
-				argp_failure(state, 1, 0, "Too many source files.");
-			else if (count < 1)
-				argp_failure(state, 1, 0, "Need a source file.");
+		
+		case 670:
+			a->bitcode = arg;
+			break;
+		
+		/*case 669:
+			a->asm = arg;
+			break;*/
+		
+		case 'a':
+			a->ast = true;
+			break;
 			
+		case ARGP_KEY_ARG:
+			a->args[state->arg_num] = arg;
 			break;
-		}
+
+		/*case ARGP_KEY_INIT:
+			a->args[state->arg_num] = arg;
+			break;*/
+
+		case ARGP_KEY_END: 
+			break;
+		
+		case 666:
+			printf("arg");
+			break;
 		
 	}
 
@@ -92,6 +127,11 @@ static int parse_opt(int key, char* arg, struct argp_state* state)
 int main(int argc, char** argv)
 {
 	struct argp_option options[] = {
+		{ "output", 'o', "OUTFILE", 0, "Output binary to file.", 0 }, // FIXME
+		{ "ir", 0, "OUTFILE", 667, "Dump intermediate representation.", 0 },
+		{ "ast", 'a', 0, 0, "Dump abstract syntax tree.", 0 },
+		{ "asm", 0, "OUTFILE", 669, "Dump the native assembly code.", 0 },
+		{ "bitcode", 0, "OUTFILE", 670, "Dump the LLVM bitcode to a file.", 0 },
 		{ 0 }
 	};
 
@@ -99,16 +139,15 @@ int main(int argc, char** argv)
 	struct argp argp = { options, parse_opt, args_doc, doc, NULL, NULL, NULL };
 
 	if (argp_parse(&argp, argc, argv, 0, 0, &arguments) == 0) {
-		const char* prev = NULL;
-		char* fname;
-
-		while ((fname = argz_next(arguments.argz, arguments.argz_len, prev))) {
-			if (file_exists(fname))
-				dump_ir(fname);
-
-			prev = fname;
+		//const char* prev = NULL;
+		//char* fname;
+			if (file_exists(arguments.args[0])) {
+				if (arguments.ast)
+					dump_ast(arguments.args[0]);
+				
+				//dump_binary(fname);
+			}
+			//prev = fname;
 		}
 
-		destroy(arguments.argz);
 	}
-}
