@@ -19,7 +19,9 @@ X language is currently able to generate LLVM IR, compile to LLVM bitcode, dump 
 Proof
 
 ```
-$ ./bin/x-lang -b bin/worked.bc -S bin/worked.S -i -a -o bin/variable_declaration res/variable_declaration.x
+$ # Dumping bitcode, assembly, LLVM IR and the AST.
+$ ./bin/x-lang -b bin/worked.bc --asm bin/worked.S --ir --ast \
+                -o bin/variable_declaration res/variable_declaration.x
 <1:1:variable_declaration>
   <1:1:type:u8>
   <1:4:ident:"a_fdf">
