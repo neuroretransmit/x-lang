@@ -103,14 +103,30 @@ static bool valid_ident(Token* ident)
  * 	@return	Is valid?
  * 	@see	tests/grammar/parser_tests.c::ident_test()
  */
-static bool parse_ident(Token* ident)
+static bool parse_ident(ParserContext* context, Token* ident)
 {
 	if (!valid_ident(ident)) {
 		destroy_token(ident);
 		return false;
 	}
 
+	list_append(context->current_tokens, ident);
+	
 	return true;
+}
+
+static bool parse_variable_declaration(ParserContext* context)
+{
+	Token* ident = fifo_pop(context->lexer_context->tokens);
+	
+	if (parse_ident(context, ident)) {
+		list_append(context->current_tokens, ident);
+		return true;
+	} else {
+		log_parser_error(context, ident, "invalid identifier\n");
+	}
+	
+	return false;
 }
 
 /**
@@ -130,10 +146,8 @@ static ASTNode* parse_x_lang(ParserContext* context)
 		switch (token->type) {
 
 			case TOK_IDENT:
-				if (parse_ident(token)) {
-					list_append(context->current_tokens, token);
+				if (parse_ident(context, token))
 					node = init_ast_node(context->current_tokens);
-				}
 
 				break;
 
@@ -152,19 +166,10 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64: {
-				/* Type is verified in lexical analysis, no need to parse incoming */
-				// --- variable declaration
-				list_append(context->current_tokens, token);
+				list_append(context->current_tokens, token); // Append type, verified in lexical analysis
 
-				Token* ident = fifo_pop(context->lexer_context->tokens);
-				
-				if (parse_ident(ident)) {
-					list_append(context->current_tokens, ident);
+				if (parse_variable_declaration(context))
 					node = init_ast_node(context->current_tokens);
-				} else {
-					log_parser_error(context, ident, "invalid identifier\n");
-				}
-				// --- end variable declaration
 				break;
 			}
 			
