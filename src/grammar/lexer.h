@@ -53,7 +53,7 @@ LexerContext* init_lexer(char* fname);
 TokenValue* init_token_value(TokenType type);
 void destroy_lexer();
 void destroy_token(void* tok);
-void destroy_token_value(void* tok_val);
+void destroy_token_value(TokenType type, void* tok_val);
 
 void lex(LexerContext* lexer);
 void dump_tokens();

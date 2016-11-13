@@ -112,6 +112,8 @@ CodegenContext* init_codegen()
 void destroy_codegen(CodegenContext* context)
 {
 	if (context) {
+		/*if (context->pass_manager)
+			LLVMDisposePassManager(context->pass_manager);*/
 		if (context->builder)
 			LLVMDisposeBuilder(context->builder);
 		if (context->engine)

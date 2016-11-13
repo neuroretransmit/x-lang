@@ -11,6 +11,12 @@
 #include <util/regex_utils.h>
 #include <util/collections/fifo.h>
 
+/**
+ * Initialize parser context
+ * 
+ * 	@param	fname Source file name
+ * 	@return	Parser context
+ */
 ParserContext* init_parser(char* fname)
 {
 	ParserContext* context = malloc(sizeof(ParserContext));
@@ -20,17 +26,28 @@ ParserContext* init_parser(char* fname)
 	return context;
 }
 
+/**
+ * Destroy parser context
+ * 
+ * 	@param	context The parser context
+ */
 void destroy_parser(ParserContext* context)
 {
 	if (context) {		
 		if (context->lexer_context)
 			destroy_lexer(context->lexer_context);
-		
-		
+
 		destroy(context);
 	}
 }
 
+/**
+ * Custom error logger for the source file at hand since we can't use internal line numbers
+ * 
+ * 	@param	context The parser context
+ * 	@param	token	The current token
+ * 	@param	fmt		Message format string
+ */
 static void log_parser_error(ParserContext* context, Token* token, const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
@@ -47,6 +64,13 @@ static void log_parser_error(ParserContext* context, Token* token, const char* f
 	va_end(args);
 }
 
+/**
+ * Validator for identifier tokens
+ * 
+ * 	@param	ident Current token
+ * 	@return	Is valid?
+ * 	@see	tests/grammar/parser_tests.c::ident_test()
+ */
 static bool valid_ident(Token* ident)
 {
 	regex_t regex;
@@ -72,6 +96,13 @@ static bool valid_ident(Token* ident)
 	return true;
 }
 
+/**
+ * Parse an identifier
+ * 
+ * 	@param	ident Current token
+ * 	@return	Is valid?
+ * 	@see	tests/grammar/parser_tests.c::ident_test()
+ */
 static bool parse_ident(Token* ident)
 {
 	if (!valid_ident(ident)) {
@@ -82,12 +113,13 @@ static bool parse_ident(Token* ident)
 	return true;
 }
 
-/* Always valid, verified in lexical analysis */
-static bool parse_type()
-{
-	return true;
-}
-
+/**
+ * Parse parent abstract syntax tree construct
+ * 
+ * 	@param	context Parser context
+ * 	@return	Abstract syntax tree
+ * 	@see	tests/grammar/parser_tests.c::parser_test()
+ */
 static ASTNode* parse_x_lang(ParserContext* context)
 {
 	ASTNode* node = NULL;
@@ -119,23 +151,23 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			case TOK_TYPE_U8:
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
-			case TOK_TYPE_U64:
+			case TOK_TYPE_U64: {
+				/* Type is verified in lexical analysis, no need to parse incoming */
 				// --- variable declaration
-				if (parse_type()) {
-					list_append(context->current_tokens, token);
+				list_append(context->current_tokens, token);
 
-					Token* ident = fifo_pop(context->lexer_context->tokens);
-					
-					if (parse_ident(ident)) {
-						list_append(context->current_tokens, ident);
-						node = init_ast_node(context->current_tokens);
-					} else {
-						log_parser_error(context, ident, "invalid identifier\n");
-					}
+				Token* ident = fifo_pop(context->lexer_context->tokens);
+				
+				if (parse_ident(ident)) {
+					list_append(context->current_tokens, ident);
+					node = init_ast_node(context->current_tokens);
+				} else {
+					log_parser_error(context, ident, "invalid identifier\n");
 				}
 				// --- end variable declaration
 				break;
-
+			}
+			
 			default:
 				log_parser_error(context, token,
 								 "expected one of <ident, integer_literal, EOF>\n");
@@ -146,11 +178,14 @@ static ASTNode* parse_x_lang(ParserContext* context)
 	return node;
 }
 
+/**
+ * Main parsing loop
+ * 	@param	context Parser context
+ * 	@return	Abstract syntax tree
+ * 	@see	tests/grammar/parser_tests.c::parser_test()
+ */
 ASTNode* parse(ParserContext* context)
 {
-	// TODO: init ROOT type
-	//		 append children to it
-	//		 dump, destroy children for root type
 	lex(context->lexer_context);
 
 	ASTNode* node = calloc(1, sizeof(ASTNode));

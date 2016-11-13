@@ -99,7 +99,7 @@ These will not be implicitly set by filename – I want to know what package I�
 
 <import> ::= “import” <package>
 
-<statement> ::=  <variable_declaration>
+<program> ::=  <variable_declaration>
 		| <variable_definition>
 		| <function_declaration>
 		| <function_definition>
@@ -107,6 +107,5 @@ These will not be implicitly set by filename – I want to know what package I�
 		| <package_specifier>
 		| <import>
 		| <expression>
+		<program>+
 		;
-
-<program> ::= <statement>+

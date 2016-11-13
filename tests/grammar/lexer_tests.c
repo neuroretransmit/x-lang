@@ -28,7 +28,7 @@ static LexerContext* setup(char* fname)
 	return lexer;
 }
 
-/*static void ident_test()
+static void ident_test()
 {
 	LexerContext* lexer = setup("res/ident.x");
 	lex(lexer);
@@ -36,7 +36,7 @@ static LexerContext* setup(char* fname)
 	char* EXPECTED_VALUES[] = {
 		"ii", "x", "b", "a", "_a", "__a_", "xylophone_dreams"
 	};
-
+	
 	Token* EXPECTED[7] = {
 		mock_token(TOK_IDENT,
 			mock_token_value(TOK_IDENT, strdup(EXPECTED_VALUES[0])),
@@ -87,20 +87,17 @@ static LexerContext* setup(char* fname)
 	log_info("PASS\n");
 	
 	destroy_lexer(lexer);
-}*/
+}
 
 static void integer_literal_test()
 {
 	LexerContext* lexer = setup("res/integer_literal.x");
 	lex(lexer);
 	
-	int64_t* expected = malloc(sizeof(int64_t) * 6);
-	expected[0] = 0;
-	expected[1] = 66;
-	expected[2] = 23976;
-	expected[3] = 238;
-	expected[4] = 129238;
-	expected[5] = 0;
+	int64_t _expected[] = { 0, 66, 23976, 238, 129238, 0 };
+	
+	void** expected = malloc(sizeof(_expected));
+	memcpy(expected, _expected, sizeof(_expected));
 	
 	TokenPos position[6] = {
 		mock_token_pos(1, 1),
@@ -112,33 +109,37 @@ static void integer_literal_test()
 	};
 	
 	Token* EXPECTED[6] = {
-		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[0]), position[0], 0),
-		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[1]), position[1], 0),
-		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[2]), position[2], 0),
-		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[3]), position[3], 0),
-		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[4]), position[4], 0),
-		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[5]), position[5], 0)
+		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[0]), position[0], 1),
+		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[1]), position[1], 2),
+		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[2]), position[2], 5),
+		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[3]), position[3], 3),
+		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[4]), position[4], 6),
+		mock_token(TOK_INTEGER_LITERAL, mock_token_value(TOK_INTEGER_LITERAL, &expected[5]), position[5], 3)
 	};
 	
 	Token* actual = NULL;
-	for (size_t i = 0; i < lexer->tokens->size; i++) {
+	for (size_t i = 0; i < 6; i++) {
 		actual = fifo_pop(lexer->tokens);
-		check_token(actual, EXPECTED[i]);
-		//destroy_token(actual);
-		//destroy_token(EXPECTED[i]);
+		check_token(actual, EXPECTED[i]);	
+		/* Weird houdini stuff I don't feel like unraveling -
+		 * 	basically the pointer from expected is freed from actual.
+		 * 	could dupe... but it's not leaking... */
+		destroy_token(actual);
+		destroy(EXPECTED[i]->val);
+		destroy(EXPECTED[i]);
 	}
 	
-	destroy_lexer(lexer);
-	
 	log_info("PASS\n");
+	destroy_lexer(lexer);
+	destroy(expected);
 }
-/*
+
 static void type_test()
 {
 	LexerContext* lexer = setup("res/type.x");
 	lex(lexer);
 	
-	__attribute__((__unused__)) Token* EXPECTED[8] = {
+	Token* EXPECTED[8] = {
 		mock_token(TOK_TYPE_U8, NULL, mock_token_pos(1, 1), 2),
 		mock_token(TOK_TYPE_U16, NULL, mock_token_pos(1, 4), 3),
 		mock_token(TOK_TYPE_U32, NULL, mock_token_pos(1, 8), 3),
@@ -150,20 +151,20 @@ static void type_test()
 	};
 	
 	Token* token = NULL;
-	for (size_t i = 0; i < lexer->tokens->size; i++) {
+	for (size_t i = 0; i < 8; i++) {
 		token = fifo_pop(lexer->tokens);
 		check_token(token, EXPECTED[i]);
-		destroy_token(EXPECTED[i]);
 		destroy_token(token);
+		destroy_token(EXPECTED[i]);
 	}
 	
-	destroy(lexer);
+	destroy_lexer(lexer);
 	log_info("PASS\n");
-}*/
+}
 
 void lexer_tests()
 {
- 	//ident_test();
-	//type_test();
+ 	ident_test();
+	type_test();
 	integer_literal_test();
 }
