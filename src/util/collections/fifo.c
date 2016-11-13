@@ -26,21 +26,26 @@ void destroy_fifo(FIFO* fifo)
 			if (fifo->head) {
 				if (fifo->head->data)
 					fifo->destructor(fifo->head->data);
-		
-				while ((node = fifo->head->next))
-					fifo->destructor(node->data);
+				
+				if (fifo->head->next)
+					while ((node = fifo->head->next))
+						fifo->destructor(node->data);
+				
+				destroy(fifo->head);
 			}
 		} else {
 			if (fifo->head){
 				if (fifo->head->data) 
 					destroy(fifo->head->data);
 			
-				while ((node = fifo->head->next))
-					destroy(node->data);
+				if (fifo->head->next)
+					while ((node = fifo->head->next))
+						destroy(node->data);
+					
+				destroy(fifo->head);
 			}
 		}
 		
-		destroy(fifo->head);
 		destroy(fifo);
 	}
 }

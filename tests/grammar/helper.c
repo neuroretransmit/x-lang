@@ -16,7 +16,10 @@ static void check_token_val(TokenType type, TokenValue* actual, TokenValue* expe
 				break;
 
 			case TOK_INTEGER_LITERAL:
-				assert(*actual->integer == *expected->integer);
+				if (actual->integer)
+					assert(*actual->integer == *expected->integer);
+				else
+					log_warn("Token type: %d\n", type);
 				break;
 
 			case TOK_TYPE_S8:
@@ -49,8 +52,15 @@ void check_token(Token* actual, Token* expected)
 		assert(actual->len == expected->len);
 		check_token_pos(actual->pos, expected->pos);
 
-		if (actual->val)
-			check_token_val(actual->type, actual->val, expected->val);
+		/* Check values */
+		switch (actual->type) {
+			case TOK_IDENT:
+			case TOK_INTEGER_LITERAL:
+				check_token_val(actual->type, actual->val, expected->val);
+				break;
+			default:
+				break;
+		}
 	}
 }
 

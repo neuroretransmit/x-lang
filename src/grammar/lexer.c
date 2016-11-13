@@ -17,33 +17,52 @@ typedef struct {
 	char* str;
 } StringCapture;
 
-void destroy_token_value(void* tok_val)
+/**
+ * Destructor for TokenValue struct
+ * 
+ * @param tok_val Void pointer to tok_val struct
+ */
+void destroy_token_value(TokenType type, void* tok_val)
 {
 	TokenValue* value = (TokenValue*) tok_val;
 
-	if (value) {
-		// LOLWUT - Why is this segfaulting....
-		if (value->string)
-			destroy(value->string);
-		else if (value->integer)
-			destroy(value->integer);
+	if (tok_val) {
+		switch (type) {
+			case TOK_IDENT:
+				destroy(value->string);
+				break;
+			case TOK_INTEGER_LITERAL:
+				destroy(value->integer);
+				break;
+			default:
+				break;
+		}
 		
 		destroy(value);
 	}
 }
 
+/**
+ * Destructor for token
+ * 	@param	token	Token to destroy
+ */
 void destroy_token(void* token)
 {
 	Token* tmp = (Token*) token;
 	
-	if (tmp) {
+	if (token) {
 		if (tmp->val)
-			destroy_token_value(tmp->val);
+			destroy_token_value(tmp->type, tmp->val);
 			
 		destroy(tmp);
 	}
 }
 
+/**
+ * Initializer for lexer
+ * 	@param 	fname 	File name
+ * 	@return 		Lexer context
+ */
 LexerContext* init_lexer(char* fname)
 {
 	LexerContext* context = malloc(sizeof(LexerContext));
@@ -55,6 +74,10 @@ LexerContext* init_lexer(char* fname)
 	return context;
 }
 
+/**
+ * Destructor for lexer context
+ * 	@param	context Lexer context
+ */
 void destroy_lexer(LexerContext* context)
 {
 	if (context) {
@@ -68,6 +91,11 @@ void destroy_lexer(LexerContext* context)
 	}
 }
 
+/**
+ * Custom logger for lexer error since we can't use internal line numbers
+ * 	@param	context Lexer context
+ * 	@param	fmt		The message format string
+ */
 static void log_lexer_error(LexerContext* context, const char* fmt, ...)
 {
 	fprintf(stderr, "%s[ERROR]%s ", ANSI_COLOR_RED, ANSI_COLOR_RESET);
@@ -83,12 +111,20 @@ static void log_lexer_error(LexerContext* context, const char* fmt, ...)
 	va_end(args);
 }
 
+/**
+ * Finds the next token
+ * 	@param		context Lexer context
+ */
 static void next_token(LexerContext* context)
 {
 	context->previous = context->lookahead;
 	context->lookahead = fgetc(context->fp);
 }
 
+/**
+ * Checks to see if character is a separator
+ * 	@param		context Lexer context
+ */
 static void adjust_position(LexerContext* context, size_t tok_len)
 {   
     if (tok_len == (size_t) -1) {
@@ -103,6 +139,11 @@ static void adjust_position(LexerContext* context, size_t tok_len)
 	}
 }
 
+/**
+ * Checks to see if character is a separator
+ * 	@param		context Lexer context
+ * 	@return		Is separator?
+ */
 static bool is_separator(LexerContext* context)
 {
 	switch (context->lookahead) {
@@ -120,6 +161,10 @@ static bool is_separator(LexerContext* context)
 	return false;
 }
 
+/**
+ * Destructor for StringCapture struct
+ * 	@param 		capture StringCapture struct
+ */
 void destroy_string_capture(StringCapture* capture)
 {
 	if (capture) {
@@ -128,6 +173,12 @@ void destroy_string_capture(StringCapture* capture)
 	}
 }
 
+/**
+ * Captures the string value of a token
+ * 
+ * 	@param 		context Lexer context
+ * 	@return		Pointer to StringCapture struct
+ */
 static StringCapture* capture_string(LexerContext* context)
 {
 	StringCapture* capture = malloc(sizeof(StringCapture));
@@ -151,12 +202,23 @@ static StringCapture* capture_string(LexerContext* context)
 	return capture;
 }
 
+/**
+ * Saves the current token's start position in lexer context
+ * 
+ * 	@param 	context	Lexer context
+ */
 static inline void save_token_start(LexerContext* context)
 {
 	context->start.line = context->current_pos.line;
 	context->start.column = context->current_pos.column;
 }
 
+/**
+ * Allocates a TokenValue struct and initializes its type
+ * 
+ * 	@param 	type	Token type
+ * 	@return			A TokenValue struct pointer
+ */
 TokenValue* init_token_value(TokenType type)
 {
 	TokenValue* val = NULL;
@@ -173,8 +235,6 @@ TokenValue* init_token_value(TokenType type)
 			break;
 			
 		case TOK_INTEGER_LITERAL:
-			val = malloc(sizeof(TokenValue));
-			break;
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
 			break;
@@ -187,9 +247,17 @@ TokenValue* init_token_value(TokenType type)
 	return val;
 }
 
+/**
+ * Constructor for Token struct
+ * 	@param 	context		Lexer context
+ * 	@param 	type		Token type
+ * 	@param 	val 		Void pointer to data
+ * 	@param 	len 		Length of token
+ * 	@return				Pointer to Token struct
+ */
 static Token* create_token(LexerContext* context, TokenType type, void* val, size_t len)
 {
-	Token* token = malloc(sizeof(Token));
+	Token* token = calloc(1, sizeof(Token));
 	token->val = init_token_value(type);
 	token->type = type;
 	token->pos.line = context->start.line;
@@ -222,7 +290,12 @@ static Token* create_token(LexerContext* context, TokenType type, void* val, siz
 	return token;
 }
 
-
+/**
+ * Identifies the next valid token in the source code.
+ * 
+ * 	@param context 	Lexer context
+ * 	@return 		Token struct
+ */
 static Token* tokenize(LexerContext* context)
 {
 	next_token(context);
@@ -269,10 +342,9 @@ static Token* tokenize(LexerContext* context)
 					// Identifier
 						create_token(context, TOK_IDENT, strdup(capture->str), capture->len);
 			} else if (isdigit(context->lookahead)) {
-				/* TODO - Only does positive integers */
-
+				/* TODO: Negative numbers when we have unary operators */
 				capture = capture_string(context);
-				int64_t* value = malloc(sizeof(uint64_t));
+				int64_t* value = malloc(sizeof(int64_t));
 				*value = (int64_t) strtoll(capture->str, 0, 0);
 				token = create_token(context, TOK_INTEGER_LITERAL, value, capture->len);
 			} else {
@@ -289,6 +361,11 @@ static Token* tokenize(LexerContext* context)
 	return token;
 }
 
+/**
+ * Main lexer loop that pushes to our token FIFO
+ * 
+ * 	@param context Lexer context
+ */
 void lex(LexerContext* context)
 {
 	Token* token;
