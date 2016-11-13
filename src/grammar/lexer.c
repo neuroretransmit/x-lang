@@ -232,6 +232,7 @@ TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U16:
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
+		case TOK_EQUAL:
 			break;
 			
 		case TOK_INTEGER_LITERAL:
@@ -281,6 +282,7 @@ static Token* create_token(LexerContext* context, TokenType type, void* val, siz
 		case TOK_TYPE_U16:
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
+		case TOK_EQUAL:
 			break;
 
 		default:
@@ -316,6 +318,9 @@ static Token* tokenize(LexerContext* context)
             return FAKE_TOKEN;
 		case EOF:
 			return NULL;
+		case '=':
+			create_token(context, TOK_EQUAL, NULL, 1);
+			break;
 
 		default: {
 			if (isalpha(context->lookahead) || context->lookahead == '_') {

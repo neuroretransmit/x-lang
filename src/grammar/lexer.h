@@ -9,6 +9,7 @@
 /* Reserve the top 100 for root ast constructs */
 typedef enum {
 	TOK_IDENT = 100,
+	/* TYPES */
 	TOK_INTEGER_LITERAL,
 	TOK_TYPE_S8,
 	TOK_TYPE_S16,
@@ -17,7 +18,9 @@ typedef enum {
 	TOK_TYPE_U8,
 	TOK_TYPE_U16,
 	TOK_TYPE_U32,
-	TOK_TYPE_U64
+	TOK_TYPE_U64,
+	/* SYMBOLS */
+	TOK_EQUAL
 } TokenType;
 
 struct Token;

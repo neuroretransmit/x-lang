@@ -129,6 +129,26 @@ static bool parse_variable_declaration(ParserContext* context)
 	return false;
 }
 
+static bool parse_variable_definition(ParserContext* context)
+{
+	Token* equal = fifo_peek(context->lexer_context->tokens);
+	
+	if (equal && equal->type == TOK_EQUAL) {
+		equal = fifo_pop(context->lexer_context->tokens);
+		Token* integer_literal = fifo_pop(context->lexer_context->tokens);
+	
+		if (equal->type == TOK_EQUAL && integer_literal->type == TOK_INTEGER_LITERAL) {
+			list_append(context->current_tokens, equal);
+			list_append(context->current_tokens, integer_literal);
+			return true;
+		} else {
+			log_err("expectected integer literal.\n");
+		}
+	}
+	
+	return false;
+}
+
 /**
  * Parse parent abstract syntax tree construct
  * 
@@ -168,8 +188,12 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			case TOK_TYPE_U64: {
 				list_append(context->current_tokens, token); // Append type, verified in lexical analysis
 
-				if (parse_variable_declaration(context))
+				bool var_decl = parse_variable_declaration(context);
+				bool var_def = parse_variable_definition(context);
+				
+				if ((var_decl && var_def) || (var_decl || var_def))
 					node = init_ast_node(context->current_tokens);
+				
 				break;
 			}
 			
