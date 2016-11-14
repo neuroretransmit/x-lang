@@ -168,7 +168,8 @@ static bool is_separator(LexerContext* context)
 void destroy_string_capture(StringCapture* capture)
 {
 	if (capture) {
-		destroy(capture->str);
+		if (capture->str)
+			destroy(capture->str);
 		destroy(capture);
 	}
 }
@@ -349,9 +350,8 @@ static Token* tokenize(LexerContext* context)
 			} else if (isdigit(context->lookahead)) {
 				/* TODO: Negative numbers when we have unary operators */
 				capture = capture_string(context);
-				int64_t* value = malloc(sizeof(int64_t));
-				*value = (int64_t) strtoll(capture->str, 0, 0);
-				token = create_token(context, TOK_INTEGER_LITERAL, value, capture->len);
+				int64_t value = strtoll(capture->str, 0, 0);
+				token = create_token(context, TOK_INTEGER_LITERAL, memdup(&value, sizeof(value)), capture->len);
 			} else {
 				log_lexer_error(context, "unknown grammar\n");
 			}

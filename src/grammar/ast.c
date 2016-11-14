@@ -26,7 +26,7 @@ static ASTNode* init_ast_integer_literal(Token* tok)
 	return _allocate_node(tok);
 }
 
-static ASTNode* init_ast_variable_declaration(Token* type, Token* ident, ASTType ast_type)
+static ASTNode* init_ast_variable_declaration(ASTType ast_type, Token* type, Token* ident)
 {
 	ASTNode* node = malloc(sizeof(ASTNode));
 	ASTVariableDeclaration* var_decl = malloc(sizeof(ASTVariableDeclaration));
@@ -38,18 +38,43 @@ static ASTNode* init_ast_variable_declaration(Token* type, Token* ident, ASTType
 	return node;
 }
 
+static ASTNode* init_ast_variable_definition(ASTType ast_type, ASTNode* var_decl, Token* equal, Token* val)
+{
+	ASTNode* node = NULL;
+	
+	if (var_decl && equal && val && ast_type == AST_TYPE_VARIABLE_DEFINITION) {
+		node = malloc(sizeof(ASTNode));
+		ASTVariableDefinition* var_def = malloc(sizeof(ASTVariableDefinition));
+		var_def->decl = var_decl->var_decl;
+		node->type = ast_type;
+		
+		switch (val->type) {
+			case TOK_INTEGER_LITERAL:
+				var_def->val = val;
+				node->var_def = var_def;
+				break;
+			default:
+				log_warn("unimplemented variable definition type\n");
+		}
+	}
+	
+	return node;
+}
+
 ASTNode* init_ast_node(List* tokens)
 {
-
 	Token* token = list_get(tokens, 0);
-
+	ASTNode* node = NULL;
+	
 	if (token) {
 		switch (token->type) {
 			case TOK_IDENT:
-				return init_ast_ident(token);
+				node = init_ast_ident(token);
+				break;
 
 			case TOK_INTEGER_LITERAL:
-				return init_ast_integer_literal(token);
+				node = init_ast_integer_literal(token);
+				break;
 
 			case TOK_TYPE_S8:
 			case TOK_TYPE_S16:
@@ -60,22 +85,30 @@ ASTNode* init_ast_node(List* tokens)
 			case TOK_TYPE_U32:
 			case TOK_TYPE_U64: {
 				Token* ident = list_get(tokens, 1);
-
+				
 				if (ident->type != TOK_IDENT) {
 					log_err("expected identifier\n");
 					break;
 				} else {
-					return init_ast_variable_declaration(token, ident, AST_TYPE_VARIABLE_DECLARATION);
+					node = init_ast_variable_declaration(AST_TYPE_VARIABLE_DECLARATION, token, ident);
+					
+					if (tokens->size == 4) {
+						Token* equal = list_get(tokens, 2);
+						Token* val = list_get(tokens, 3);
+						node = init_ast_variable_definition(AST_TYPE_VARIABLE_DEFINITION, node, equal, val);
+					}
 				}
+				
+				break;
 			}
 
 			default:
-				log_err("expected one of <ident>, ...\n");
-				return NULL;
+				log_err("found token type %d...\n", token->type);
+				break;
 		}
 	}
 
-	return NULL;
+	return node;
 }
 
 static void destroy_ast_variable_declaration(ASTVariableDeclaration* var_decl)
@@ -91,6 +124,18 @@ static void destroy_ast_variable_declaration(ASTVariableDeclaration* var_decl)
 	}
 }
 
+static void destroy_ast_variable_definition(ASTVariableDefinition* var_def)
+{
+	if (var_def) {
+		if (var_def->decl)
+			destroy_ast_variable_declaration(var_def->decl);
+		if (var_def->val)
+			destroy_token(var_def->val);
+		
+		destroy(var_def);
+	}
+}
+
 void destroy_ast_node(void* node)
 {
 	ASTNode* converted = (ASTNode*) node;
@@ -102,6 +147,9 @@ void destroy_ast_node(void* node)
 				break;
 			case AST_TYPE_VARIABLE_DECLARATION:
 				destroy_ast_variable_declaration(converted->var_decl);
+				break;
+			case AST_TYPE_VARIABLE_DEFINITION:
+				destroy_ast_variable_definition(converted->var_def);
 				break;
 			default:
 				break;
@@ -127,13 +175,13 @@ static void ast_dump_ident(Token* ident, int depth)
 	}
 }
 
-static void ast_dump_integer_literal(ASTNode* integer_literal, int depth)
+static void ast_dump_integer_literal(Token* integer_literal, int depth)
 {
 	if (integer_literal) {
 		print_depth(depth);
 		printf("<%zu:%zu:integer_literal:%" PRId64 ">\n",
-			   integer_literal->token->pos.line, integer_literal->token->pos.column,
-			   *integer_literal->token->val->integer);
+			   integer_literal->pos.line, integer_literal->pos.column,
+			   *integer_literal->val->integer);
 	}
 }
 
@@ -172,41 +220,74 @@ static void ast_dump_variable_declaration(ASTVariableDeclaration* var_decl, int 
 	}
 }
 
+static void ast_dump_variable_definition(ASTVariableDefinition* var_def, int depth)
+{
+	if (var_def) {
+		print_depth(depth);
+		
+		if (var_def->decl->type) {
+			printf("<%zu:%zu:variable_definition>\n",
+				   var_def->decl->type->pos.line, var_def->decl->type->pos.column);
+			depth += 1;
+			
+			ast_dump_type(var_def->decl->type, depth);
+			
+			if (var_def->decl->ident)
+				ast_dump_ident(var_def->decl->ident, depth);
+			
+			if (var_def->val) {
+				switch (var_def->val->type) {
+					case TOK_INTEGER_LITERAL:
+						ast_dump_integer_literal(var_def->val, depth);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+}
+
 void ast_dump(ASTNode* ast)
 {
 	int depth = 0;
 
-	for (unsigned i = 0; i < ast->children->size; i++) {
-		ASTNode* node = list_get(ast->children, i);
+	if (ast->children) {
+		for (unsigned i = 0; i < ast->children->size; i++) {
+			ASTNode* node = list_get(ast->children, i);
 
-		if (node && node->token) {
-			switch (node->type) {
-				case TOK_INTEGER_LITERAL:
-					ast_dump_integer_literal(node, depth);
-					break;
+			if (node && node->token) {
+				switch (node->type) {
+					case TOK_INTEGER_LITERAL:
+						ast_dump_integer_literal(node->token, depth);
+						break;
 
-				case TOK_IDENT:
-					ast_dump_ident(node->token, depth);
-					break;
+					case TOK_IDENT:
+						ast_dump_ident(node->token, depth);
+						break;
 
-				case TOK_TYPE_S8:
-				case TOK_TYPE_S16:
-				case TOK_TYPE_S32:
-				case TOK_TYPE_S64:
-				case TOK_TYPE_U8:
-				case TOK_TYPE_U16:
-				case TOK_TYPE_U32:
-				case TOK_TYPE_U64:
-					ast_dump_type(node->token, depth);
-					break;
+					case TOK_TYPE_S8:
+					case TOK_TYPE_S16:
+					case TOK_TYPE_S32:
+					case TOK_TYPE_S64:
+					case TOK_TYPE_U8:
+					case TOK_TYPE_U16:
+					case TOK_TYPE_U32:
+					case TOK_TYPE_U64:
+						ast_dump_type(node->token, depth);
+						break;
 
-				case AST_TYPE_VARIABLE_DECLARATION:
-					ast_dump_variable_declaration(node->var_decl, depth);
-					break;
+					case AST_TYPE_VARIABLE_DECLARATION:
+						ast_dump_variable_declaration(node->var_decl, depth);
+						break;
 
-				default:
-					log_err("unsupported AST node type\n");
-					break;
+					case AST_TYPE_VARIABLE_DEFINITION:
+						ast_dump_variable_definition(node->var_def, depth);
+						break;
+					default:
+						log_err("unsupported AST node type\n");
+						break;
+				}
 			}
 		}
 	}

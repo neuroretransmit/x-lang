@@ -33,12 +33,31 @@ static LLVMValueRef codegen_var_decl(CodegenContext* context, ASTNode* node)
 		LLVMValueRef var = LLVMGetNamedGlobal(context->module, node->var_decl->ident->val->string);
 	
 		if (var) {
-			log_err("variable already exists with the same name\n");
+			log_err("variable already exists with that name\n");
 		} else {
 			LLVMTypeRef type = 	deduce_llvm_type(node->var_decl->type->type);
 			LLVMValueRef decl = LLVMAddGlobal(context->module, type, node->var_decl->ident->val->string);
-		
+			
 			return decl;
+		}
+	}
+	
+	return NULL;
+}
+
+static LLVMValueRef codegen_var_def(CodegenContext* context, ASTNode* node)
+{
+	if (node) {
+		LLVMValueRef var = LLVMGetNamedGlobal(context->module, node->var_def->decl->ident->val->string);
+		
+		if (var) {
+			log_err("variable already exists with that name\n");
+		} else {
+			LLVMTypeRef type = 	deduce_llvm_type(node->var_decl->type->type);
+			LLVMValueRef def = LLVMAddGlobal(context->module, type, node->var_decl->ident->val->string);
+			LLVMSetInitializer(var, LLVMConstInt(deduce_llvm_type(node->var_def->decl->type->type), *node->var_def->val->val->integer, true));
+			
+			return def;
 		}
 	}
 	
@@ -65,6 +84,9 @@ LLVMValueRef codegen(CodegenContext* context, ASTNode* node)
 				break;
 			case AST_TYPE_VARIABLE_DECLARATION:
 				root = codegen_var_decl(context, node);
+				break;
+			case AST_TYPE_VARIABLE_DEFINITION:
+				root = codegen_var_def(context, node);
 				break;
 			default:
 				log_warn("no case for this AST type %d.\n", node->type);

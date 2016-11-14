@@ -8,16 +8,21 @@
 typedef enum {
 	AST_TYPE_NONE,
 	AST_TYPE_ROOT,
-	AST_TYPE_VARIABLE_DECLARATION
+	AST_TYPE_VARIABLE_DECLARATION,
+	AST_TYPE_VARIABLE_DEFINITION
 } ASTType;
 
 struct ASTNode;
 
 typedef struct {
-	
 	Token* type;
 	Token* ident;
 } ASTVariableDeclaration;
+
+typedef struct {
+	ASTVariableDeclaration* decl;
+	Token* val;
+} ASTVariableDefinition;
 
 typedef struct {
 	List* children;
@@ -25,6 +30,7 @@ typedef struct {
 	union {
 		Token* token;
 		ASTVariableDeclaration* var_decl;
+		ASTVariableDefinition* var_def;
 	};
 } ASTNode;
 

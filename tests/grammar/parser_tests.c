@@ -72,9 +72,8 @@ void variable_declaration_test()
 							mock_token(TOK_IDENT, mock_token_value(TOK_IDENT, strdup("sdif")), mock_token_pos(8, 5), 4)));
 	list_append(EXPECTED->children, tmp);
 	
-	for (size_t i = 0; i < ast->children->size; i++) {
+	for (size_t i = 0; i < ast->children->size; i++)
 		check_ast_node(list_get(ast->children, i), list_get(EXPECTED->children, i));
-	}
 	
 	log_info("PASS\n");
 	
