@@ -16,7 +16,7 @@ The X language aims to be a system level language that incorporates functional p
 
 X language is currently able to generate LLVM IR, compile to LLVM bitcode, dump native assembly and compile a native binary. Top-level statements are supported, the main module and function are implicitly generated. No other syntax but variable declarations are supported at this time - it is being added now that the backend is functional.
 
-Proof
+Proof (variables are optimized out in the native ASM)
 
 ```
 $ # Dumping bitcode, assembly, LLVM IR and the AST.
