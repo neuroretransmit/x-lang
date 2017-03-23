@@ -1,1 +1,9 @@
-u8 x
+u8 a
+u16 b
+u32 c
+u64 d
+s8 e
+s16 f
+s32 g
+s64 h
+char i

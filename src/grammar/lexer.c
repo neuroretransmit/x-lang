@@ -232,8 +232,11 @@ TokenValue* init_token_value(TokenType type)
 		case TOK_TYPE_U16:
 		case TOK_TYPE_U32:
 		case TOK_TYPE_U64:
+        case TOK_TYPE_CHAR:
+        case TOK_EQUAL:
 			break;
 			
+        case TOK_CHAR_LITERAL:
 		case TOK_INTEGER_LITERAL:
 		case TOK_IDENT:
 			val = malloc(sizeof(TokenValue));
@@ -265,6 +268,9 @@ static Token* create_token(LexerContext* context, TokenType type, void* val, siz
 	token->len = len;
 
 	switch (type) {
+        case TOK_CHAR_LITERAL:
+            token->val->string = val;
+        
 		case TOK_INTEGER_LITERAL:
 			token->val->integer = val;
 			break;
@@ -316,6 +322,9 @@ static Token* tokenize(LexerContext* context)
             return FAKE_TOKEN;
 		case EOF:
 			return NULL;
+        case '=':
+            adjust_position(context, 1);
+            return create_token(context, TOK_EQUAL, NULL, 1);
 
 		default: {
 			if (isalpha(context->lookahead) || context->lookahead == '_') {
@@ -339,6 +348,8 @@ static Token* tokenize(LexerContext* context)
 						? create_token(context, TOK_TYPE_S32, NULL, capture->len) :
 					strstr(capture->str, "s64") 
 						? create_token(context, TOK_TYPE_S64, NULL, capture->len) :
+                    strstr(capture->str, "char")
+                        ? create_token(context, TOK_TYPE_CHAR, NULL, capture->len) :
 					// Identifier
 						create_token(context, TOK_IDENT, strdup(capture->str), capture->len);
 			} else if (isdigit(context->lookahead)) {

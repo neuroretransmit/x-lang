@@ -19,6 +19,7 @@ static LLVMTypeRef deduce_llvm_type(int type)
 		case TOK_TYPE_U32: return LLVMInt32Type();
 		case TOK_TYPE_S64:
 		case TOK_TYPE_U64: return LLVMInt64Type();
+        case TOK_TYPE_CHAR: return LLVMInt8Type();
 		default:
 			log_kill("didn't recieve a type.\n");
 			break;

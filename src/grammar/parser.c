@@ -122,11 +122,19 @@ static bool parse_variable_declaration(ParserContext* context)
 	if (parse_ident(context, ident)) {
 		list_append(context->current_tokens, ident);
 		return true;
-	} else {
-		log_parser_error(context, ident, "invalid identifier\n");
-	}
+	} 
 	
 	return false;
+}
+
+static bool parse_assignment(ParserContext* context)
+{
+    /* EQUAL VERIFIED IN PEEK OF MAIN PARSE */
+    
+    
+    Token* val = fifo_pop(context->lexer_context->tokens);
+    list_append(context->current_tokens, val);
+    return true;
 }
 
 /**
@@ -145,19 +153,35 @@ static ASTNode* parse_x_lang(ParserContext* context)
 
 		switch (token->type) {
 
-			case TOK_IDENT:
-				if (parse_ident(context, token))
-					node = init_ast_node(context->current_tokens);
+			case TOK_IDENT: {
+                Token* peek = fifo_peek(context->lexer_context->tokens);
+                bool ident = parse_ident(context, token);
+                
+                if (ident) {
+                    bool is_assignment = (peek->type == TOK_EQUAL);
+                    bool assignment = false;
+                    
+                    if (is_assignment) {
+                        fifo_pop(context->lexer_context->tokens);
+                        if (!(assignment = parse_assignment(context))) {
+                            log_parser_error(context, token, "expected one of <ident, assignment>");
+                        }
+                    }
 
-				break;
+                }
+                node = init_ast_node(context->current_tokens);
+                break;
+            }
 
 			case TOK_INTEGER_LITERAL:
 					list_append(context->current_tokens, token);
 					node = init_ast_node(context->current_tokens);
 
 				break;
-
-
+            
+            case TOK_EQUAL:
+                destroy_token(fifo_pop(context->lexer_context->tokens));
+                break;
 			case TOK_TYPE_S8:
 			case TOK_TYPE_S16:
 			case TOK_TYPE_S32:
@@ -165,7 +189,8 @@ static ASTNode* parse_x_lang(ParserContext* context)
 			case TOK_TYPE_U8:
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
-			case TOK_TYPE_U64: {
+			case TOK_TYPE_U64:
+            case TOK_TYPE_CHAR: {
 				list_append(context->current_tokens, token); // Append type, verified in lexical analysis
 
 				if (parse_variable_declaration(context))

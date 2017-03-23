@@ -58,7 +58,8 @@ ASTNode* init_ast_node(List* tokens)
 			case TOK_TYPE_U8:
 			case TOK_TYPE_U16:
 			case TOK_TYPE_U32:
-			case TOK_TYPE_U64: {
+			case TOK_TYPE_U64:
+            case TOK_TYPE_CHAR: {
 				Token* ident = list_get(tokens, 1);
 
 				if (ident->type != TOK_IDENT) {
@@ -150,7 +151,8 @@ static void ast_dump_type(Token* type, int depth)
 				type->type == TOK_TYPE_U8 ? "u8" :
 				type->type == TOK_TYPE_U16 ? "u16" :
 				type->type == TOK_TYPE_U32 ? "u32" :
-				type->type == TOK_TYPE_U64 ? "u64" : "not a type"));
+				type->type == TOK_TYPE_U64 ? "u64" :
+				type->type == TOK_TYPE_CHAR ? "char" : "not a type"));
 	}
 }
 
@@ -170,6 +172,24 @@ static void ast_dump_variable_declaration(ASTVariableDeclaration* var_decl, int 
 				ast_dump_ident(var_decl->ident, depth);
 		}
 	}
+}
+
+static void ast_dump_variable_assignment(ASTAssignment* var_assign, int depth)
+{
+    if (var_assign) {
+        print_depth(depth);
+        
+        if (var_assign->ident) {
+            printf("<%zu:%zu:variable_assignment>\n",
+                   var_assign->ident->pos.line, var_assign->ident->pos.column);
+            depth += 1;
+            
+            ast_dump_ident(var_assign->ident, depth);
+            if (var_assign->val) {
+                ast_dump_integer_literal(var_assign->val);
+            }
+        }
+    }
 }
 
 void ast_dump(ASTNode* ast)
@@ -204,6 +224,9 @@ void ast_dump(ASTNode* ast)
 					ast_dump_variable_declaration(node->var_decl, depth);
 					break;
 
+                case AST_TYPE_VARIABLE_DECLARATION:
+                    ast_dump_variable_assignment(node->var_assign, depth);
+                    break;
 				default:
 					log_err("unsupported AST node type\n");
 					break;
